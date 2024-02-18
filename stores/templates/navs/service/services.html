@@ -1,0 +1,128 @@
+{% extends "layouts/main_base.html" %} {% block title %} Service {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/foods/style.css">
+<link rel="stylesheet" href="/static/css/foods/categories.css">
+<link rel="stylesheet" href="/static/css/foods/cart.css">
+<link rel="stylesheet" type="text/css" href="/static/css/navs/service/services.css"> {% endblock stylesheets %} {% block content %}
+
+<section class="main-section">
+    <div class="response"></div>
+    <ul class="categories">
+        <li class="{%if request.GET.type == '' %}active{%endif%}">
+            <a href="?category={{category.name|urlencode}}">All</a>
+        </li>
+        <li class="{%if request.GET.type == 'free' %}active{%endif%}">
+            <a href="?category={{category.name|urlencode}}">Free</a>
+        </li>
+        <li class="{%if request.GET.type == 'paid' %}active{%endif%}">
+            <a href="?category={{category.name|urlencode}}">Paid</a>
+        </li>
+    </ul>
+    <div class="d-flex service-boxes">
+        {%for service in services%}
+        <div class="col service-box item-{{service.id}}">
+            <div class="content">
+                <img src="{{service.image}}" alt="{{service.name}} Image">
+                <h5 class="service_name">{{service.name}}</h5>
+                <p>{{service.description}}</p>
+            </div>
+            <span class="{% if service.price == 0 %}free{%else%}paid{%endif%} price" value="{{service.price}}">{% if service.price == 0 %}
+                Free
+              {% else %}
+              ₹{{ service.price }}{% endif %} </span>
+            <button class="cart-view" data-bs-toggle="modal" data-bs-target="#add-to-cart-{{service.id}}"><i class="bi bi-plus-circle"></i></button>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="add-to-cart-{{service.id}}" tabindex="-1" aria-labelledby="add-to-cart" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">{{service.name}}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="item-section item-{{service.id}}">
+                            <div class="image">
+                                <img loading="lazy" src="{{service.image}}" style="width: 250px;border-radius: 9px;" alt="{{service.name}}" />
+                            </div>
+
+                            <div class="item-details">
+                                <h4 class="product_name">{{service.name}}</h4>
+                                <p><b>Prices:</b> {{service.price}}</p>
+                                <div class="product_quantity">
+                                    <p><b>Quantity: </b></p>
+                                    {% if service.quantity >= 1 %}
+                                    <div class="quantity_box">
+                                        <button type="button" class="minus" onclick="decrementQuantity('{{service.id}}')"><i class="bi bi-dash"></i></button>
+                                        <input type="number" name="quantity" id="quantity-{{service.id}}" class="quantity" value="1" min="1" max="{{service.quantity}}">
+                                        <button type="button" class="plus" onclick="incrementQuantity('{{service.id}}', '{{service.quantity}}')"><i class="bi bi-plus"></i></button>
+                                    </div>
+                                    {% else %}
+                                    <p class="text-danger">Out of Stock</p>
+                                    {% endif %}
+                                </div>
+                                <p class="product_price">
+                                    <p><b>Description: </b></p>
+                                    {{service.description}}
+                                </p>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        {% if service.quantity >= 1 %}
+                        <button class="add-to-cart cart-btn" price="{{service.price}}" id="{{service.id}}" room_id="{{room_id}}" token="{{csrf_token}}">Add to Cart</button> {%endif%}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+
+
+    <aside id="cart-bar" class="cart-bar">
+
+        <ul class="cart-nav cart-list" id="cart-nav">
+            <h5>Service Cart</h5>
+            {%for cart in cart_items%}
+            <li id="cart-item-{{cart.id}}" cart_id="{{cart.id}}" class="cart">
+                <div class="product-box">
+                    <img src="{{cart.service.image}}" />
+                    <div class="content">
+                        <p class="name">{{cart.service.name}}</p>
+                        <strong class="price">Price: ₹ {{cart.service.price}}  </strong>
+                        <span class="quantity"> Qty: {{cart.quantity}}</span>
+                    </div>
+                </div>
+                <span class="close delete-cart-item" id="{{cart.id}}" token="{{csrf_token}}"><i class="bi bi-x-lg"></i></span>
+            </li>
+            {%endfor%}
+        </ul>
+        <button class="place-order" room_id="{{room_id}}"><span class="checkout">Checkout</span> <span class="total_price">₹ {{total_price}}</span></button>
+
+    </aside>
+
+</section>
+{%endblock content%} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="/static/js/service/service.js"></script>
+<script>
+    function incrementQuantity(item_id, max_quantity) {
+        const quantityInput = document.getElementById('quantity-' + parseInt(item_id));
+        if (parseInt(quantityInput.value) < parseInt(max_quantity)) {
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+    }
+
+    function decrementQuantity(item_id) {
+        const quantityInput = document.getElementById('quantity-' + parseInt(item_id));
+        if (parseInt(quantityInput.value) > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+        }
+    }
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,104 @@
+ {% extends "layouts/base.html" %} {% block title %} Global Configuration {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="response"></div>
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Global Configuration</h5>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Label</th>
+                                    <th scope="col">Value</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for global in object_list %}
+                                <tr>
+                                    <td class="row">{{global.id}}</td>
+                                    <td>{{global.config_label}}</td>
+                                    <td>{{global.config_value}}</td>
+                                    <td><a onclick="javascript:updateConf(this)" data-id="{{global.id}}" data-value="{{global.config_value}}" data-name="{{global.config_name}}" data-label="{{global.config_label}}"><i class="bi bi-pen"></i></a></td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span id="configModalOpener" data-bs-toggle="modal" data-bs-target="#configModal" style="display: none;"></span>
+        <div class="modal fade" id="configModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Global Configuration</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input type="hidden" id="field_name">
+                                    <input type="hidden" id="global_id">
+                                    <input type="text" name="global_config_value" class="form-control" id="globalConfigInput">
+                                    <label for="globalConfigInput" id="globalConfigInputLabel">Enter Mobile Number<span class="text-danger">*</span></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-outline-primary" onclick="javascript:saveConfiguration()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script>
+    const updateConf = (e) => {
+        document.getElementById("globalConfigInput").value = e.dataset.value;
+        document.getElementById("globalConfigInputLabel").innerHTML = e.dataset.label + '<span class="text-danger">*</span>';
+        document.getElementById("field_name").value = e.dataset.name;
+        document.getElementById("global_id").value = e.dataset.id;
+        document.getElementById("configModalOpener").click();
+    }
+
+    const saveConfiguration = () => {
+        if (confirm("Are you sure want to update value of this config?")) {
+            const global_id = document.getElementById("global_id").value;
+            const field_name = document.getElementById("field_name").value;
+            const field_value = document.getElementById("globalConfigInput").value;
+            const token = "{{csrf_token}}";
+            $.ajax({
+                headers: {
+                    "X-CSRFToken": token
+                },
+                url: "/dashboard/configuration/global/" + global_id + '/', // Replace with the actual update URL
+                type: "PUT",
+                data: {
+                    config_value: field_value
+                },
+                success: function(response) {
+                    $('.response').empty().show().html('<div class="alert alert-success"> The global has been updated.</div>').delay(3000).fadeOut(300);
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    $('.response').empty().show().html('<div class="alert alert-danger">' + error + '</div>').delay(3000).fadeOut(300);
+                }
+            });
+        }
+    }
+</script>
+{% endblock javascripts %}

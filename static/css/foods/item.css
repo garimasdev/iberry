@@ -1,0 +1,107 @@
+.item-container {
+    margin: 100px auto;
+    display: flex;
+    justify-content: center;
+}
+
+.main-section .item-section {
+    display: flex;
+    column-gap: 50px;
+    padding: 15px 30px;
+    border-radius: 10px;
+}
+
+.item-container {
+    background-color: white;
+    width: 80%;
+    border-radius: 10px;
+}
+
+.main-section .modal-content {
+    width: 1200px;
+}
+
+.main-section .item-section .image {
+    width: 40%;
+}
+
+.main-section .item-section .image img {
+    width: 100%;
+}
+
+.main-section .item-section .item-details {
+    margin-top: 20px;
+    width: 45%;
+}
+
+.main-section .item-section .item-details .prices-box {
+    margin: 0px 10px;
+}
+
+.main-section .item-section .item-details .product_quantity {
+    display: flex;
+    column-gap: 18px;
+}
+
+.main-section .item-section .item-details .product_quantity button {
+    border: none;
+    outline: none;
+    border-radius: 3px;
+}
+
+.main-section .item-section .item-details .product_quantity input {
+    width: 60px;
+    text-align: center;
+    border: 2px solid gainsboro;
+    border-radius: 6px;
+}
+
+.main-section .item-section .item-details .add-to-cart,
+.main-section .add-to-cart.cart-btn {
+    border: none;
+    outline: none;
+    padding: 10px 25px;
+    border-radius: 8px;
+    background: #4154f1;
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+
+/* Custom model css */
+
+.modal-dialog {
+    width: 80%;
+    max-width: 80%;
+    margin: 20px auto;
+}
+
+.modal-content {
+    width: 80%;
+    max-width: 80%;
+    margin: 0px auto;
+}
+
+@media only screen and (max-width: 785px) {
+    .modal-dialog {
+        width: 100%;
+        max-width: 100%;
+        margin: 20px auto;
+    }
+    .modal-content {
+        width: 100%;
+        max-width: 100%;
+        margin: 0px auto;
+    }
+    .main-section .item-section {
+        flex-flow: column;
+        align-items: center;
+    }
+    .main-section .item-section .image {
+        width: 60%;
+    }
+    .main-section .item-section .item-details {
+        width: 100%;
+    }
+}

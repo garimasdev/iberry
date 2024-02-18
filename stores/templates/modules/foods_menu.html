@@ -1,0 +1,21 @@
+{% extends "layouts/main_base.html" %} {% block title %} Foods Menu {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="/static/css/modules/modules.css"> {% endblock stylesheets %} {% block content %}
+
+<section class="main-section">
+    <div class="modules">
+        <a href="items/" class="module">
+            <img src="/media/modules/food-items.svg" alt="">
+            <h5>Food items</h5>
+        </a>
+        {%if bar_enabled %}
+        <a href="bar/" class="module">
+            <img src="/media/modules/food-bar.svg" alt="">
+            <h5>Bar items</h5>
+        </a>
+        {%endif%}
+    </div>
+</section>
+{%endblock content%} {% block javascripts %} {% endblock javascripts %}

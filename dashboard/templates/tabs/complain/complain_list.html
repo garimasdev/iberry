@@ -1,0 +1,159 @@
+{% extends "layouts/base.html" %} {% block title %} Complains {% endblock %}
+<!--Style CSS-->
+{% block stylesheets %}
+<style>
+    .item-box {
+        display: flex;
+        align-items: center;
+        column-gap: 12px;
+    }
+    
+    .item-box img {
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+        border: 2px solid #e6e9ff;
+    }
+    
+    .price-box {
+        background: #d5d1d1;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 0px 8px;
+    }
+</style>
+{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Complain List</h5>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Room</th>
+                                    <th scope="col">Complain</th>
+                                    <th scope="col">Report</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complain in object_list%}
+                                <tr id="item-{{complain.id}}">
+                                    <td class="row">{{complain.complain_placed_id}}</td>
+                                    <td>
+                                        <span>{{complain.room.room_number}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{ complain.complain.title }}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{ complain.report }}</span>
+                                    </td>
+                                    <td><span class="{{complain.status}}">{{complain.status}}</span></td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                              Actions
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="#update-modal-{{complain.id}}" data-bs-toggle="modal">Update</a></li>
+                                                <li><a href="#" class="dropdown-item delete-item" id="{{complain.id}}" type="button">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!--Order Update View-->
+                                <div class="modal fade update-modal-{{complain.id}}" id="update-modal-{{complain.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <h4 class="order-id">#ComplainId-{{complain.complain_id}}</h4>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <p><strong>Room:</strong> {{ complain.room.room_number}}</p>
+                                                        <p><strong>Time:</strong> {{ complain.created_at}}</p>
+
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="mb-3">
+                                                            <label for="update_order_status" class="form-label">Status</label>
+                                                            <select class="form-select mb-0" id="{{complain.id}}-order_status" aria-label="order_status select example">
+                                                            <option value="0" class="Complained" {%if complain.status == 'Complained'%}selected{%endif%}>Complained</option>
+                                                            <option value="1" class="Processing" {%if complain.status == 'Processing'%}selected{%endif%}>Processing</option>
+                                                            <option value="2" class="Completed" {%if complain.status == 'Completed'%}selected{%endif%}>Completed</option>
+                                                            <option value="3" class="Canceled" {%if complain.status == 'Canceled'%}selected{%endif%}>Canceled</option>
+                                                        </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="complain-details">
+                                                    <h4>Complain Details</h4>
+                                                    <p><strong>Issue: </strong> {{complain.complain.title}}</p>
+                                                    <p><strong>Report: </strong> {{complain.report}}</p>
+                                                </div>
+
+                                                <div class="col-md-12">
+                                                    <div class="form-floating mb-3">
+                                                        <textarea name="note" class="form-select" id="{{complain.id}}-note" style="height: 120px;">{{complain.note}}</textarea>
+                                                        <label for="floatingPbx">Note</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary update-order" id="{{complain.id}}" token="{{csrf_token}}">Update</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="/static/js/dashboard/complain.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".delete-item").click(function(e) {
+            const itemId = $(this).attr("id");
+            const token = "{{csrf_token}}"
+            $.ajax({
+                headers: {
+                    "X-CSRFToken": token
+                },
+                url: "/dashboard/complaints/delete/" + itemId + "/",
+                type: "DELETE",
+                success: function(response) {
+                    console.log("Response", response);
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error case
+                    console.log(error);
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock javascripts %}

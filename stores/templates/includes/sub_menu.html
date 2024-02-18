@@ -1,0 +1,45 @@
+<link rel="stylesheet" type="text/css" href="/static/css/includes/sub_menu.css">
+<div class="top-back-and-types">
+    {%if '/store/'|add:room_number|add:'/' != request.path %}
+    <button type="button" onclick="history.back()" class="back-btn"><i class="bi bi-arrow-left-short"></i> <span>Back</span></button>
+    <!--another button-->
+    {%if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/bar/' in request.path%} {% with request.GET.urlencode as current_params %}
+    <ul class="item-types">
+        {%if request.path != '/store/'|add:room_number|add:'/foods/bar/'%}
+        <li class="item-type veg {%if request.GET.item_type == 'Veg' %}active{%endif%}">
+            <a href="{%if request.GET %}
+            {% if "item_type=Veg" not in current_params %}
+            {{ request.path }}?{{ current_params }}&item_type=Veg
+            {% else %}{{ request.path }}?{{ current_params }} {% endif %}
+            {% else %}{{ request.path }}?item_type=Veg{% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                <path d="M346.7 6C337.6 17 320 42.3 320 72c0 40 15.3 55.3 40 80s40 40 80 40c29.7 0 55-17.6 66-26.7c4-3.3 6-8.2 6-13.3s-2-10-6-13.2c-11.4-9.1-38.3-26.8-74-26.8c-32 0-40 8-40 8s8-8 8-40c0-35.7-17.7-62.6-26.8-74C370 2 365.1 0 360 0s-10 2-13.3 6zM244.6 136c-40 0-77.1 18.1-101.7 48.2l60.5 60.5c6.2 6.2 6.2 16.4 0 22.6s-16.4 6.2-22.6 0l-55.3-55.3 0 .1L2.2 477.9C-2 487-.1 497.8 7 505s17.9 9 27.1 4.8l134.7-62.4-52.1-52.1c-6.2-6.2-6.2-16.4 0-22.6s16.4-6.2 22.6 0L199.7 433l100.2-46.4c46.4-21.5 76.2-68 76.2-119.2C376 194.8 317.2 136 244.6 136z"/></svg>
+                <span>Veg</span>
+            </a>
+        </li>
+        <li class="item-type non-veg {%if request.GET.item_type == 'Non Veg' %}active{%endif%}">
+            <a href="{%if request.GET %}
+            {% if "item_type=Non Veg" not in current_params %}
+            {{ request.path }}?{{ current_params }}&item_type=Non Veg
+            {% else %}{{ request.path }}?{{ current_params }} {% endif %}
+            {% else %}{{ request.path }}?item_type=Non Veg{% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                <path d="M61.1 224C45 224 32 211 32 194.9c0-1.9 .2-3.7 .6-5.6C37.9 168.3 78.8 32 256 32s218.1 136.3 223.4 157.3c.5 1.9 .6 3.7 .6 5.6c0 16.1-13 29.1-29.1 29.1H61.1zM144 128a16 16 0 1 0 -32 0 16 16 0 1 0 32 0zm240 16a16 16 0 1 0 0-32 16 16 0 1 0 0 32zM272 96a16 16 0 1 0 -32 0 16 16 0 1 0 32 0zM16 304c0-26.5 21.5-48 48-48H448c26.5 0 48 21.5 48 48s-21.5 48-48 48H64c-26.5 0-48-21.5-48-48zm16 96c0-8.8 7.2-16 16-16H464c8.8 0 16 7.2 16 16v16c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V400z"/></svg>
+                <span>Non Veg</span>
+            </a>
+        </li>
+        {%endif%}
+        <li class="item-type day-deal {%if request.GET.item_type == 'Day Deal' %}active{%endif%}">
+            <a href="{%if request.GET %}
+            {% if "item_type=Day Deal" not in current_params %}
+            {{ request.path }}?{{ current_params }}&item_type=Day Deal
+            {% else %}{{ request.path }}?{{ current_params }} {% endif %}
+            {% else %}{{ request.path }}?item_type=Day Deal{% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512">
+                <path d="M374.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-320 320c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l320-320zM128 128A64 64 0 1 0 0 128a64 64 0 1 0 128 0zM384 384a64 64 0 1 0 -128 0 64 64 0 1 0 128 0z"/></svg>
+                <span>Day Deal</span>
+            </a>
+        </li>
+    </ul>
+    {% endwith %} {%endif%} {%endif%}
+</div>

@@ -1,0 +1,224 @@
+{% extends "layouts/base.html" %} {% block title %} Room List {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="text-right" style="text-align: right;">
+            <a href="/dashboard/room/add/" type="button" class="btn btn-outline-primary">Add New Room</a>
+        </div>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <!--
+                <?php
+          $success_alert = $this->session->flashdata('success');
+          if (!empty($success_alert)) {
+            echo '<div class="alert alert-success" role="alert">' . $success_alert . '</div>';
+          }
+          $error_alert = $this->session->flashdata('error');
+          if (!empty($error_alert)) {
+            echo '<div class="alert alert-danger" role="alert">' . $error_alert . '</div>';
+          }
+          ?>-->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Room List</h5>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Room No.</th>
+                                    <th scope="col">Extension Name</th>
+                                    <th scope="col">PBX Server</th>
+                                    <th scope="col">Janus Gateway</th>
+                                    <!--<?= ($auth_token_data[0]['config_value'] == "Y") ? '<th scope="col">Auth Token</th>' : ''; ?> -->
+                                    <th scope="col">Status</th>
+                                    <th scope="col">QR Code</th>
+                                    <th scope="col">Send SMS</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for room in object_list %}
+                                <tr>
+                                    <td class="row">{{room.id}}</td>
+                                    <td>{{room.room_number}}</td>
+                                    <td>{{room.extension.extension_name}}</td>
+                                    <td>{{room.extension.pbx.pbx_name}}</td>
+                                    <td>{{room.extension.janus.janus_name}}</td>
+                                    <td>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" onclick="changeStatus(this)" data-id="{{room.id}}" {%if room.status%}checked{%endif%}>
+                                        </div>
+                                    </td>
+                                    <td><a onclick="javascript:generate_qr(this);" data-url="{{ request.scheme }}://{{ request.get_host }}/store/{{room.room_token}}/"><i class="bi bi-columns-gap"></i></a></td>
+                                    <td><a onclick="javascript:send_sms(this);" data-url="{{room.short_url}}" data-token="{{room.auth_token}}"><i class="bi bi-chat-left-dots-fill"></i></a></td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                              Actions
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="/dashboard/room/update/{{room.id}}/" class="dropdown-item" type="button">Update</a></li>
+                                                <li><a href="#Delete" data-id="{{room.id}}" onClick=javascript:del_icon({{room.id}}) title="Delete" class="dropdown-item delete-room" type="button">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <span id="qrCodeOpener" data-bs-toggle="modal" data-bs-target="#verticalycentered" style="display: none;">
+    </span>
+    <div class="modal fade" id="verticalycentered" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">QR Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="qrcode">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-success" onclick="javascript:window.print();"><i class="bi bi-printer-fill"></i> Print</button>
+                    <a class="btn btn-outline-primary" href="#" id="qrdl"><i class="bi bi-download"></i> Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <span id="sendSms" data-bs-toggle="modal" data-bs-target="#sendSmsOpener">
+    </span>
+    <div class="modal fade" id="sendSmsOpener" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Send SMS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="text" id="sms_to" class="form-control" id="floatingSmsTo" placeholder="Enter Mobile Number" value="{{room.room_number}}">
+                                <label for="floatingSmsTo">Enter Mobile Number<span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" style="height: auto;" id="smsText" disabled readonly></textarea>
+                                <label for="smsText">SMS Content</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span class="btn btn-outline-primary" id="send_sms"><i class="bi bi-arrow-right-square-fill"></i> Send</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="/static/vendor/qrcodejs/qrcode.js"></script>
+<script>
+    const generate_qr = (e) => {
+        document.getElementById("qrcode").innerHTML = "";
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: e.dataset.url,
+            width: 256,
+            height: 256,
+            colorDark: "#0d6efd",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        document.getElementById("qrCodeOpener").click();
+        setTimeout(() => {
+            let qelem = document.querySelector('#qrcode img');
+            let dlink = document.querySelector('#qrdl');
+            let qr = qelem.getAttribute('src');
+            dlink.setAttribute('href', qr);
+            dlink.setAttribute('download', 'qrcode.png');
+        }, 500);
+    }
+
+    const send_sms = (e) => {
+        let sms_content = "Click #LINK# to access hotel Phone System and Food menu. #TOKEN#Welcome to ibudha.com";
+        sms_content = sms_content.replace('#LINK#', e.dataset.url);
+        sms_content = sms_content.replace('#TOKEN#', e.dataset.token + " is token for QR code.");
+        document.getElementById("smsText").innerHTML = sms_content;
+        document.getElementById("sendSms").click();
+    }
+
+    document.getElementById("send_sms").onclick = function() {
+        const sms_text = document.getElementById("smsText").innerHTML;
+        const sms_to = document.getElementById("sms_to").value;
+
+        if (sms_to == null || sms_to == "" || sms_to == undefined) {
+            alert("Mobile Number is required.");
+            return;
+        }
+        const xhttp = new XMLHttpRequest();
+        const token = "{{csrf_token}}";
+        const url = "/dashboard/room/send-sms/";
+        const params = 'sms_to=' + btoa(sms_to) + '&sms_text=' + btoa(sms_text);
+        xhttp.open('POST', url, true);
+        xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhttp.onload = function() {
+            const response = JSON.parse(this.responseText);
+            if (response.status == "ERROR") {
+                alert(response.msg);
+                return;
+            } else {
+                window.location.href = "/dashboard/room/list/";
+            }
+        }
+        xhttp.setRequestHeader("X-CSRFToken", token);
+        xhttp.send(params);
+    }
+
+    const del_icon = (room_id) => {
+        if (confirm("Are you sure want to delete this record?")) {
+            const xhttp = new XMLHttpRequest();
+            const token = "{{csrf_token}}";
+            xhttp.onload = function() {
+                if (this.status == 204) {
+                    window.location.href = "/dashboard/room/list/";
+                }
+            }
+            xhttp.open("DELETE", "/dashboard/room/delete/" + room_id + "/", true);
+            xhttp.setRequestHeader("X-CSRFToken", token);
+            xhttp.send();
+        }
+    }
+
+    const changeStatus = (e) => {
+        if (confirm("Are you sure want to change status of this room?")) {
+            const room_id = e.dataset.id;
+            const status = (e.checked) ? true : false;
+            const xhttp = new XMLHttpRequest();
+            const token = "{{csrf_token}}";
+            const url = "/dashboard/room/update/status/" + room_id + "/";
+            const params = 'status=' + status;
+            xhttp.open('PUT', url, true);
+            xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhttp.onload = function() {
+                if (this.status == 200) {
+                    window.location.href = "/dashboard/room/list/";
+                }
+            }
+            xhttp.setRequestHeader("X-CSRFToken", token);
+            xhttp.send(params);
+        }
+    }
+</script>
+{% endblock javascripts %}

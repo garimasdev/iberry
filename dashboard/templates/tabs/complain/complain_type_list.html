@@ -1,0 +1,107 @@
+{% extends "layouts/base.html" %} {% block title %} Complain Types {% endblock %}
+<!--Style CSS-->
+{% block stylesheets %}
+<style>
+    .item-box {
+        display: flex;
+        align-items: center;
+        column-gap: 12px;
+    }
+    
+    .item-box img {
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+        border: 2px solid #e6e9ff;
+    }
+    
+    .price-box {
+        background: #d5d1d1;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 0px 8px;
+    }
+</style>
+{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="text-right" style="text-align: right;">
+            <a href="/dashboard/complaints/types/add/" type="button" class="btn btn-outline-primary">Add Complain Type</a>
+        </div>
+    </div>
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Complain Type List</h5>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Created_At</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for complain in object_list%}
+                                <tr id="item-{{complain.id}}">
+                                    <td class="row">{{complain.id}}</td>
+                                    <td>
+                                        <span>{{complain.title}}</span>
+                                    </td>
+                                    <td>
+                                        <span>{{complain.created_at}}</span>
+                                    </td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                              Actions
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="/dashboard/complaints/types/update/{{complain.id}}/">Update</a></li>
+                                                <li><a href="#" class="dropdown-item delete-item" id="{{complain.id}}" type="button">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="/static/js/dashboard/complain.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".delete-item").click(function(e) {
+            const itemId = $(this).attr("id");
+            const token = "{{csrf_token}}"
+            $.ajax({
+                headers: {
+                    "X-CSRFToken": token
+                },
+                url: "/dashboard/complaints/types/delete/" + itemId + "/",
+                type: "DELETE",
+                success: function(response) {
+                    console.log("Response", response);
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error case
+                    console.log(error);
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock javascripts %}

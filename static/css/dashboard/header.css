@@ -1,0 +1,42 @@
+.notification-box {
+    position: absolute;
+    max-width: 330px;
+    min-width: 330px;
+    right: 5px;
+    top: 50px;
+    padding: 20px;
+    border-radius: 8px;
+    display: none;
+    transition: 0.3s ease-in;
+}
+
+.notification-box.active {
+    display: block;
+    top: 60px;
+    animation-name: notifiction;
+    animation-duration: 0.3s;
+}
+
+@keyframes notifiction {
+    0% {
+        top: 50px;
+    }
+    100% {
+        top: 60px;
+    }
+}
+
+.notification-box ul {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+.notification-box ul li {
+    margin: 10px 0px;
+}
+
+.notification-box ul li a {
+    text-decoration: none;
+    color: #000;
+}

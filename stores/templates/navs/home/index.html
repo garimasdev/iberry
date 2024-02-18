@@ -1,0 +1,172 @@
+{% extends "layouts/main_base.html" %} {% block title %} Home {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/foods/style.css">
+<link rel="stylesheet" href="/static/css/foods/categories.css">
+<link rel="stylesheet" href="/static/css/foods/item.css">
+<link rel="stylesheet" href="/static/css/foods/float_cart.css"
+/>
+<link rel="stylesheet" href="/static/css/foods/cart.css"> {% endblock stylesheets %} {% block content %}
+
+<section class="main-section">
+    <div class="response"></div>
+    <ul class="categories">
+        {%if sub_categories|length > 0 %}
+        <!--Main Category-->
+        {%for sub_category in sub_categories%}
+        <li class="{%if request.GET.sub_category == sub_category.name %}active{%endif%}">
+            <a href="?category={{sub_category.category.name|urlencode}}&sub_category={{sub_category.name|urlencode}}">{{sub_category.name}}</a>
+        </li>
+        {%endfor%}
+        <!--Sub Category-->
+        {%else%} {%for category in categories%}
+        <li class="{%if request.GET.category == category.name %}active{%endif%}">
+            <a href="?category={{category.name|urlencode}}">{{category.name}}</a>
+        </li>
+        {%endfor%} {%endif%}
+    </ul>
+    {%for categoriesItems in items%}
+    <h4 class="category">{{categoriesItems.category}}</h4>
+    <div class="products">
+        {%for item in categoriesItems.items%}
+        <div class="product item-{{item.id}}" name="item">
+            <div class="select-product" data-bs-toggle="modal" data-bs-target="#add-to-cart-{{item.id}}"></div>
+            <div class="image">
+                <a href="#/store/{{room_number}}/foods/{{item.id}}/"><img loading="lazy" src="{{item.image}}" alt="{{item.title}}" /></a>
+            </div>
+
+            <div class="content">
+                <p class="product_name">{{item.title}}</p>
+                {% with item.prices|first as price %}
+                {%if price.sell_price%}
+                <p class="product_price"><span class="item_type {{item.item_type}}"></span> ₹ <strong>{{price.sell_price}}</strong> <del>{{price.price}}</del></p>
+                {%else%}
+                <p class="product_price"><span class="item_type {{item.item_type}}"></span> ₹ <strong>{{price.price}}</strong></p>
+                {%endif%}
+                {% endwith %}
+            </div>
+            <button class="cart-view" data-bs-toggle="modal" data-bs-target="#add-to-cart-{{item.id}}"><i class="bi bi-plus-circle"></i></button>
+            <!-- Modal -->
+            <div class="modal fade" id="add-to-cart-{{item.id}}" tabindex="-1" aria-labelledby="add-to-cart" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{item.title}}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="item-section item-{{item.id}}">
+                                <div class="image">
+                                    <img loading="lazy" src="{{item.image}}" alt="{{item.title}}" />
+                                </div>
+
+                                <div class="item-details">
+                                    <h4 class="product_name">{{item.title}}</h4>
+                                    <p class="product_price">
+                                        <h5><b>Prices:</b> </h5>
+                                        <div class="row prices-box">
+                                            {%for price in item.prices%}
+                                            <div class="form-check col">
+                                                <input class="form-check-input price-input price-input-{{item.id}}" type="radio" name="price" id="price-{{price.id}}" value="{{price.id}}" price="{{price.price}}" sell_price="{{price.sell_price}}" {%if price == item.prices.0%}checked{%endif%}>
+                                                {%if price.sell_price%}
+                                                <label class="form-check-label" for="price-{{price.id}}">₹ {{price.name}} {{price.sell_price}} <del>{{price.price}}</del></label>
+                                                {%else%}
+                                                <label class="form-check-label" for="price-{{price.id}}">₹ {{price.name}} {{price.price}}</label>
+                                                {%endif%}
+
+                                            </div>
+                                            {%endfor%}
+                                        </div>
+                                    </p>
+                                    <div class="product_quantity">
+                                        <h5><b>Quantity: </b></h5>
+                                        {% if item.quantity >= 1 %}
+                                        <div class="quantity_box">
+                                            <button type="button" class="minus" onclick="decrementQuantity('{{item.id}}')"><i class="bi bi-dash"></i></button>
+                                            <input type="number" name="quantity" id="quantity-{{item.id}}" class="quantity" value="1" min="1" max="{{item.quantity}}">
+                                            <button type="button" class="plus" onclick="incrementQuantity('{{item.id}}', '{{item.quantity}}')"><i class="bi bi-plus"></i></button>
+                                        </div>
+                                        {% else %}
+                                        <p class="text-danger">Out of Stock</p>
+                                        {% endif %}
+                                    </div>
+                                    <p class="product_price">
+                                        <h5><b>Description: </b></h5>
+                                        {{item.description}}
+                                    </p>
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            {% if item.quantity >= 1 %}
+                            <button class="add-to-cart cart-btn" id="{{item.id}}" room_id="{{room_id}}" token="{{csrf_token}}">Add to Cart</button> {%endif%}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {%endfor%}
+    </div>
+    {%endfor%}
+    <!-- {{perms}}-->
+
+    <aside id="cart-bar" class="cart-bar">
+
+        <ul class="cart-nav cart-list" id="cart-nav">
+            <h5>Cart</h5>
+            {%for cart in cart_items%}
+            <li id="cart-item-{{cart.id}}" cart_id="{{cart.id}}" class="cart">
+                <div class="product-box">
+                    <img src="{{cart.item.image}}" />
+                    <div class="content">
+                        <p class="name">{{cart.item.title}}</p>
+                        <strong class="price">Price: ₹ {{cart.price}}  </strong>
+                        <span class="quantity"> Qty: {{cart.quantity}}</span>
+                    </div>
+                </div>
+                <span class="close delete-cart-item" id="{{cart.id}}" token="{{csrf_token}}"><i class="bi bi-x-lg"></i></span>
+            </li>
+            {%endfor%}
+        </ul>
+        <button class="place-order" room_id="{{room_id}}"><span class="checkout">Checkout</span> <span class="total_price">₹ {{total_price}}</span></button>
+
+    </aside>
+
+    <!-- Floating Cart Bar-->
+
+    {% include "includes/float_cart.html" %}
+
+
+
+
+</section>
+{%endblock content%} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="/static/js/foods/foods.js"></script>
+<script>
+    function incrementQuantity(item_id, max_quantity) {
+        const quantityInput = document.getElementById('quantity-' + parseInt(item_id));
+        if (parseInt(quantityInput.value) < parseInt(max_quantity)) {
+            quantityInput.value = parseInt(quantityInput.value) + 1;
+        }
+    }
+
+    function decrementQuantity(item_id) {
+        const quantityInput = document.getElementById('quantity-' + parseInt(item_id));
+        if (parseInt(quantityInput.value) > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+        }
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        $('.modal').on('shown.bs.modal', function() {
+            $(this).find('.price-input:first').prop('checked', true);
+        });
+    });
+</script>
+{% endblock javascripts %}

@@ -1,0 +1,40 @@
+{% extends "layouts/base.html" %} {% block title %} Add New PBX Server {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Add New PBX Server</h5>
+            <form class="row g-3" method="post" action="">
+                {% csrf_token %}
+                <div class="col-md-12">
+                    {% if form.errors %}
+                    <small class="text-danger">{{form.errors}}</small> {%endif%}
+                </div>
+                <input type="hidden" name="user" value="{{request.user.id}}">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" name="pbx_name" class="form-control" id="floatingName" placeholder="Enter Name" autofocus>
+                        <label for="floatingName">Enter Name<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        <input type="text" name="pbx_domain" class="form-control" id="floatingDomain" placeholder="Enter Domain/IP Address">
+                        <label for="floatingDomain">Enter Domain/IP Address<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/dashboard/configuration/pbx/" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+            <!-- End floating Labels Form -->
+
+        </div>
+    </div>
+
+</main>
+<!-- End #main -->
+{% endblock content %}

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Iberry - Phone</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+    <link href="/media/img/favicon.png" rel="icon">
+    <link href="/media/img/apple-touch-icon.png" rel="apple-touch-icon">
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+</head>
+<style>
+    .send_dtmf {
+        width: 33% !important;
+    }
+</style>
+
+<body>
+    <main>
+        <div class="container">
+            <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-12 col-md-12 d-flex flex-column align-items-center justify-content-center">
+                            <div class="d-flex justify-content-center py-4">
+                                <span class="logo d-flex align-items-center w-auto">
+                  <img src="/media/img/logo.png" alt="">
+                  <span class="d-none d-lg-block">Iberry</span>
+                                </span>
+                            </div>
+                            <div class="card mb-3 w-100">
+                                <div class="card-body">
+                                    <div class="pt-2 pb-2">
+                                        <h6 class="card-title text-center pb-0 fs-4 status">Connecting...</h6>
+                                    </div>
+                                    <div class="row g-3" id="_config">
+                                        <p class="text-center small">Click on any button below to dial call.</p>
+                                        {%for dialer in dialers%}
+                                        <button data-url="sip:{{dialer.extension.extension_sip_number}}@{{dialer.extension.pbx.pbx_domain}}" type="button" class="btn btn-outline-primary dial_call" onclick="javascript:doCall(this);"><i class="bi bi-telephone-outbound-fill me-1"></i>{{dialer.c2c_name}}</button>                                        {%endfor%}
+                                        <div class="input-group has-validation">
+                                            <input type="text" name="ext_number" placeholder="Enter Extension Number" class="form-control" id="extNumber">
+                                            <span class="input-group-text btn btn-primary" id="dialExt"><i class="bi bi-telephone-outbound-fill me-1"></i></span>
+                                            <div class="invalid-feedback">Please enter extension number.</div>
+                                        </div>
+
+                                    </div>
+                                    <div id="_phone" style="display: none;">
+                                        <div class="col-md-12">
+                                            <div class="row mb-2 mt-2">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">1</div>
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">2</div>
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">3</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">4</div>
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">5</div>
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">6</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">7</div>
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">8</div>
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">9</div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">*</div>
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">0</div>
+                                                        <div class="col-xs-4 btn btn-outline-primary send_dtmf">#</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-12 col-sm-12">
+                                                    <button class="btn btn-danger w-100" onclick="javascript:doHangup();"><i class="bi bi-telephone-outbound-fill me-1"></i> End Call</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div id="videoright"></div>
+    </main>
+    <!-- End #main -->
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+    <script>
+        const secret = "{{extension.extension_sip_password}}";
+        const authuser = "{{extension.extension_sip_number}}";
+        const pbx_domain = "{{extension.pbx.pbx_domain}}";
+        const janus_domain = "{{extension.janus.janus_domain}}";
+    </script>
+    <script src="/static/vendor/janus/adapter.min.js"></script>
+    <script src="/static/vendor/janus/jquery.min.js"></script>
+    <script src="/static/vendor/janus/janus.js"></script>
+    <script src="/static/vendor/janus/settings.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script>
+        initJanus();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,86 @@
+ {% extends "layouts/base.html" %} {% block title %} Dialer Option List {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="text-right" style="text-align: right;">
+            <a href="/dashboard/dialer/add/" type="button" class="btn btn-outline-primary">Add New Dialer Option</a>
+        </div>
+    </div>
+    <!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <!--<?php
+          $success_alert = $this->session->flashdata('success');
+          if (!empty($success_alert)) {
+            echo '<div class="alert alert-success" role="alert">' . $success_alert . '</div>';
+          }
+          $error_alert = $this->session->flashdata('error');
+          if (!empty($error_alert)) {
+            echo '<div class="alert alert-danger" role="alert">' . $error_alert . '</div>';
+          }
+          ?>-->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Dialer Option List</h5>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Dialer Option Name</th>
+                                    <th scope="col">Extension Name</th>
+                                    <th scope="col">PBX Server</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for dialer in object_list%}
+                                <tr>
+                                    <td class="row">{{dialer.id}}</td>
+                                    <td>{{dialer.c2c_name}}</td>
+                                    <td>{{dialer.extension.extension_name}}</td>
+                                    <td>{{dialer.extension.pbx.pbx_name}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                              Actions
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="/dashboard/dialer/update/{{dialer.id}}/" class="dropdown-item" type="button">Update</a></li>
+                                                <li><a href="#Delete" onClick=javascript:del_icon({{dialer.id}}) title="Delete" class="dropdown-item delete-dialer" type="button">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script>
+    const del_icon = (user_id) => {
+        if (confirm("Are you sure want to delete this record?")) {
+            const xhttp = new XMLHttpRequest();
+            const token = "{{csrf_token}}";
+            xhttp.onload = function() {
+                if (this.status) {
+                    window.location.href = "/dashboard/dialer/";
+                }
+            }
+            xhttp.open("DELETE", "/dashboard/dialer/delete/" + user_id + "/", true);
+            xhttp.setRequestHeader("X-CSRFToken", token);
+            xhttp.send();
+        }
+    }
+</script>
+{% endblock javascripts %}

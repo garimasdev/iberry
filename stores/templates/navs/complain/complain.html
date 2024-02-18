@@ -1,0 +1,36 @@
+{% extends "layouts/main_base.html" %} {% block title %} Complain {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/foods/style.css">
+<link rel="stylesheet" type="text/css" href="/static/css/navs/complain/complain.css"> {% endblock stylesheets %} {% block content %}
+
+<section class="main-section">
+    <form class="row g-3 complain-box" method="post" action="">
+        {% csrf_token %}
+        <div class="col-md-12">
+            {% if form.errors %}
+            <small class="text-danger">{{form.errors}}</small> {%endif%}
+        </div>
+        <input type="hidden" name="room" value="{{room_id}}">
+        <h2 class="text-center">Complain</h2>
+        <div class="col-md-12">
+            <div class="form-floating mb-3">
+                {{form.complain}}
+                <label for="floatingPbx">Issue<span class="text-danger">*</span></label>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="form-floating mb-3">
+                {{form.report}}
+                <label for="floatingPbx">Report<span class="text-danger"></span></label>
+            </div>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Complain Submit</button>
+        </div>
+    </form>
+</section>
+{%endblock content%} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+{% endblock javascripts %}

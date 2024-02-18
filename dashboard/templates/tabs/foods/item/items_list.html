@@ -1,0 +1,125 @@
+ {% extends "layouts/base.html" %} {% block title %} Foods Items {% endblock %}
+<!--Style CSS-->
+{% block stylesheets %}
+<style>
+    .item-box {
+        display: flex;
+        align-items: center;
+        column-gap: 12px;
+    }
+    
+    .item-box img {
+        width: 50px;
+        height: 50px;
+        border-radius: 5px;
+        border: 2px solid #e6e9ff;
+    }
+    
+    .price-box {
+        background: #d5d1d1;
+        padding: 5px 10px;
+        border-radius: 5px;
+        margin: 0px 8px;
+    }
+</style>
+{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="text-right" style="text-align: right;">
+            <a href="/dashboard/foods/item/add/" type="button" class="btn btn-outline-primary">Add New Food</a>
+        </div>
+    </div>
+    <!-- End Page Title -->
+
+    <section class="section">
+        <!--{{perms.store}}-->
+        <div class="row">
+            <div class="col-lg-12">
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Food Items List</h5>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Sub Category</th>
+                                    <th scope="col">Prices</th>
+                                    <th scope="col">Created_at</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in object_list%}
+                                <tr id="item-{{item.id}}">
+                                    <td class="row">{{item.id}}</td>
+                                    <td>
+                                        <div class="item-box">
+                                            <img src="{{item.image}}" alt="">
+                                            <span>{{item.title}}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {{item.category.name}}
+                                    </td>
+                                    <td>
+                                        {{item.sub_category.name}}
+                                    </td>
+                                    <td>
+                                        {%for price in item.prices%}
+                                        <span class="price-box">{{price.name}}: {{price.price}} </span> {%endfor%}
+                                    </td>
+                                    <td>{{item.created_at}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                              Actions
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="/dashboard/foods/item/update/{{item.id}}/" class="dropdown-item" type="button">Update</a></li>
+                                                <li><a href="#" class="dropdown-item delete-item" id="{{item.id}}" type="button">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        $(".delete-item").click(function(e) {
+            const itemId = $(this).attr("id");
+            const token = "{{csrf_token}}"
+            $.ajax({
+                headers: {
+                    "X-CSRFToken": token
+                },
+                url: "/dashboard/foods/item/delete/" + itemId + "/",
+                type: "DELETE",
+                success: function(response) {
+                    console.log("Response", response);
+                    //$("#item-" + itemId).remove();
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error case
+                    console.log(error);
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock javascripts %}

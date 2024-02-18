@@ -1,0 +1,80 @@
+{% extends "layouts/main_base.html" %} {% block title %} Home {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/foods/item.css">
+<link rel="stylesheet" href="/static/css/foods/cart.css"> {% endblock stylesheets %} {% block content %}
+
+<section class="main-section item-container">
+    <div class="response"></div>
+    <div class="item-section item-{{item.id}}">
+        <div class="image">
+            <img loading="lazy" src="{{item.image}}" alt="{{item.title}}" />
+        </div>
+
+        <div class="item-details">
+            <h4 class="product_name">{{item.title}}</h4>
+            <p class="product_price">
+                <h5><b>Prices:</b> </h5>
+                <div class="row prices-box">
+                    {%for price in item.prices%}
+                    <div class="form-check col">
+                        {% if forloop.first %}
+                        <input class="form-check-input price-input" type="radio" name="price" id="price-{{price.id}}" value="{{price.id}}" checked>
+                        <label class="form-check-label" for="price-{{price.id}}">
+                            ₹ {{price.price}}
+                        </label> {% else %}
+                        <input class="form-check-input price-input" type="radio" name="price" id="price-{{price.id}}" value="{{price.id}}">
+
+                        <label class="form-check-label" for="price-{{price.id}}">
+                        ₹ {{price.name}} {{price.price}}
+                    </label> {% endif %}
+                    </div>
+                    {%endfor%}
+                </div>
+            </p>
+            <div class="product_quantity">
+                <h5><b>Quantity: </b></h5>
+                <div class="quantity_box">
+                    <button type="button" class="minus"><i class="bi bi-dash"></i></button>
+                    <input type="number" name="quantity" id="quantity" value="1">
+                    <button type="button" class="plus"><i class="bi bi-plus"></i></button>
+                </div>
+            </div>
+            <p class="product_price">
+                <h5><b>Description: </b></h5>
+                {{item.description}}
+            </p>
+
+            <button class="add-to-cart" id="{{item.id}}" room_id="{{room_id}}" token="{{csrf_token}}">Add to Cart</button>
+        </div>
+
+    </div>
+    <!-- {{perms}}-->
+
+    <aside id="cart-bar" class="cart-bar">
+
+        <ul class="cart-nav cart-list" id="cart-nav">
+            <h5>Cart</h5>
+            {%for cart in cart_items%}
+            <li id="cart-item-{{cart.id}}" cart_id="{{cart.id}}" class="cart">
+                <div class="product-box">
+                    <img src="{{cart.item.image}}" />
+                    <div class="content">
+                        <p class="name">{{cart.item.title}}</p>
+                        <strong class="price">₹ {{cart.price}}</strong>
+                    </div>
+                </div>
+                <span class="close delete-cart-item" id="{{cart.id}}" token="{{csrf_token}}"><i class="bi bi-x-lg"></i></span>
+            </li>
+            {%endfor%}
+        </ul>
+        <button class="place-order" room_id="{{room_id}}"><span class="checkout">Checkout</span> <span class="total_price">₹ {{total_price}}</span></button>
+
+    </aside>
+
+</section>
+{%endblock content%} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="/static/js/foods/foods.js"></script>
+{% endblock javascripts %}

@@ -1,0 +1,131 @@
+ {% extends "layouts/base.html" %} {% block title %} Users {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <!--<div class="pagetitle">
+        <div class="text-right" style="text-align: right;">
+            <a href="<?=site_url('users/add')?>" type="button" class="btn btn-outline-primary">Add New User</a>
+        </div>
+    </div>
+-->
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <!--<?php
+          $success_alert = $this->session->flashdata('success');
+          if (!empty($success_alert)) {
+            echo '<div class="alert alert-success" role="alert">' . $success_alert . '</div>';
+          }
+          $error_alert = $this->session->flashdata('error');
+          if (!empty($error_alert)) {
+            echo '<div class="alert alert-danger" role="alert">' . $error_alert . '</div>';
+          }
+          ?>-->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Users List</h5>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Username</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for user in object_list%}
+                                <tr>
+                                    <td class="row">{{user.id}}</td>
+                                    <td>{{user.name}}</td>
+                                    <td>{{user.username}}</td>
+                                    <td><a onClick="javascript:change_pwd(this);" data-id="{{user.id}}" title="Change Password"><i class="bi bi-eye"></i></a><a data-id="{{user.id}}" onClick="javascript:del_icon(this);" title="Delete"><i class="text-danger bi bi-trash"></i></a></td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <span id="modalOpener" data-bs-toggle="modal" data-bs-target="#verticalycentered" style="display: none;">
+    </span>
+    <div class="modal fade" id="verticalycentered" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="password" name="new_password" class="form-control" id="new_password" placeholder="Enter New Password">
+                                <label for="new_password">Enter New Password<span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-floating">
+                                <input type="password" name="new_password" class="form-control" id="confirm_password" placeholder="Enter New Password">
+                                <label for="confirm_password">Enter Confirm Password<span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        <input type="text" name="user_id" id="user_id" hidden>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" onclick="javascript:change_password();"><i class="bi bi-eye-fill"></i> Change Password</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script>
+    const del_icon = (e) => {
+        const user_id = e.dataset.id;
+        if (confirm("Are you sure want to delete this record?")) {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onload = function() {
+                if (this.statusText == "OK") {
+                    window.location.href = "<?=site_url('users/list');?>";
+                }
+            }
+            xhttp.open("GET", "<?=site_url('users/delete')?>/" + user_id, true);
+            xhttp.send();
+        }
+    }
+    const change_pwd = (e) => {
+        document.getElementById("modalOpener").click();
+        document.getElementById("user_id").value = e.dataset.id;
+    }
+    const change_password = () => {
+        const user_id = document.getElementById("user_id").value;
+        const new_password = document.getElementById("new_password").value;
+        const confirm_password = document.getElementById("confirm_password").value;
+
+        if (new_password != confirm_password) {
+            alert("New Password and Confirm Password should be same.");
+            return false;
+        }
+        if (confirm("Are you sure want to change password for this user?")) {
+            const xhttp = new XMLHttpRequest();
+            const url = "<?=site_url('users/update')?>";
+            const params = 'user_id=' + btoa(user_id) + '&password=' + btoa(new_password);
+            xhttp.open('POST', url, true);
+            xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhttp.onload = function() {
+                if (this.statusText == "OK") {
+                    window.location.href = "<?=site_url('users/list');?>";
+                }
+            }
+            xhttp.send(params);
+        }
+    }
+</script>
+{% endblock javascripts %}

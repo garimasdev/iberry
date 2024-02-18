@@ -1,0 +1,61 @@
+.float-cart {
+  width: 400px;
+  z-index: 50;
+  bottom: 20px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.float-cart .title {
+  font-size: 17px;
+  margin-bottom: 0;
+}
+
+.float-cart img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.float-cart button {
+  font-size: 14px;
+}
+
+.bowl-icon {
+  color: #4154f1;
+  background: #f6f6fe;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bowl-icon {
+  font-size: 12px;
+}
+
+@media only screen and (max-width: 800px) {
+  .float-cart {
+    bottom: 70px;
+  }
+}
+
+@media only screen and (max-width: 550px) {
+  .float-cart {
+    width: calc((100%) - 20px);
+  }
+}
+
+@media only screen and (max-width: 370px) {
+  .float-cart {
+    width: calc((100%) - 10px);
+  }
+
+  .float-cart .title {
+    font-size: 14px;
+  }
+
+  .float-cart .subtitle {
+    font-size: 12px;
+  }
+}

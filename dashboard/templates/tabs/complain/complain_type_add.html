@@ -1,0 +1,33 @@
+{% extends "layouts/base.html" %} {% block title %} Add Complain Type {% endblock %}
+<!-- Style Here -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Add New Complain Type</h5>
+            <form class="row g-3" method="post" action="">
+                {% csrf_token %}
+                <div class="col-md-12">
+                    {% if form.errors %}
+                    <small class="text-danger">{{form.errors}}</small> {%endif%}
+                </div>
+                <input type="hidden" name="user" value="{{request.user.id}}">
+                <div class="col">
+                    <div class="form-floating">
+                        {{form.title}}
+                        <label for="floatingName">Enter Title<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/dashboard/complaints/types/" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+            <!-- End floating Labels Form -->
+
+        </div>
+    </div>
+
+</main>
+<!-- End #main -->
+{% endblock content %}

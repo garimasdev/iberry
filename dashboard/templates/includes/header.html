@@ -1,0 +1,71 @@
+<!-- ======= Header ======= -->
+<link rel="stylesheet" href="/static/css/dashboard/header.css">
+<header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+        <a href="/dashboard/" class="logo d-flex align-items-center">
+            <img src="/media/img/logo.png" alt="">
+            <span class="d-none d-lg-block">Iberry</span>
+        </a>
+        <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div>
+    <!-- End Logo -->
+
+    <nav class="header-nav ms-auto" style="padding-right: 25px;">
+        <ul class="d-flex align-items-center">
+            <li class="nav-item dropdown pe-3">
+                <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                    <i class="bi bi-emoji-smile-fill rounded-circle"></i>
+                    <span class="d-none d-md-block dropdown-toggle ps-2">{{ request.user.name }}</span>
+                </a>
+                <!-- End Profile Iamge Icon -->
+
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                    <li class="dropdown-header">
+                        <h6>
+                            {{ request.user.name }}
+                        </h6>
+                        <span>{{ request.user.username }}</span>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="/logout/">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Sign Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="btn btn-primary notification-icon-btn position-relative">
+                    <i class="bi bi-bell-fill"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {{notification_count}}+
+                      <span class="visually-hidden">unread messages</span>
+                    </span>
+                  </button>
+            </li>
+        </ul>
+    </nav>
+    <div class="notification-box card">
+        <ul>
+            {%for notification in notifications%}
+            <li>
+                <a href="#">
+                    {{notification.title}}
+                </a>
+            </li>
+            {%endfor%}
+        </ul>
+    </div>
+</header>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        $(".notification-icon-btn").click(function() {
+            $(".notification-box").toggleClass("active");
+        });
+    });
+</script>

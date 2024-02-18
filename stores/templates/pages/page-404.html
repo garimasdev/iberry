@@ -1,0 +1,17 @@
+{% extends "layouts/main_base.html" %} {% block title %} Not Found {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+    section {
+        display: flex;
+        justify-content: center;
+        margin: 80px auto;
+    }
+</style>
+{% endblock stylesheets %} {% block content %}
+<section>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_muewqymz.json" background="transparent" speed="1" style="width: 500px; height: 500px;" loop autoplay></lottie-player>
+</section>
+{%endblock content%}

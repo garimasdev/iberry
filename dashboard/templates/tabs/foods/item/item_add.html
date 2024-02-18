@@ -1,0 +1,164 @@
+ {% extends "layouts/base.html" %} {% block title %} Add Food Item {% endblock %}
+<!-- Style Here -->
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/dashboard/item/item_add.css"> {% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <!-- Modal -->
+    <div class="modal fade" id="price" tabindex="-1" aria-labelledby="price" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form class="row g-3 create-price" method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="user" value="{{request.user.id}}">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="title">Create Price</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            {% if form.errors %}
+                            <small class="text-danger">{{form.errors}}</small> {%endif%}
+                        </div>
+                        <div class="col">
+                            <div class="form-floating mb-3">
+                                <input type="text" name="name" class="form-select" maxlength="150" id="id_name" required>
+                                <label for="floatingPbx">Name<span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="number" name="price" class="form-select" id="id_price" required>
+                                <label for="floatingName">Price<span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="col">
+                            <div class="form-floating">
+                                <input type="number" name="sell_price" class="form-select" id="id_sell_price">
+                                <label for="floatingName">Sell Price<span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary price-save-btn">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Add New Food</h5>
+            <form class="row g-3 create-item" method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-md-12">
+                    {% if form.errors %}
+                    <small class="text-danger">{{form.errors}}</small> {%endif%}
+                </div>
+                <input type="hidden" name="user" value="{{request.user.id}}">
+                <div class="col-md-12 image-box">
+                    <div class="image-box-content">
+                        <label class="update-image" for="id_image">
+                            <img loading="lazy" src="/media/img/icons8-add-image-100.png" id="blah" class="user_info" aria-hidden="true" alt="">
+                            <input type="file" name="image" id="id_image" style="display:none">
+                        </label>
+                        <p class="text-center">Item Image</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        {{form.title}}
+                        <label for="floatingName">Enter Name<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{form.category}}
+                        <label for="floatingPbx">Food Category<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{form.sub_category}}
+                        <label for="floatingPbx">Sub Category<span class="text-danger"></span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{form.quantity}}
+                        <label for="floatingPbx">Qunatity<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        {{form.item_type}}
+                        <label for="floatingDomain">Item Type</label>
+                    </div>
+                </div>
+                <div class="col-md-6 prices">
+                    <div class="col form-floating">
+                        <p for="floatingDomain">Regular Price<span class="text-danger">*</span></p>
+                        <ol class="price-list">
+                        </ol>
+                    </div>
+                    <button type="button" class="add-price" data-bs-toggle="modal" data-bs-target="#price"><i class="bi bi-plus-square-fill"></i></button>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        {{form.description}}
+                        <label for="floatingDomain">Description</label>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/dashboard/foods/items/" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+            <!-- End floating Labels Form -->
+
+        </div>
+    </div>
+
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="/static/js/dashboard/item/item_price.js"></script>
+<script>
+    var imgInp = document.getElementById('id_image');
+    imgInp.onchange = evt => {
+        const [file] = imgInp.files
+        if (file) {
+            blah.src = URL.createObjectURL(file)
+        }
+    }
+</script>
+<script>
+    $(document).ready(function() {
+        $("#id_prices").attr("class", "form-select");
+        //$("#id_category").attr("class", "form-select");
+        //$("#id_category").attr("required", true);
+        $("#id_prices").attr("required", true);
+
+        //Filter category and get subcategory
+        $('#id_category').change(function() {
+            var categoryId = $(this).val();
+            var subcategoryDropdown = $('#id_sub_category');
+            subcategoryDropdown.prop('disabled', true);
+
+            $.ajax({
+                url: '/dashboard/foods/get_subcategories/',
+                type: 'GET',
+                data: {
+                    'category_id': categoryId
+                },
+                success: function(data) {
+                    subcategoryDropdown.html(data);
+                    subcategoryDropdown.prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>
+{% endblock javascripts %}

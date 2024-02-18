@@ -1,0 +1,167 @@
+{% extends "layouts/base.html" %} {% block title %} Order List {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+    .modal.fade .modal-dialog {
+        max-width: 850px;
+    }
+    
+    ol {
+        margin: 0px;
+        padding: 0px;
+    }
+    
+    ol li {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        column-gap: 15px;
+        margin: 15px 5px;
+    }
+    
+    .item-box img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .item-box .content p {
+        margin: 0px;
+    }
+</style>
+{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <section class="section">
+        <div class="response"></div>
+        <!--Order Print View-->
+        <div class="modal fade print-modal" id="print-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary print-btn">Print Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order List</h5>
+                        <!-- Table with stripped rows -->
+                        <table class="table table-hover datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Order Id</th>
+                                    <th scope="col">Room No.</th>
+                                    <th scope="col">Total Price</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Created_at</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in object_list %}
+                                <tr class="order-{{order.id}}">
+                                    <td scope="row">{{order.id}}</td>
+                                    <td>{{order.order_id}}</td>
+                                    <td>{{order.room.room_number}}</td>
+                                    <td>{{order.total_price}}</td>
+                                    <td><span class="{{order.status}}">{{order.status}}</span></td>
+                                    <td>{{order.created_at}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                              Action
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item view-order" href="#update-modal-{{order.id}}" data-bs-toggle="modal">View or Update</a></li>
+                                                <!--<li><a class="dropdown-item print-order-btn" href="#print-modal" id="{{order.id}}" token="{{csrf_token}}" data-bs-toggle="modal">Print Order</a></li>-->
+                                                <li><a class="dropdown-item delete-order" href="#Delete" id="{{order.id}}" token="{{csrf_token}}">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!--Order Update View-->
+                                <div class="modal fade update-modal-{{order.id}}" id="update-modal-{{order.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <h4 class="order-id">#OrderId-{{order.order_id}}</h4>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <p><strong>Room:</strong> {{ order.room.room_number}}</p>
+                                                        <p><strong>Time:</strong> {{ order.created_at}}</p>
+
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <div class="mb-3">
+                                                            <label for="update_order_status" class="form-label">Status</label>
+                                                            <select class="form-select mb-0" id="{{order.id}}-order_status" aria-label="order_status select example">
+                                                            <option value="0" class="Ordered" {%if order.status == 'Ordered'%}selected{%endif%}>Ordered</option>
+                                                            <option value="1" class="Processing" {%if order.status == 'Processing'%}selected{%endif%}>Processing</option>
+                                                            <option value="2" class="Completed" {%if order.status == 'Completed'%}selected{%endif%}>Completed</option>
+                                                            <option value="3" class="Canceled" {%if order.status == 'Canceled'%}selected{%endif%}>Canceled</option>
+                                                        </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <div class="row">
+                                                    <div class="col-6">
+                                                        <h4>Order Services</h4>
+                                                        <ol>
+                                                            {%for service in order.services%}
+                                                            <li class="item-box item-{{service.id}}">
+                                                                <img src="{{service.service.image}}" alt="">
+                                                                <div class="content">
+                                                                    <span>{{service.service.name}}</span>
+                                                                    <p class="total_price"><strong>Price: </strong>{{service.price}}</p>
+                                                                    <p class="total_price"><strong>Quantity: </strong>{{service.quantity}}</p>
+                                                                </div>
+                                                            </li>
+                                                            {%endfor%}
+
+                                                        </ol>
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <div class="form-floating mb-3">
+                                                            <textarea name="note" class="form-select" id="{{order.id}}-note" style="height: 120px;">{{order.note}}</textarea>
+                                                            <label for="floatingPbx">Note</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary update-order" id="{{order.id}}" token="{{csrf_token}}">Update</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.min.js"></script>
+<script src="/static/js/service/service_order.js"></script>
+{% endblock javascripts %}

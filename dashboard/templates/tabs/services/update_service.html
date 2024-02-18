@@ -1,0 +1,72 @@
+{% extends "layouts/base.html" %} {% block title %} Update Service {% endblock %}
+<!-- Style Here -->
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/dashboard/item/item_add.css"> {% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Update Service</h5>
+            <form class="row g-3 update-item" method="post" action="" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-md-12">
+                    {% if form.errors %}
+                    <small class="text-danger">{{form.errors}}</small> {%endif%}
+                </div>
+                <input type="hidden" name="user" value="{{request.user.id}}">
+                <div class="col-md-12 image-box">
+                    <div class="image-box-content">
+                        <label class="update-image" for="id_image">
+                            <img loading="lazy" src="{{ form.instance.image.url }}" id="blah" class="user_info" aria-hidden="true" alt="">
+                            <input type="file" name="image" id="id_image" style="display:none">
+                        </label>
+                        <p>Service Image or Icon</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        {{form.name}}
+                        <label for="id_name">Enter Name<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{form.price}}
+                        <label for="id_price">Price<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{form.quantity}}
+                        <label for="floatingPbx">Quantity<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        {{form.description}}
+                        <label for="id_description">Description</label>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/dashboard/foods/items/" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+            <!-- End floating Labels Form -->
+
+        </div>
+    </div>
+
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script>
+    var imgInp = document.getElementById('id_image');
+    imgInp.onchange = evt => {
+        const [file] = imgInp.files
+        if (file) {
+            blah.src = URL.createObjectURL(file)
+        }
+    }
+</script>
+{% endblock javascripts %}

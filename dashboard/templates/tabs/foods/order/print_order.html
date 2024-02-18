@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %} {% block title %} Order List {% endblock %} {%block content%}
+<div class="container text-center mt-5 order-slip">
+    <h2>Iberry</h2>
+    <p class="lead">Order Voucher</p>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <p><strong>Room Number:</strong> 123</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Order ID:</strong> 456789</p>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Ice Cream</td>
+                <td>2</td>
+                <td>₹ 100</td>
+            </tr>
+            <!-- Add more rows for other items -->
+        </tbody>
+    </table>
+    <p class="text-right"><strong>Total Price:</strong> ₹ 200</p>
+    <p class="text-right"><strong>Date:</strong> August 6, 2023<strong>Time:</strong> 3:30 PM</p>
+    <hr>
+    <p><em>Note: Thank you for your order!</em></p>
+</div>
+{%endblock%}

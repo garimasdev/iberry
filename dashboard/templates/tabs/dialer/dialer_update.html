@@ -1,0 +1,40 @@
+{% extends "layouts/base.html" %} {% block title %} Update Dialer Option {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Update Dialer Option</h5>
+            <form class="row g-3" method="post" action="">
+                {% csrf_token %}
+                <div class="col-md-12">
+                    {% if form.errors %}
+                    <small class="text-danger">{{form.errors}}</small> {%endif%}
+                </div>
+                <input type="hidden" name="user" value="{{request.user.id}}">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        {{form.c2c_name}}
+                        <label for="floatingDialerOptionLabel">Enter Dialer Option Label<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{form.extension}}
+                        <label for="floatingExtension">Extension<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                {{form.status}}
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/dashboard/dialer/" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+            <!-- End floating Labels Form -->
+        </div>
+    </div>
+
+</main>
+<!-- End #main -->
+{% endblock content %}

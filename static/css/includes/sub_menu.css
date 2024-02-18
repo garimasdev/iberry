@@ -1,0 +1,104 @@
+.top-back-and-types {
+    display: inline-flex;
+    white-space: nowrap;
+    align-items: center;
+    padding: 15px 20px;
+    margin-top: 60px;
+    width: 100%;
+    overflow-y: hidden;
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.top-back-and-types::-webkit-scrollbar {
+    display: none;
+}
+
+.top-back-and-types .back-btn {
+    outline: none;
+    border: none;
+    background: #4154f1;
+    color: white;
+    padding: 8px 15px;
+    font-size: 16px;
+    border-radius: 10px;
+}
+
+.top-back-and-types .item-types-title {
+    margin-left: 40px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #8d8d8d;
+}
+
+.top-back-and-types .item-types {
+    list-style: none;
+    display: flex;
+    column-gap: 15px;
+    margin: 0px;
+}
+
+.top-back-and-types .item-types .item-type {
+    background: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+}
+
+.top-back-and-types .item-types .item-type a {
+    text-decoration: none;
+    color: black;
+}
+
+.top-back-and-types .item-types .item-type span {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.top-back-and-types .item-types .item-type.veg svg {
+    fill: #39b039;
+}
+
+.top-back-and-types .item-types .item-type.non-veg svg {
+    fill: #ff2323;
+}
+
+.top-back-and-types .item-types .item-type.day-deal svg {
+    fill: #c6c626;
+}
+
+.top-back-and-types .item-types .item-type.active {
+    background: #4154f1;
+}
+
+.top-back-and-types .item-types .item-type.active span {
+    color: white;
+}
+
+.top-back-and-types .item-types .item-type.active svg {
+    fill: white;
+}
+
+@media only screen and (max-width: 450px) {
+    .top-back-and-types {
+        padding: 10px 5px;
+        justify-content: space-between;
+    }
+    .top-back-and-types .back-btn {
+        padding: 0px 9px;
+        font-size: 30px;
+    }
+    .top-back-and-types .back-btn span {
+        display: none;
+    }
+    .top-back-and-types .item-types {
+        column-gap: 10px;
+        padding: 0px;
+    }
+    .top-back-and-types .item-types .item-type {
+        padding: 8px 10px;
+    }
+}

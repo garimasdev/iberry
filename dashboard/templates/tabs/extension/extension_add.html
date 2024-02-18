@@ -1,0 +1,58 @@
+{% extends "layouts/base.html" %} {% block title %} Add New Extension {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+
+<main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Add New Extension</h5>
+            <form class="row g-3" method="post" action="">
+                {% csrf_token %}
+                <div class="col-md-12">
+                    {% if form.errors %}
+                    <small class="text-danger">{{form.errors}}</small> {%endif%}
+                </div>
+                <input type="hidden" name="user" value="{{request.user.id}}">
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        {{form.extension_name}}
+                        <label for="floatingName">Enter Name<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        {{form.extension_sip_number}}
+                        <label for="floatingDomain">Enter Extension Number<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating">
+                        {{form.extension_sip_password}}
+                        <label for="floatingDomain">Enter Extension Password<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{form.pbx}}
+                        <label for="floatingPbx">PBX Server<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        {{form.janus}}
+                        <label for="floatingJanus">Janus Gateway<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <a href="/dashboard/extension/" class="btn btn-secondary">Back</a>
+                </div>
+            </form>
+            <!-- End floating Labels Form -->
+        </div>
+    </div>
+
+</main>
+<!-- End #main -->
+{% endblock content %}

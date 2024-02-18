@@ -1,0 +1,40 @@
+.main-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 70px;
+}
+
+.main-section .order-box {
+    min-width: 950px;
+    background: white;
+    max-width: 950px;
+    display: flex;
+    justify-content: center;
+    margin: 80px 0px;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 14px;
+    padding: 20px 0px;
+}
+
+.main-section .order-box .time-box {
+    background: #656363;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 25px;
+    font-size: 15px;
+}
+
+.main-section .order-box p {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+@media only screen and (max-width: 950px) {
+    .main-section .order-box {
+        min-width: 100%;
+        max-width: 100%;
+    }
+}

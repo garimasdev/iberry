@@ -1,0 +1,118 @@
+{% extends "layouts/base.html" %} {% block title %} Order Report Generate {% endblock %}
+<!-- Style Here -->
+{% block stylesheets %} {% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Generate Order Report</h5>
+            <div class="generated_data">
+
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <select name="model" class="form-select" id="model" required>
+                            <option value="" selected>Select Model</option>
+                            <option value="food_orders">Food Orders</option>
+                            <option value="service_orders">Service Orders</option>
+                            <option value="complaints">Complaints</option>
+                        </select>
+                        <label for="floatingPbx">Select Model<span class="text-danger">*</span></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="start_date">Start Date:</label>
+                        <input type="datetime-local" class="form-select" id="start_date" name="start_date">
+                    </div>
+                    <div class="col">
+                        <label for="end_date">End Date:</label>
+                        <input type="datetime-local" class="form-select" id="end_date" name="end_date">
+                    </div>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">Generate Report</button>
+            </form>
+        </div>
+    </div>
+
+
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("form").submit(function(event) {
+            event.preventDefault()
+            var formData = $(this).serialize();
+            const token = "{{csrf_token}}";
+            $.ajax({
+                headers: {
+                    "X-CSRFToken": token
+                },
+                type: "POST",
+                url: "/dashboard/reports/",
+                data: formData,
+                success: function(response) {
+                    console.log("Get data", response);
+                    $("form").hide();
+
+                    var tableHeader = '';
+                    response.header.forEach(function(element) {
+                        tableHeader += '<th scope="col">' + element + '</th>';
+                    });
+
+                    var tableRows = '';
+                    response.data.forEach(function(element) {
+                        tableRows += '<tr>' +
+                            '<td>' + element.order_date_time + '</td>' +
+                            '<td>' + element.status + '</td>' +
+                            '<td>' + element.delivery_date_time + '</td>' +
+                            '<td>' + element.from_room_number + '</td>' +
+                            '<td>' + element.order_description + '</td>' +
+                            '<td>' + element.comment_by_staff + '</td>' +
+                            '<td>' + element.total_time_taken + '</td>' +
+                            '</tr>';
+                    });
+
+                    console.log("Get Header", tableHeader);
+                    console.log("Get Rows", tableRows);
+                    console.log("Get Filename", response.filename);
+                    $(".generated_data").append('<button type="button" class="btn btn-primary" id="export" filename="' + response.filename + '" onclick="htmlTableToExcel()">Export Data</button>');
+                    $(".generated_data").append('<table class="table datatable" id="table">' +
+                        '    <thead>' +
+                        '        <tr>' + tableHeader +
+                        '        </tr>' +
+                        '    </thead>' +
+                        '    <tbody>' + tableRows +
+                        '    </tbody>' +
+                        '</table>');
+
+                },
+                error: function(error) {
+                    $('.response').empty().show().html('<div class="alert alert-danger">' + error + '</div>').delay(1500).fadeOut(3000);
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function htmlTableToExcel() {
+        const filename = $("#export").attr("filename");
+        console.log("Get Filename is html ", filename);
+        var data = document.getElementById('table');
+        var excelFile = XLSX.utils.table_to_book(data, {
+            sheet: "sheet1"
+        });
+        XLSX.write(excelFile, {
+            bookType: "xlsx",
+            bookSST: true,
+            type: 'base64'
+        });
+        XLSX.writeFile(excelFile, filename);
+    }
+</script>
+{% endblock javascripts %}

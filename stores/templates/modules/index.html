@@ -1,0 +1,27 @@
+{% extends "layouts/main_base.html" %} {% block title %} Modules {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="/static/css/modules/modules.css"> {% endblock stylesheets %} {% block content %}
+
+<section class="main-section">
+    <div class="modules">
+        <a href="/store/{{room_number}}/hotel-intercom/" class="module">
+            <img src="/media/modules/download.svg" alt="">
+            <h5>Hotel intercom</h5>
+        </a>
+        <a href="/store/{{room_number}}/foods/" class="module">
+            <img src="/media/modules/food-menu.svg" alt="">
+            <h5>Food menu</h5>
+        </a>
+        <a href="/store/{{room_number}}/services/" class="module">
+            <img src="/media/modules/services.svg" alt="">
+            <h5>Free services</h5>
+        </a>
+        <a href="/store/{{room_number}}/complain/" class="module">
+            <img src="/media/modules/support-contact.svg" alt="">
+            <h5>Complaints</h5>
+        </a>
+    </div>
+</section>
+{%endblock content%} {% block javascripts %} {% endblock javascripts %}

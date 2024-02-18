@@ -1,0 +1,14 @@
+
+[Unit]
+Description=Docker Compose Application
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/local/bin/docker-compose -f /home/nurhesen/Downloads/home/ubuntu/iberry/docker-compose.yml up
+
+[Install]
+WantedBy=default.target
+

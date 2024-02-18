@@ -1,0 +1,39 @@
+<div
+  class="float-cart bg-white mx-s shadow-lg position-fixed start-50 translate-middle-x d-flex p-2 rounded border"
+  id="float-cart"
+>
+  {% if cart_count > 0 %}
+  <div
+    class="d-flex justify-content-between w-100 align-items-center"
+    id="float-cart-filled"
+  >
+    <img
+      src="https://b.zmtcdn.com/data/dish_photos/6b2/53c20eaec8cb89832ed50a3d545a56b2.jpg?fit=around|130:130&crop=130:130;*,*"
+      alt=""
+    />
+    <div>
+      <h2 class="fw-bold title" id="cart">{{ request.user.name }}</h2>
+      <span class="float subtitle float-total-items">
+        {{cart_count}} items in your cart</span
+      >
+    </div>
+    <button
+      class="d-flex btn btn-primary flex-column align-items-center float-cart-btn"
+    >
+      <span class="float-total-price">₹{{total_price}}</span>
+      <span>View Cart</span>
+    </button>
+    <button class="btn-close btn btn-light" aria-label="close"></button>
+  </div>
+  {% else %}
+  <div
+    class="d-flex justify-content-center align-items-center w-100 flex-column"
+    id="float-cart-empty"
+  >
+    <span class="bowl-icon">
+      <i class="bx bx-bowl-hot bx-sm"></i>
+    </span>
+    <p class="m-0">Your cart is empty</p>
+  </div>
+  {% endif %}
+</div>

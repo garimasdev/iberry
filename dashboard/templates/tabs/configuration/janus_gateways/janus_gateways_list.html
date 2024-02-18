@@ -1,0 +1,95 @@
+ {% extends "layouts/base.html" %} {% block title %} Janus Gateway List {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<main id="main" class="main">
+    <div class="pagetitle">
+        <div class="text-right" style="text-align: right;">
+            <a href="/dashboard/configuration/janus/add/" type="button" class="btn btn-outline-primary">Add New Janus</a>
+        </div>
+    </div>
+    <!-- End Page Title -->
+
+    <section class="section">
+        <div class="row">
+            <div class="col-lg-12">
+                <!--<?php
+          $success_alert = $this->session->flashdata('success');
+          if (!empty($success_alert)) {
+            echo '<div class="alert alert-success" role="alert">' . $success_alert . '</div>';
+          }
+          $error_alert = $this->session->flashdata('error');
+          if (!empty($error_alert)) {
+            echo '<div class="alert alert-danger" role="alert">' . $error_alert . '</div>';
+          }
+          ?>-->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Janus Gateway List</h5>
+                        <!-- Table with stripped rows -->
+                        <table class="table datatable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Domain/IP Address</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for janus in object_list%}
+                                <tr>
+                                    <td class="row">{{janus.id}}</td>
+                                    <td>{{janus.janus_name}}</td>
+                                    <td>{{janus.janus_domain}}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                          Actions
+                                        </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="/dashboard/configuration/janus/update/{{janus.id}}/" class="dropdown-item" type="button">Update</a></li>
+                                                <li><a href="#Delete" class="dropdown-item delete-janus" id="{{janus.id}}" type="button">Delete</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!-- End #main -->
+{% endblock content %} {% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function() {
+        $(".delete-janus").click(function(e) {
+            const janusId = $(this).attr("id");
+            const token = "{{csrf_token}}"
+            $.ajax({
+                headers: {
+                    "X-CSRFToken": token
+                },
+                url: "/dashboard/configuration/janus/delete/" + janusId + "/",
+                type: "DELETE",
+                success: function(response) {
+                    console.log("Response", response);
+                    //$("#item-" + itemId).remove();
+                    window.location.reload();
+                },
+                error: function(xhr, status, error) {
+                    // Handle the error case
+                    console.log(error);
+                    alert(error);
+                }
+            });
+        });
+
+    });
+</script>
+{% endblock javascripts %}
