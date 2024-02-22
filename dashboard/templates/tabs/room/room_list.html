@@ -170,7 +170,7 @@
         const xhttp = new XMLHttpRequest();
         const token = "{{csrf_token}}";
         const url = "/dashboard/room/send-sms/";
-        const params = 'sms_to=' + btoa(sms_to) + '&sms_text=' + btoa(sms_text);
+        const params = 'sms_to=' + sms_to + '&sms_text=' + sms_text;
         xhttp.open('POST', url, true);
         xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhttp.onload = function() {
