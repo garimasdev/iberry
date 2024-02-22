@@ -453,7 +453,8 @@ def PlaceOrderAPIView(request):
                     token=registration_token,
                 )
                 messaging.send(message)
-                telegram_notification(get_room.room_number, get_room.user.channel_name)
+                telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Order")
+
                 return JsonResponse(
                     {
                         "success": "Order has been Placed.",
@@ -679,6 +680,19 @@ class ServiceOrderPlaceAPIView(APIView):
                 order.total_price = total_amount
                 order.save()
                 cart_items.delete()
+                # Send push notification
+                # registration_token = get_room.user.firebase_token
+                # message = f'Order received from room number {get_room.room_number}'
+                # notification = messaging.Notification(
+                #     title=f'Order received from room number {get_room.room_number}',
+                #     body=message,
+                # )
+                # message = messaging.Message(
+                #     notification=notification,
+                #     token=registration_token,
+                # )
+                # messaging.send(message)
+                telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Service")
                 return Response(
                     {
                         "success": "Order has been Placed.",

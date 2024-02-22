@@ -1,9 +1,11 @@
+from urllib import request
 import uuid
 from django.db import models
-from django.contrib.auth import get_user_model
 from accounts.models import User
-from dashboard.utils import generateAuthToken, getShortUrl
+from dashboard.utils import generateAuthToken
 from datetime import datetime
+from notification.helpers import telegram_notification
+
 
 # Create your models here.
 class Pbx(models.Model):
@@ -221,6 +223,7 @@ class Complain(models.Model):
         # Update the updated_at field when the status changes
         if self.pk is not None:
             original_instance = Complain.objects.get(pk=self.pk)
+            telegram_notification(self.room.room_number, self.room.user.channel_name, self.room.room_token, request, "Complaint")
             if original_instance.status != self.status:
                 self.updated_at = datetime.now()
 
