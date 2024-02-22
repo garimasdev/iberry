@@ -3,10 +3,8 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 import uuid
-
 
 class UserManager(BaseUserManager):
     def _create_user(self, username, email, password=None, **extra_fields):
@@ -15,6 +13,7 @@ class UserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(username=username, email=email, **extra_fields)
         user.password = make_password(password)
+        user.outdoor_token = str(uuid.uuid4().int & (10**8-1))
         user.save(using=self._db)
         return user
 
@@ -72,9 +71,8 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     firebase_token = models.TextField(null=True, blank=True)
-    # add channel name
-    # added something
     channel_name = models.CharField(max_length=70, null=True, blank=True)
+    outdoor_token = models.CharField(max_length=20, null=True, blank=True)
 
     USERNAME_FIELD = 'username'
     objects = UserManager()
