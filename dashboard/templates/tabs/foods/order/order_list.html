@@ -107,12 +107,12 @@
                                                     <div class="col-6">
                                                         <div class="mb-3">
                                                             <label for="update_order_status" class="form-label">Status</label>
-                                                            <select class="form-select mb-0" id="{{order.id}}-order_status" aria-label="order_status select example">
-                                                            <option value="0" class="Ordered" {%if order.status == 'Ordered'%}selected{%endif%}>Ordered</option>
-                                                            <option value="1" class="Processing" {%if order.status == 'Processing'%}selected{%endif%}>Processing</option>
-                                                            <option value="2" class="Completed" {%if order.status == 'Completed'%}selected{%endif%}>Completed</option>
-                                                            <option value="3" class="Canceled" {%if order.status == 'Canceled'%}selected{%endif%}>Canceled</option>
-                                                        </select>
+                                                            <select class="form-select mb-0" id="{{order.id}}-order_status" aria-label="order_status select example" onchange="changeStatusColor(this)">
+                                                                <option value="0" class="Ordered" {%if order.status == 'Ordered'%}selected{%endif%}>Ordered</option>
+                                                                <option value="1" class="Processing" {%if order.status == 'Processing'%}selected{%endif%}>Processing</option>
+                                                                <option value="2" class="Completed" {%if order.status == 'Completed'%}selected{%endif%}>Completed</option>
+                                                                <option value="3" class="Canceled" {%if order.status == 'Canceled'%}selected{%endif%}>Canceled</option>
+                                                            </select>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -1,4 +1,29 @@
 $(document).ready(function() {
+
+    // Function to fetch updated order data
+    function fetchOrders() {
+        // Perform AJAX request to fetch updated order data
+        $.ajax({
+            type: "GET",
+            url: "/dashboard/foors/orders//", // Endpoint to fetch orders
+            dataType: "json",
+            success: function(response) {
+                // Update the order page with the fetched data
+                // You may need to implement this logic based on your page structure
+                console.log("Fetched updated order data:", response);
+                // Reload the page or update the UI as per your requirements
+                window.location.reload();
+            },
+            error: function(error) {
+                console.error("Error fetching orders:", error);
+            }
+        });
+    }
+
+    // Set interval to fetch orders every 30 seconds
+    setInterval(fetchOrders, 30000);
+
+
     //place order
     $(document).on("click", ".delete-order", function(e) {
         e.preventDefault();

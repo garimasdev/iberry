@@ -130,7 +130,6 @@ SMS_DLT_PRINCIPAL_ID = '1301160933730426574';
 SMS_DLT_CONTENT_ID = '1307168136868522350';
 SMS_TEMPLATE = 'Click #LINK# to access hotel Phone System and Food menu. #TOKEN#Welcome to ibudha.com';
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 

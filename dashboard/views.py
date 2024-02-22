@@ -1,4 +1,6 @@
-from datetime import timedelta, timezone, datetime
+from datetime import datetime
+import random
+import string
 from django.db.models import Count, Q
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.http import JsonResponse
@@ -91,7 +93,13 @@ class RoomCreateView(UserAccessMixin, CreateView):
 class RoomUpdateAPIView(UserAccessMixin, UpdateAPIView):
     permission_required = 'dashboard.change_room'
     queryset = Room.objects.all()
-    serializer_class = RoomUpdateSerializer
+    # serializer_class = RoomUpdateSerializer
+    def update(self, request, *args, **kwargs):
+        obj = self.get_object()
+        obj.status = request.data.get('status', json.loads(request.body).get('status', False))
+        obj.auth_token = ''.join(random.choices(string.ascii_letters+string.digits, k=6))
+        obj.save()
+        return Response("New token generated")
     
 
 class  RoomUpdateView(UserAccessMixin, UpdateView):
@@ -147,6 +155,7 @@ class SendSMSAPIView(APIView):
         message_type = 'text'
         sms_text = urllib.parse.quote(sms_text)
         url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username={settings.SMS_USERNAME}&password={settings.SMS_PASSWORD}&unicode={unicode}&from={settings.SMS_FROM}&to={sms_to}&dltPrincipalEntityId={settings.SMS_DLT_PRINCIPAL_ID}&dltContentId={settings.SMS_DLT_CONTENT_ID}&text={sms_text}"
+        
 
         try:
             with urlopen(url_sms) as response:
@@ -711,9 +720,18 @@ class JanusDeleteView(UserAccessMixin, DeleteView):
     
     
     
-class GlobalUpdateAPIView(UpdateAPIView):
+class GlobalUpdateAPIView(UserAccessMixin, UpdateAPIView):
     queryset = Global.objects.all()
-    serializer_class = GlobalUpdateSerializer
+    # serializer_class = GlobalUpdateSerializer
+    def update(self, request,  *args, **kwargs):
+        instance  = self.get_object()
+        instance.config_value = request.data.get('config_value', json.loads(request.body).get('config_value'))
+        if instance.config_value == 'Y':
+            Room.objects.filter(user=self.request.user).update(status=True)
+        else:
+            Room.objects.filter(user=self.request.user).update(status=False)
+        instance.save()
+        return Response("Configuration Saved")
     
 
 class GlobalViewPage(UserAccessMixin, ListView):
@@ -731,6 +749,7 @@ class GlobalViewPage(UserAccessMixin, ListView):
             )
         else:
             object_list = self.model.objects.filter(user=self.request.user)
+            
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
     
     

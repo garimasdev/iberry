@@ -82,7 +82,7 @@ class OrderRoomSerializer(serializers.ModelSerializer):
 class RoomUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
-        fields = ['status']
+        fields = ['status', 'auth_token']
         
 
 """

@@ -38,3 +38,27 @@
         max-width: 100%;
     }
 }
+
+/* Define the styles for the order status dropdown */
+
+
+/* Define styles for different order status options */
+/* Set color for the 'Ordered' status */
+.main-section .order-box select.form-select option.Ordered {
+    color: blue; 
+}
+
+/* Set color for the 'Processing' status */
+.main-section .order-box select.form-select option.Processing {
+    color: orange; 
+}
+
+/* Set color for the 'Completed' status */
+.main-section .order-box select.form-select option.Completed {
+    color: green; 
+}
+
+/* Set color for the 'Canceled' status */
+.main-section .order-box select.form-select option.Canceled {
+    color: red; 
+}
