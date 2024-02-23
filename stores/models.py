@@ -119,6 +119,12 @@ class OrderItem(models.Model):
     quantity = models.PositiveSmallIntegerField()
     
 
+class OutdoorOrderItem(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='outdoor_order_items')
+    order = models.ForeignKey('OutdoorOrder', on_delete=models.CASCADE)
+    price = models.IntegerField(editable=False)
+    quantity = models.PositiveSmallIntegerField()
+
 
 class Order(models.Model):
     STATUS = (
@@ -156,6 +162,43 @@ class Order(models.Model):
                 self.updated_at = datetime.now()
 
         super(Order, self).save(*args, **kwargs)
+
+
+class OutdoorOrder(models.Model):
+    STATUS = (
+        (0, "Ordered"),
+        (1, "Processing"),
+        (2, "Completed"),
+        (3, "Canceled"),
+    )
+    order_id = models.CharField(max_length=8, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.ManyToManyField(OutdoorOrderItem, related_name='stores_outdoor_order_items')
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    status = models.SmallIntegerField(choices=STATUS, default=0)
+    note = models.CharField(max_length=250, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    @staticmethod
+    def has_read_permission(request):
+        return True
+    
+    @staticmethod
+    def has_write_permission(request):
+        return True
+    
+    class Meta:
+        ordering = ['-created_at']
+        
+    def save(self, *args, **kwargs):
+        # Update the updated_at field when the status changes
+        if self.pk is not None:
+            original_instance = OutdoorOrder.objects.get(pk=self.pk)
+            if original_instance.status != self.status:
+                self.updated_at = datetime.now()
+
+        super(OutdoorOrder, self).save(*args, **kwargs)
 
 
 

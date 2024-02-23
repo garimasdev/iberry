@@ -227,10 +227,10 @@ $(document).ready(function () {
           'X-CSRFToken': token,
         },
         type: 'POST',
-        url: '/order/',
+        url: '/outdoor-order/',
         contentType: 'application/json',
         data: JSON.stringify({
-          room: roomId,
+          user: roomId,
         }),
         success: function (response) {
           $('.response')

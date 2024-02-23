@@ -1,5 +1,5 @@
 from django.contrib import admin
-from stores.models import Cart, OutdoorCart, Category, Image, Item, Order, OrderItem, Price, ServiceCart, ServiceOrder, SubCategory
+from stores.models import Cart, OutdoorCart, OutdoorOrder, Category, Image, Item, Order, OrderItem, Price, ServiceCart, ServiceOrder, SubCategory
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
@@ -51,6 +51,7 @@ admin.site.register(Cart)
 admin.site.register(OutdoorCart)
 admin.site.register(OrderItem)
 admin.site.register(Order)
+admin.site.register(OutdoorOrder)
 admin.site.register(Price)
 admin.site.register(ServiceCart)
 admin.site.register(ServiceOrder)

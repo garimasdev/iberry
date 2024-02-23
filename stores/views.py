@@ -1,5 +1,7 @@
 import json
 import os
+import string
+import random
 import uuid
 
 from accounts.models import User
@@ -40,7 +42,9 @@ from stores.models import (
     Category,
     Item,
     Order,
+    OutdoorOrder,
     OrderItem,
+    OutdoorOrderItem,
     Price,
     ServiceCart,
     ServiceOrder,
@@ -53,14 +57,17 @@ from stores.serializers import (
     CartSerializer,
     OutdoorCartSerializer,
     CustomOrderSerializer,
+    CustomOutdoorOrderSerializer,
     GetServiceCartSerializer,
     ItemSerializer,
     OrderSerializer,
+    OutdoorOrderSerializer,
     ServiceCartSerializer,
     ServiceOrderSerializer,
     ServiceOrdersSerializer,
     ServiceUpdateOrderSerializer,
     UpdateOrderSerializer,
+    UpdateOutdoorOrderSerializer
 )
 
 credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
@@ -600,6 +607,62 @@ class OrderModelView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Order.objects.all()
+
+
+class OutdoorOrderModelView(APIView):
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = request.data
+            serializer = CustomOutdoorOrderSerializer(data=data)
+            if serializer.is_valid():
+                get_room = User.objects.get(outdoor_token=data['user'])
+                cart_items = OutdoorCart.objects.filter(user=get_room)
+                if cart_items:
+                    order_id = str(uuid.uuid4().int & (10**8 - 1))
+                    order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
+                    total_amount = 0
+                    for cart in cart_items:
+                        item = cart.item
+                        quantity = cart.quantity
+                        total_amount += cart.price * quantity
+                        order_item = OutdoorOrderItem.objects.create(
+                            order=order, item=item, quantity=quantity, price=cart.price
+                        )
+                        order.items.add(order_item)
+
+                    order.total_price = total_amount
+                    order.save()
+                    cart_items.delete()
+                    # Send push notification
+                    message = f'A new order received'
+                    notification = messaging.Notification(
+                        title=f'A new order received',
+                        body=message,
+                    )
+                    message = messaging.Message(
+                        notification=notification,
+                        token=get_room.firebase_token,
+                    )
+                    messaging.send(message)
+                    # telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Order")
+
+                    return Response(
+                        {
+                            "success": "Order has been Placed.",
+                            "room_id": request.data['user'],
+                            "order_id": order_id,
+                        },
+                        status=status.HTTP_201_CREATED
+                    )
+                else:
+                    return Response(
+                        {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
+                    )
+        except:
+            import traceback
+            traceback.print_exc()
 
 
 @csrf_exempt
