@@ -1,5 +1,4 @@
 from datetime import datetime
-import uuid
 from django.db import models
 # from django.contrib.auth.models import User
 from accounts.models import User
@@ -73,9 +72,27 @@ class Image(models.Model):
     file = models.ImageField(upload_to='items/')
     
 
+class OutdoorCart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    price = models.IntegerField()
+    quantity = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+  
+    def placeOrder(self):
+        self.save()
+  
+    @staticmethod
+    def get_orders_by_customer(user):
+        return OutdoorCart.objects.filter(user=user).order_by('-created_at')
+    
+    class Meta:
+        unique_together = ('user', 'item')
+        ordering = ['-created_at']
+
 
 class Cart(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, blank=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     price = models.IntegerField()
     quantity = models.IntegerField(default=1)

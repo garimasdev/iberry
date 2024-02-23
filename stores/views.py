@@ -2,6 +2,7 @@ import json
 import os
 import uuid
 
+from accounts.models import User
 import firebase_admin
 from django.db.models import Q
 from django.http import Http404, HttpResponse, JsonResponse
@@ -35,6 +36,7 @@ from dashboard.serializers import (
 from notification.helpers import telegram_notification
 from stores.models import (
     Cart,
+    OutdoorCart,
     Category,
     Item,
     Order,
@@ -47,7 +49,9 @@ from stores.models import (
 )
 from stores.serializers import (
     CartItemSerializer,
+    OutdoorCartItemSerializer,
     CartSerializer,
+    OutdoorCartSerializer,
     CustomOrderSerializer,
     GetServiceCartSerializer,
     ItemSerializer,
@@ -135,21 +139,33 @@ class FoodsPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         pk = self.kwargs.get("room_token")
+        flag = False
         if pk:
             try:
                 room = Room.objects.get(room_token=pk)
             except Room.DoesNotExist:
-                raise Http404("Store does not exist.")
-            # context['total_users'] = User.objects.all().count()
+                try:
+                    room = User.objects.get(outdoor_token=pk)
+                    flag = True
+                except User.DoesNotExist:
+                    raise Http404("Store does not exist.")
         else:
             raise Http404("Store does not exist.")
 
-        try:
-            bar_enabled = Category.objects.filter(user=room.user, name="Bar").exists()
-        except Category.DoesNotExist:
-            bar_enabled = False
-        context["bar_enabled"] = bar_enabled
+        if room and flag is False:
+            try:
+                bar_enabled = Category.objects.filter(user=room.user, name="Bar").exists()
+            except Category.DoesNotExist:
+                bar_enabled = False
+        else:
+            try:
+                bar_enabled = Category.objects.filter(user=room, name="Bar").exists()
+            except Category.DoesNotExist:
+                bar_enabled = False
 
+        if flag is True:
+            context['outdoor_token'] = True
+        context["bar_enabled"] = bar_enabled
         return context
 
 
@@ -170,7 +186,6 @@ class HomeViewPage(TemplateView):
                 room = Room.objects.get(room_token=pk)
             except Room.DoesNotExist:
                 raise Http404("Store does not exist.")
-            # context['total_users'] = User.objects.all().count()
         else:
             raise Http404("Store does not exist.")
 
@@ -191,7 +206,6 @@ class HomeViewPage(TemplateView):
                     )
             except SubCategory.DoesNotExist:
                 items = filterItemByCategories(room.user, get_categories)
-
         # Filter Item by Category
         elif category_filter:
             try:
@@ -199,6 +213,7 @@ class HomeViewPage(TemplateView):
                     user=room.user, name=category_filter
                 ).exclude(name__in=["Bar"])
                 get_sub_category = SubCategory.objects.filter(category=category[0])
+
                 if item_type:
                     items = filterItemByCategories(
                         room.user, category, item_type=item_type
@@ -207,7 +222,6 @@ class HomeViewPage(TemplateView):
                     items = filterItemByCategories(room.user, category)
             except Category.DoesNotExist:
                 items = filterItemByCategories(room.user, get_categories)
-
         # Filter by Item Type
         elif item_type:
             items = filterItemByCategories(
@@ -221,7 +235,6 @@ class HomeViewPage(TemplateView):
 
         get_cart_items = Cart.objects.filter(room=room)
         amounts = sum(item.price * item.quantity for item in get_cart_items)
-
         context["categories"] = FoodCategoriesSerializer(
             get_categories.exclude(name__in=["Bar", "Veg", "Non Veg"]), many=True
         ).data
@@ -232,7 +245,93 @@ class HomeViewPage(TemplateView):
         context["room_id"] = room.id
         context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
         context["total_price"] = amounts
+
         return context
+
+
+class OutdoorHomeViewPage(TemplateView):
+    template_name = "navs/home/outdoor_index.html"
+
+    def get_context_data(self, **kwargs):
+        try:
+            context = super().get_context_data(**kwargs)
+            category_filter = self.request.GET.get("category")
+            sub_category_filter = self.request.GET.get("sub_category")
+            item_type = self.request.GET.get("item_type")
+            search = self.request.GET.get("q")
+            get_sub_category = None
+            pk = self.kwargs.get("room_token")
+            if pk:
+                try:
+                    room = User.objects.get(outdoor_token=pk)
+                except User.DoesNotExist:
+                    raise Http404("Store does not exist.")
+            else:
+                raise Http404("Store does not exist.")
+
+            get_categories = Category.objects.filter(user=room).exclude(
+                name__in=["Bar"]
+            )
+            # Filter Item by Sub Category
+            if sub_category_filter:
+                try:
+                    get_sub_category = SubCategory.objects.filter(name=sub_category_filter)
+                    if item_type:
+                        items = filterItemByCategories(
+                            room, sub_category=get_sub_category[0], item_type=item_type
+                        )
+                    else:
+                        items = filterItemByCategories(
+                            room, sub_category=get_sub_category[0]
+                        )
+                except SubCategory.DoesNotExist:
+                    items = filterItemByCategories(room, get_categories)
+
+            # Filter Item by Category
+            elif category_filter:
+                try:
+                    category = Category.objects.filter(
+                        user=room, name=category_filter
+                    ).exclude(name__in=["Bar"])
+                    get_sub_category = SubCategory.objects.filter(category=category[0])
+
+                    if item_type:
+                        items = filterItemByCategories(
+                            room, category, item_type=item_type
+                        )
+                    else:
+                        items = filterItemByCategories(room, category)
+                except Category.DoesNotExist:
+                    items = filterItemByCategories(room, get_categories)
+
+            # Filter by Item Type
+            elif item_type:
+                items = filterItemByCategories(
+                    room, categories=get_categories, item_type=item_type
+                )
+            # Filter Item By Search
+            elif search:
+                items = filterItemByCategories(room, get_categories, search=search)
+            else:
+                items = filterItemByCategories(room, get_categories)
+
+            get_cart_items = OutdoorCart.objects.filter(user=room)
+            amounts = sum(item.price * item.quantity for item in get_cart_items)
+            context["categories"] = FoodCategoriesSerializer(
+                get_categories.exclude(name__in=["Bar", "Veg", "Non Veg"]), many=True
+            ).data
+            context["sub_categories"] = FoodSubCategoriesSerializer(
+                get_sub_category, many=True
+            ).data
+            context["items"] = items
+            context["room_id"] = pk
+            context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
+            context["total_price"] = amounts
+
+            return context
+        except:
+            import traceback
+            traceback.print_exc()
 
 
 class BarPageView(TemplateView):
@@ -378,6 +477,7 @@ class CartModelView(viewsets.ModelViewSet):
         object_id = self.perform_create(serializer)
         room = Room.objects.get(id=room_id)
         cart_items = Cart.objects.filter(room=room)
+
         total_items = sum(item.quantity for item in cart_items)
         amounts = sum(item.price * item.quantity for item in cart_items)
         extra_data = {
@@ -394,6 +494,92 @@ class CartModelView(viewsets.ModelViewSet):
         cart = Cart.objects.get(id=cart_id)
         self.perform_destroy(instance)
         get_cart_items = Cart.objects.filter(room=cart.room)
+        amounts = sum(item.price * item.quantity for item in get_cart_items)
+        total_items = sum(item.quantity for item in get_cart_items)
+        response_data = {
+            "total_price": amounts,
+            "total_items": total_items,
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+class OutdoorCartModelView(viewsets.ModelViewSet):
+    authentication_classes = []
+    permission_classes = []
+    serializer_class = OutdoorCartSerializer
+
+    def get_queryset(self):
+        room_id = self.request.query_params.get("room_id")
+        if room_id:
+            return OutdoorCart.objects.filter(user__outdoor_token=room_id)
+        else:
+            return OutdoorCart.objects.all()
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        return instance.id
+
+    def perform_update(self, serializer):
+        # Custom logic to handle updates
+        instance = serializer.save()
+        return instance.id
+
+    def create(self, request, *args, **kwargs):
+        try:
+            serializer = self.get_serializer(data={
+                'user': User.objects.get(outdoor_token=request.data['user']).pk,
+                'item': request.data['item'],
+                'price': request.data['price'],
+                'quantity': request.data['quantity'],
+            })
+            serializer.is_valid(raise_exception=True)
+            item_id = self.request.POST.get("item")
+            price_id = self.request.POST.get("price")
+            room_id = self.request.POST.get("user")
+
+            item = Item.objects.get(id=item_id)
+            price = 0
+            if int(price_id) > 1:
+                get_price = Price.objects.get(id=price_id)
+                if get_price.sell_price:
+                    price = get_price.sell_price
+                else:
+                    price = get_price.price
+            else:
+                get_price = item.prices.first()
+                if get_price.sell_price:
+                    price = get_price.sell_price
+                else:
+                    price = get_price.price
+
+            additional_data = {
+                "price": price,
+            }
+            for key, value in additional_data.items():
+                serializer.validated_data[key] = value
+
+            object_id = self.perform_create(serializer)
+            user = User.objects.get(outdoor_token=room_id)
+            cart_items = OutdoorCart.objects.filter(user=user)
+            total_items = sum(item.quantity for item in cart_items)
+            amounts = sum(item.price * item.quantity for item in cart_items)
+            extra_data = {
+                "id": object_id,
+                "total_price": amounts,
+                "total_items": total_items,
+            }
+
+            return Response(extra_data, status=status.HTTP_201_CREATED)
+        except:
+            import traceback
+            traceback.print_exc()
+
+    def destroy(self, request, *args, **kwargs):
+        cart_id = self.kwargs["pk"]
+        instance = self.get_object()
+        cart = OutdoorCart.objects.get(id=cart_id)
+        self.perform_destroy(instance)
+        get_cart_items = OutdoorCart.objects.filter(user=cart.user)
         amounts = sum(item.price * item.quantity for item in get_cart_items)
         total_items = sum(item.quantity for item in get_cart_items)
         response_data = {

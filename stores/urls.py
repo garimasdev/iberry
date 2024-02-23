@@ -7,6 +7,7 @@ from rest_framework import routers
 router = routers.SimpleRouter()
 app_name = 'stores'
 
+router.register(r'outdoor-cart', views.OutdoorCartModelView, basename='outdoorcart')
 router.register(r'cart', views.CartModelView, basename='cart')
 router.register(r'order', views.OrderModelView, basename='order')
 router.register(r'service-cart', views.ServiceCartModelView, basename='service-cart')
@@ -16,6 +17,7 @@ urlpatterns = [
     
     path('store/<str:room_token>/', views.ModulesViewPage.as_view(), name="my_url"),
     path('store/<str:room_token>/foods/', views.FoodsPageView.as_view(), name="foods"),
+    path('store/<str:room_token>/foods/outdoor_items/', views.OutdoorHomeViewPage.as_view(), name="foods-outdoor-items"),
     path('store/<str:room_token>/foods/items/', views.HomeViewPage.as_view(), name="foods-items"),
     path('store/<str:room_token>/foods/bar/', views.BarPageView.as_view(), name="foods-bar"),
     path('store/<str:room_token>/foods/<str:item_id>/', views.ProductDetailView.as_view(), name='food-item-view'),

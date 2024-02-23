@@ -6,10 +6,17 @@
 
 <section class="main-section">
     <div class="modules">
-        <a href="items/" class="module">
-            <img src="/media/modules/food-items.svg" alt="">
-            <h5>Food items</h5>
-        </a>
+        {% if outdoor_token %}
+            <a href="outdoor_items/" class="module">
+                <img src="/media/modules/food-items.svg" alt="">
+                <h5>Food items</h5>
+            </a>
+        {% else %}
+            <a href="items/" class="module">
+                <img src="/media/modules/food-items.svg" alt="">
+                <h5>Food items</h5>
+            </a>
+        {% endif %}
         {%if bar_enabled %}
         <a href="bar/" class="module">
             <img src="/media/modules/food-bar.svg" alt="">

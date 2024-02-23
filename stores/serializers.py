@@ -1,9 +1,7 @@
-import uuid
-from django.contrib.auth import get_user_model
 from dashboard.models import Service
 from dashboard.serializers import FoodItemsSerializer, OrderRoomSerializer, PriceSerializer
 from rest_framework import serializers
-from stores.models import Cart, Item, Order, OrderItem, ServiceCart, ServiceOrder
+from stores.models import Cart, OutdoorCart, Item, Order, OrderItem, ServiceCart, ServiceOrder
 from django.utils import dateparse
                 
 
@@ -16,15 +14,22 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = '__all__'
 
+class OutdoorCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OutdoorCart
+        fields = '__all__'
 
 class CartItemSerializer(serializers.ModelSerializer):
     item = FoodItemsSerializer()
     class Meta:
         model = Cart
         fields = '__all__'
-        
 
-
+class OutdoorCartItemSerializer(serializers.ModelSerializer):
+    item = FoodItemsSerializer()
+    class Meta:
+        model = OutdoorCart
+        fields = '__all__'
 
 class OrderItemSerializer(serializers.ModelSerializer):
     # product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
