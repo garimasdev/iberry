@@ -34,7 +34,7 @@ $(document).ready(function () {
         headers: {
           'X-CSRFToken': token,
         },
-        url: `/cart/?room_id=${roomID}`,
+        url: `/outdoor-cart/?room_id=${roomID}`,
         type: 'GET',
         dataType: 'json',
   
@@ -190,7 +190,7 @@ $(document).ready(function () {
         headers: {
           'X-CSRFToken': token,
         },
-        url: '/cart/' + cartId + '/',
+        url: '/outdoor-cart/' + cartId + '/',
         type: 'DELETE',
         data: {
           id: cartId,
