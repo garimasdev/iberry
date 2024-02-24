@@ -39,6 +39,8 @@ urlpatterns = [
     path('foods/category/sub-category/delete/<int:pk>/', views.FoodsSubCategoryDeleteView.as_view(), name="foods-sub-category-delete"),
     path('foods/get_subcategories/', views.SubcategoryView.as_view(), name='get_subcategories'),
     
+    path('foods/outdoor-orders/', views.FoodsOutdoorOrdersViewPage.as_view(), name="foods-outdoor-orders"),
+    path('foods/outdoor-orders/<int:pk>/', views.OutdoorOrderExportPageView.as_view(), name="foods-outdoor-orders-print"),
     path('foors/orders/', views.FoodsOrdersViewPage.as_view(), name="foods-orders"),
     path('foors/orders/<int:pk>/', views.OrderExportPageView.as_view(), name="foods-orders-print"),
     # /dashboard/foods/category/add

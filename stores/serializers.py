@@ -93,7 +93,6 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['status', 'note']
 
-
 class UpdateOutdoorOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = OutdoorOrder

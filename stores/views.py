@@ -596,6 +596,18 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
+class OutdoorOrderView(viewsets.ModelViewSet):
+    serializer_class = OutdoorOrderSerializer
+
+    def get_serializer_class(self):
+        if self.action == "update":
+            return UpdateOutdoorOrderSerializer
+        else:
+            return self.serializer_class
+
+    def get_queryset(self):
+        return OutdoorOrder.objects.all()
+
 class OrderModelView(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 

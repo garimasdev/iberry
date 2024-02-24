@@ -17,7 +17,7 @@ from django.db.models.functions import TruncDay
 from core import settings
 from dashboard.forms import ComplainTypeForm, DialerForm, ExtensionForm, FoodsCategoryForm, FoodsItemForm, JanusForm, PbxForm, RoomForm, ServiceForm, SubCategoryForm
 from dashboard.models import Complain, ComplainType, Dialer, Extension, Global, Janus, Pbx, Room, Service
-from dashboard.serializers import ComplainSerializer, ComplainTypeSerializer, DialerSerializer, ExtensionSerializer, FoodCategoriesSerializer, FoodItemAPISerializer, FoodItemsSerializer, FoodOrdersSerializer, FoodSubCategoriesSerializer, GlobalSerializer, GlobalUpdateSerializer, JanusSerializer, PbxSerializer, PriceSerializer, RoomSerializer, RoomUpdateSerializer, ServiceOrdersSerializer, ServiceSerializer, UpdateComplainSerializer
+from dashboard.serializers import ComplainSerializer, ComplainTypeSerializer, DialerSerializer, ExtensionSerializer, FoodCategoriesSerializer, FoodItemAPISerializer, FoodItemsSerializer, FoodOrdersSerializer, FoodOutdoorOrdersSerializer, FoodSubCategoriesSerializer, GlobalSerializer, GlobalUpdateSerializer, JanusSerializer, PbxSerializer, PriceSerializer, RoomSerializer, RoomUpdateSerializer, ServiceOrdersSerializer, ServiceSerializer, UpdateComplainSerializer
 from urllib.request import urlopen
 import json
 import urllib
@@ -25,7 +25,7 @@ from django.http import HttpResponse
 from openpyxl.styles import Alignment
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from stores.models import Category, Item, Order, Price, ServiceOrder, SubCategory
+from stores.models import Category, Item, OutdoorOrder, Order, Price, ServiceOrder, SubCategory
 from django_filters.views import FilterView
 from .filters import OrderFilter
 import openpyxl
@@ -376,6 +376,24 @@ class FoodsOrdersViewPage(UserAccessMixin, ListView):
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
 
+class FoodsOutdoorOrdersViewPage(UserAccessMixin, ListView):
+    permission_required = 'stores.view_order'
+    template_name = "tabs/foods/order/outdoor_order_list.html"
+    serializer_class = FoodOutdoorOrdersSerializer
+    model = OutdoorOrder
+    queryset = OutdoorOrder.objects.all()
+
+    def get_queryset(self):
+        q = self.request.GET.get('q')
+        if q:
+            object_list = self.model.objects.filter(
+                Q(name__icontains=q) | Q(email__icontains=q) | Q(user_type__icontains=q) | Q(user_id__icontains=q)
+            )
+        else:
+            # get_rooms = User.objects.filter(pk=self.request.user.pk)
+            object_list = self.model.objects.filter(user=self.request.user)
+        return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+
 class OrderExportPageView(UserAccessMixin, APIView):
     permission_required = 'stores.view_order'
     serializer_class = FoodOrdersSerializer
@@ -390,7 +408,19 @@ class OrderExportPageView(UserAccessMixin, APIView):
             return Response(data=data.data)
         except Order.DoesNotExist:
             return Response(data={"error": "Invalid Format of data"}, status=status.HTTP_400_BAD_REQUEST)
-        
+
+
+class OutdoorOrderExportPageView(UserAccessMixin, APIView):
+    permission_required = 'stores.view_order'
+    serializer_class = FoodOutdoorOrdersSerializer
+
+    def post(self, request, pk):
+        try:
+            query = OutdoorOrder.objects.get(id=pk)
+            data = FoodOutdoorOrdersSerializer(query);
+            return Response(data=data.data)
+        except OutdoorOrder.DoesNotExist:
+            return Response(data={"error": "Invalid Format of data"}, status=status.HTTP_400_BAD_REQUEST)
     
 
 """
