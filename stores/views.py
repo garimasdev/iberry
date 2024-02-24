@@ -673,8 +673,9 @@ class OutdoorOrderModelView(APIView):
                         {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
                     )
         except:
-            import traceback
-            traceback.print_exc()
+            return Response({
+                'success': "Order not being placed."
+            })
 
 
 @csrf_exempt

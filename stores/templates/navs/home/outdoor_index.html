@@ -11,6 +11,40 @@
 
 <section class="main-section">
     <div class="response"></div>
+    <!-- user confirmation -->
+    <div class="modal fade" id="asktheuser" tabindex="-1" aria-labelledby="asktheuserLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="asktheuserLabel">Select the payment mode</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="cod" checked>
+                            <label class="form-check-label" for="cod">
+                              Cash On Delivery
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="online">
+                            <label class="form-check-label" for="online">
+                              Online
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="proceedPayment()">Proceed</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
     <ul class="categories">
         {%if sub_categories|length > 0 %}
         <!--Main Category-->
@@ -130,7 +164,7 @@
             </li>
             {%endfor%}
         </ul>
-        <button class="place-order" room_id="{{room_id}}"><span class="checkout">Checkout</span> <span class="total_price">₹ {{total_price}}</span></button>
+        <button class="place-order" room_id="{{room_id}}" data-bs-toggle="modal" data-bs-target="#asktheuser"><span class="checkout">Checkout</span> <span class="total_price">₹ {{total_price}}</span></button>
     </aside>
 
     <!-- Floating Cart Bar-->
@@ -162,5 +196,59 @@
             $(this).find('.price-input:first').prop('checked', true);
         });
     });
+
+    function proceedPayment() {
+        // Get the selected payment mode
+        var selectedPaymentMode = document.querySelector('input[name="flexRadioDefault"]:checked').id;
+        // Perform logic based on the selected payment mode
+        if (selectedPaymentMode === 'cod') {
+            // Handle Cash On Delivery logic
+            const roomId = '{{room_id}}';
+            const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+            $.ajax({
+                headers: {
+                    'X-CSRFToken': token,
+                },
+                type: 'POST',
+                url: '/outdoor-order/',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    user: roomId,
+                }),
+                success: function (response) {
+                    $('.response')
+                        .empty()
+                        .show()
+                        .html(
+                        '<div class="alert alert-success" role="alert">Your order has been placed.</div>'
+                        )
+                        .delay(2000)
+                        .fadeOut(500)
+                    $('.cart-icon span').text('0')
+                    $('.cart').remove()
+                    $('.total_price').text('₹ 0')
+                    console.log('Get data', response)
+                    location.href =
+                        '/order_status/' + response.room_id + '/' + response.order_id + '/'
+                },
+                error: function (error) {
+                    $('.response')
+                        .empty()
+                        .show()
+                        .html('<div class="alert alert-danger">' + error + '</div>')
+                        .delay(1500)
+                        .fadeOut(3000)
+                },
+            });
+
+        } else if (selectedPaymentMode === 'online') {
+            // Handle Online payment logic
+            alert('Proceeding with Online payment');
+        } else {
+            // Handle other cases if needed
+            alert('Invalid payment mode');
+        }
+    }
+
 </script>
 {% endblock javascripts %}

@@ -215,48 +215,6 @@ $(document).ready(function () {
           console.log(error)
         },
       })
-    })
-  
-    //place order
-    $(document).on('click', '.place-order', function (e) {
-      e.preventDefault()
-      const roomId = $(this).attr('room_id')
-      const token = document.getElementsByName('csrfmiddlewaretoken')[0].value
-      $.ajax({
-        headers: {
-          'X-CSRFToken': token,
-        },
-        type: 'POST',
-        url: '/outdoor-order/',
-        contentType: 'application/json',
-        data: JSON.stringify({
-          user: roomId,
-        }),
-        success: function (response) {
-          $('.response')
-            .empty()
-            .show()
-            .html(
-              '<div class="alert alert-success" role="alert">Your order has been placed.</div>'
-            )
-            .delay(2000)
-            .fadeOut(500)
-          $('.cart-icon span').text('0')
-          $('.cart').remove()
-          $('.total_price').text('₹ 0')
-          console.log('Get data', response)
-          location.href =
-            '/order_status/' + response.room_id + '/' + response.order_id + '/'
-        },
-        error: function (error) {
-          $('.response')
-            .empty()
-            .show()
-            .html('<div class="alert alert-danger">' + error + '</div>')
-            .delay(1500)
-            .fadeOut(3000)
-        },
-      })
-    })
-  })
+    });
+  });
   
