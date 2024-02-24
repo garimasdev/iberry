@@ -11,9 +11,8 @@ app_name = 'dashboard'
 router.register(r'food/price', views.FoodPriceModelView, basename='food-price')
 urlpatterns = [
     path('', views.DashboardViewPage.as_view(), name="dashboard"),
-    # path('save/token',views.SaveToken.as_view(), name="fcm-token"),
+    path('user/change_password/', views.UserChangePassword, name="user-change-password"),
     path('save/token',views.savetoken, name="fcm-token"),
-    
     # room paths
     path('room/list/', views.RoomViewPage.as_view(), name="room-list"),
     path('room/add/', views.RoomCreateView.as_view(), name="room-add"),

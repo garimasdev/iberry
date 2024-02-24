@@ -41,7 +41,23 @@ class UserAccessMixin(PermissionRequiredMixin):
         if not self.has_permission():
             return redirect('/');
         return super(UserAccessMixin, self).dispatch(request, *args, **kwargs)
-    
+
+
+def UserChangePassword(request):
+    if request.method == 'POST':
+        try:
+            password = request.POST['password']
+            user = User.objects.get(pk=request.user.pk)
+            user.set_password(password)
+            user.save()
+            return JsonResponse({
+                'status': True
+            })
+        except (User.DoesNotExist, KeyError):
+            return JsonResponse({
+                'status': False
+            })
+
 
 class DashboardViewPage(UserAccessMixin, TemplateView):
     # UserAccessMixin,
