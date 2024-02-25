@@ -3,10 +3,13 @@ import os
 import string
 import random
 import uuid
+import razorpay
 
 from accounts.models import User
+from django.shortcuts import render
 import firebase_admin
 from django.db.models import Q
+from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -38,6 +41,7 @@ from dashboard.serializers import (
 from notification.helpers import telegram_notification
 from stores.models import (
     Cart,
+    Temporary_Users,
     OutdoorCart,
     Category,
     Item,
@@ -271,6 +275,10 @@ class OutdoorHomeViewPage(TemplateView):
             if pk:
                 try:
                     room = User.objects.get(outdoor_token=pk)
+                    self.request.session['anonymous_user_id'] = ''.join(random.choices(string.ascii_uppercase+string.digits, k=12))
+                    temp_user_id = Temporary_Users.objects.create(
+                        anonymous_user_id=self.request.session['anonymous_user_id']
+                    )
                 except User.DoesNotExist:
                     raise Http404("Store does not exist.")
             else:
@@ -322,7 +330,7 @@ class OutdoorHomeViewPage(TemplateView):
             else:
                 items = filterItemByCategories(room, get_categories)
 
-            get_cart_items = OutdoorCart.objects.filter(user=room)
+            get_cart_items = OutdoorCart.objects.filter(user=room, anonymous_user_id=temp_user_id.anonymous_user_id)
             amounts = sum(item.price * item.quantity for item in get_cart_items)
             context["categories"] = FoodCategoriesSerializer(
                 get_categories.exclude(name__in=["Bar", "Veg", "Non Veg"]), many=True
@@ -334,12 +342,69 @@ class OutdoorHomeViewPage(TemplateView):
             context["room_id"] = pk
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
             context["total_price"] = amounts
-
+            context["anonymous_user_id"] = temp_user_id.anonymous_user_id
             return context
         except:
             import traceback
             traceback.print_exc()
 
+
+def CreatePaymentOrder(request):
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body)
+            cart_items = OutdoorCart.objects.filter(anonymous_user_id=payload['anonymous_user_id'])
+            cart_total = sum([item.quantity * item.price for item in cart_items])
+            receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
+            client = razorpay.Client(auth=(settings.RAZORPAY_CLIENT_ID, settings.RAZORPAY_CLIENT_SECRET))
+            order_payload = {
+                "amount": cart_total * 100,
+                "currency": "INR",
+                "receipt": receipt
+            }
+            order_response = client.order.create(data=order_payload)
+            if 'id' not in order_response:
+                return JsonResponse({
+                    'status': False
+                })
+            # update the temp_users table with order id and receipt
+            temp_user = Temporary_Users.objects.get(anonymous_user_id=payload['anonymous_user_id'])
+            temp_user.razorpay_order_id = order_response['id']
+            temp_user.receipt = receipt
+            temp_user.order_total = str(cart_total * 100)
+            temp_user.customer_name = payload['username']
+            temp_user.customer_email = payload['email']
+            temp_user.customer_phone = payload['phone']
+            temp_user.customer_address = payload['address']
+            temp_user.save()
+            return JsonResponse({
+                'status': True,
+                'uri': f'{request.scheme}://{request.get_host()}/payment/checkout?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'
+            })
+        except:
+            import traceback
+            traceback.print_exc()
+            return JsonResponse({
+                'status': False
+            })
+
+
+def paymentCheckout(request):
+    if request.method == 'GET':
+        anonymous_user_id = request.GET.get('user_id')
+        user_token = request.GET.get('user')
+        user = User.objects.get(outdoor_token=user_token)
+        temp_user = Temporary_Users.objects.get(anonymous_user_id=anonymous_user_id)
+        return render(request, 'navs/home/checkout.html', {
+            'key_id': settings.RAZORPAY_CLIENT_ID,
+            'amount': int(temp_user.order_total),
+            'order_id': temp_user.razorpay_order_id,
+            'phone': temp_user.customer_phone,
+            'email': temp_user.customer_email,
+            'name': temp_user.customer_name,
+            'picture': user.picture.url,
+            'company_name': user.name.capitalize()
+        })
 
 class BarPageView(TemplateView):
     # model = Category
@@ -535,6 +600,7 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
         try:
             serializer = self.get_serializer(data={
                 'user': User.objects.get(outdoor_token=request.data['user']).pk,
+                'anonymous_user_id': request.data['anonymous_user_id'],
                 'item': request.data['item'],
                 'price': request.data['price'],
                 'quantity': request.data['quantity'],
@@ -567,7 +633,7 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
 
             object_id = self.perform_create(serializer)
             user = User.objects.get(outdoor_token=room_id)
-            cart_items = OutdoorCart.objects.filter(user=user)
+            cart_items = OutdoorCart.objects.filter(user=user, anonymous_user_id=request.data['anonymous_user_id'])
             total_items = sum(item.quantity for item in cart_items)
             amounts = sum(item.price * item.quantity for item in cart_items)
             extra_data = {
@@ -627,51 +693,55 @@ class OutdoorOrderModelView(APIView):
     def post(self, request, *args, **kwargs):
         try:
             data = request.data
-            serializer = CustomOutdoorOrderSerializer(data=data)
-            if serializer.is_valid():
-                get_room = User.objects.get(outdoor_token=data['user'])
-                cart_items = OutdoorCart.objects.filter(user=get_room)
-                if cart_items:
-                    order_id = str(uuid.uuid4().int & (10**8 - 1))
-                    order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
-                    total_amount = 0
-                    for cart in cart_items:
-                        item = cart.item
-                        quantity = cart.quantity
-                        total_amount += cart.price * quantity
-                        order_item = OutdoorOrderItem.objects.create(
-                            order=order, item=item, quantity=quantity, price=cart.price
-                        )
-                        order.items.add(order_item)
+            # serializer = CustomOutdoorOrderSerializer(data=data)
+            # if serializer.is_valid():
+            get_room = User.objects.get(outdoor_token=data['user'])
+            cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=data['anonymous_user_id'])
+            if cart_items:
+                order_id = str(uuid.uuid4().int & (10**8 - 1))
+                order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
+                total_amount = 0
+                for cart in cart_items:
+                    item = cart.item
+                    quantity = cart.quantity
+                    total_amount += cart.price * quantity
+                    order_item = OutdoorOrderItem.objects.create(
+                        order=order, item=item, quantity=quantity, price=cart.price
+                    )
+                    order.items.add(order_item)
 
-                    order.total_price = total_amount
-                    order.save()
-                    cart_items.delete()
-                    # Send push notification
-                    message = f'A new order received'
-                    notification = messaging.Notification(
-                        title=f'A new order received',
-                        body=message,
-                    )
-                    message = messaging.Message(
-                        notification=notification,
-                        token=get_room.firebase_token,
-                    )
-                    messaging.send(message)
-                    # telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Order")
+                order.total_price = total_amount
+                order.save()
+                cart_items.delete()
+                # here i can associate the order_id in temp_users
+                temp_user = Temporary_Users.objects.get(anonymous_user_id=data['anonymous_user_id'])
+                temp_user.custom_order_id = order_id
+                temp_user.save()
+                # Send push notification
+                message = f'A new order received'
+                notification = messaging.Notification(
+                    title=f'A new order received',
+                    body=message,
+                )
+                message = messaging.Message(
+                    notification=notification,
+                    token=get_room.firebase_token,
+                )
+                messaging.send(message)
+                # telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Order")
 
-                    return Response(
-                        {
-                            "success": "Order has been Placed.",
-                            "room_id": request.data['user'],
-                            "order_id": order_id,
-                        },
-                        status=status.HTTP_201_CREATED
-                    )
-                else:
-                    return Response(
-                        {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
-                    )
+                return Response(
+                    {
+                        "success": "Order has been Placed.",
+                        "room_id": request.data['user'],
+                        "order_id": order_id,
+                    },
+                    status=status.HTTP_201_CREATED
+                )
+            else:
+                return Response(
+                    {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
+                )
         except:
             return Response({
                 'success': "Order not being placed."

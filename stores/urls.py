@@ -1,5 +1,4 @@
-from django.urls import path, re_path
-
+from django.urls import path
 from accounts.views import UsersViewPage
 from . import views
 from django.contrib.auth.views import LogoutView
@@ -15,6 +14,9 @@ router.register(r'service-cart', views.ServiceCartModelView, basename='service-c
 router.register(r'service-order', views.ServiceOrderModelView, basename='service-order')
 
 urlpatterns = [
+    # Payment urls
+    path('payment/checkout', views.paymentCheckout, name='payment_checkout'),
+    path('create/payment/order', views.CreatePaymentOrder, name='create_payment_order'),
     path('firebase-messaging-sw.js',views.showFirebaseJS,name="show_firebase_js"),
     path('outdoor-order/', views.OutdoorOrderModelView.as_view(), name='outdoor_order'),
     path('store/<str:room_token>/', views.ModulesViewPage.as_view(), name="my_url"),

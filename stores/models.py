@@ -70,11 +70,25 @@ class Item(models.Model):
 
 class Image(models.Model):
     file = models.ImageField(upload_to='items/')
-    
+
+
+class Temporary_Users(models.Model):
+    anonymous_user_id = models.CharField(max_length=80, null=True, blank=True, unique=True)
+    custom_order_id = models.CharField(max_length=80, null=True, blank=True)
+    razorpay_order_id = models.CharField(max_length=80, null=True, blank=True)
+    receipt = models.CharField(max_length=16, null=True, blank=True)
+    order_total = models.CharField(max_length=60, null=True, blank=True)
+    customer_name = models.CharField(max_length=60, null=True, blank=True)
+    customer_email = models.CharField(max_length=60, null=True, blank=True)
+    customer_phone = models.CharField(max_length=60, null=True, blank=True)
+    customer_address = models.TextField(null=True, blank=True)
+    class Meta:
+        db_table = 'temp_users'
 
 class OutdoorCart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    anonymous_user_id = models.CharField(max_length=80, null=True, blank=True)
     price = models.IntegerField()
     quantity = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)

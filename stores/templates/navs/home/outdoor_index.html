@@ -45,6 +45,43 @@
         </div>
     </div>
 
+    <div class="modal fade" id="asktheuserdetails" tabindex="-1" aria-labelledby="asktheuserdetailsLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h1 class="modal-title fs-5" id="asktheuserdetailsLabel">Enter your details</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="tel" class="form-control" id="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address</label>
+                            <textarea class="form-control" id="address">{{address}}</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="createPayment()">Proceed</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
     <ul class="categories">
         {%if sub_categories|length > 0 %}
         <!--Main Category-->
@@ -134,7 +171,7 @@
                         </div>
                         <div class="modal-footer">
                             {% if item.quantity >= 1 %}
-                                <button class="add-to-cart cart-btn" id="{{item.id}}" room_id="{{room_id}}" token="{{csrf_token}}">Add to Cart</button> 
+                                <button class="add-to-cart cart-btn" id="{{item.id}}" room_id="{{room_id}}" anonymous_user_id="{{anonymous_user_id}}" token="{{csrf_token}}">Add to Cart</button> 
                             {%endif%}
                         </div>
                     </div>
@@ -214,6 +251,7 @@
                 contentType: 'application/json',
                 data: JSON.stringify({
                     user: roomId,
+                    anonymous_user_id: "{{anonymous_user_id}}"
                 }),
                 success: function (response) {
                     $('.response')
@@ -240,14 +278,58 @@
                         .fadeOut(3000)
                 },
             });
-
         } else if (selectedPaymentMode === 'online') {
             // Handle Online payment logic
-            alert('Proceeding with Online payment');
+            var ask_the_user_modal = new bootstrap.Modal(document.getElementById('asktheuser'));
+            ask_the_user_modal.hide();
+            var ask_the_user_details_modal = new bootstrap.Modal(document.getElementById('asktheuserdetails'));
+            ask_the_user_details_modal.show();
         } else {
             // Handle other cases if needed
             alert('Invalid payment mode');
         }
+    }
+    
+    function createPayment() {
+        // Get values from the input fields and textarea
+        var username = document.getElementById('username').value;
+        var phone = document.getElementById('phone').value;
+        var address = document.getElementById('address').value;
+        var email = document.getElementById('email').value;
+        var data = {
+            username: username,
+            phone: phone,
+            address: address,
+            email: email,
+            anonymous_user_id: "{{anonymous_user_id}}",
+            user: "{{room_id}}"
+        };
+        // Fetch API POST request
+        fetch('{% url "stores:create_payment_order" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'  // Replace with your actual CSRF token
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle the response data as needed
+            if (data.status === true) {
+                window.location.href = data.uri;
+            } else {
+                alert('Sorry payment cannot proceed');
+            }
+        })
+        .catch(error => {
+            alert('Sorry payment cannot proceed');
+        });
     }
 
 </script>

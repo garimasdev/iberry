@@ -54,6 +54,7 @@ $(document).ready(function () {
       const room_id = $(this).attr('room_id')
       const token = $(this).attr('token')
       const food_id = $(this).attr('id')
+      const anonymous_user_id = $(this).attr('anonymous_user_id')
       const qunatity = $('#quantity-' + food_id).val()
       // const price_id = $("#price-" + food_id).attr('id');
       var selectedData = []
@@ -77,6 +78,7 @@ $(document).ready(function () {
           item: food_id,
           price: selectedData[0].id,
           quantity: qunatity,
+          anonymous_user_id: anonymous_user_id
         },
         dataType: 'json',
         success: function (response) {
