@@ -15,6 +15,7 @@ router.register(r'service-order', views.ServiceOrderModelView, basename='service
 
 urlpatterns = [
     # Payment urls
+    path('payment/checkout/success', views.paymentCheckoutSuccess, name='paymentCheckoutSuccess'),
     path('payment/checkout', views.paymentCheckout, name='payment_checkout'),
     path('create/payment/order', views.CreatePaymentOrder, name='create_payment_order'),
     path('firebase-messaging-sw.js',views.showFirebaseJS,name="show_firebase_js"),

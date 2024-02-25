@@ -19,7 +19,7 @@ var options = {
     "description": "This is your order",
     "image": "{{picture}}",
     "order_id": "{{order_id}}", 
-    "callback_url": "https://eneqd3r9zrjok.x.pipedream.net/",
+    "callback_url": "http://localhost:8000/payment/checkout/success?user_id="+"{{user_id}}"+"&token="+"{{user_token}}",
     "prefill": { 
         "name": "{{name}}",
         "email": "{{email}}",

@@ -403,8 +403,63 @@ def paymentCheckout(request):
             'email': temp_user.customer_email,
             'name': temp_user.customer_name,
             'picture': user.picture.url,
-            'company_name': user.name.capitalize()
+            'company_name': user.name.capitalize(),
+            'user_id': anonymous_user_id,
+            'user_token': user_token
         })
+
+
+@csrf_exempt
+def paymentCheckoutSuccess(request):
+    if request.method == 'POST':
+        try:
+            payload = request.POST
+            client = razorpay.Client(auth=(settings.RAZORPAY_CLIENT_ID, settings.RAZORPAY_CLIENT_SECRET))
+            status = client.utility.verify_payment_signature({
+                'razorpay_order_id': payload['razorpay_order_id'],
+                'razorpay_payment_id': payload['razorpay_payment_id'],
+                'razorpay_signature': payload['razorpay_signature']
+            })
+            if status is True:
+                get_room = User.objects.get(outdoor_token=request.GET.get('token'))
+                cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
+                if cart_items:
+                    order_id = str(uuid.uuid4().int & (10**8 - 1))
+                    order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
+                    total_amount = 0
+                    for cart in cart_items:
+                        item = cart.item
+                        quantity = cart.quantity
+                        total_amount += cart.price * quantity
+                        order_item = OutdoorOrderItem.objects.create(
+                            order=order, item=item, quantity=quantity, price=cart.price
+                        )
+                        order.items.add(order_item)
+
+                    order.total_price = total_amount
+                    order.save()
+                    cart_items.delete()
+                    # here i can associate the order_id in temp_users
+                    temp_user = Temporary_Users.objects.get(anonymous_user_id=request.GET.get('user_id'))
+                    temp_user.custom_order_id = order_id
+                    temp_user.save()
+                    # Send push notification
+                    message = f'A new order received'
+                    notification = messaging.Notification(
+                        title=f'A new order received',
+                        body=message,
+                    )
+                    message = messaging.Message(
+                        notification=notification,
+                        token=get_room.firebase_token
+                    )
+                    messaging.send(message)
+            else:
+                print('nhi hui')
+        except:
+            import traceback
+            traceback.print_exc()
+
 
 class BarPageView(TemplateView):
     # model = Category
