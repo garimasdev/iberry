@@ -807,54 +807,58 @@ class OutdoorOrderModelView(APIView):
 @csrf_exempt
 def PlaceOrderAPIView(request):
     if request.method == "POST":
-        data = json.loads(request.body)
-        serializer = CustomOrderSerializer(data=data)
-        if serializer.is_valid():
-            get_room = Room.objects.get(id=serializer.data["room"])
-            cart_items = Cart.objects.filter(room=get_room)
-            if cart_items:
-                order_id = str(uuid.uuid4().int & (10**8 - 1))
-                order = Order.objects.create(order_id=order_id, room=get_room)
-                order.save()
-                total_amount = 0
-                for cart in cart_items:
-                    item = cart.item
-                    quantity = cart.quantity
-                    total_amount += cart.price * quantity
-                    order_item = OrderItem.objects.create(
-                        order=order, item=item, quantity=quantity, price=cart.price
+        try:
+            data = json.loads(request.body)
+            serializer = CustomOrderSerializer(data=data)
+            if serializer.is_valid():
+                get_room = Room.objects.get(id=serializer.data["room"])
+                cart_items = Cart.objects.filter(room=get_room)
+                if cart_items:
+                    order_id = str(uuid.uuid4().int & (10**8 - 1))
+                    order = Order.objects.create(order_id=order_id, room=get_room)
+                    order.save()
+                    total_amount = 0
+                    for cart in cart_items:
+                        item = cart.item
+                        quantity = cart.quantity
+                        total_amount += cart.price * quantity
+                        order_item = OrderItem.objects.create(
+                            order=order, item=item, quantity=quantity, price=cart.price
+                        )
+                        order.items.add(order_item)
+
+                    order.total_price = total_amount
+                    order.save()
+                    cart_items.delete()
+                    # Send push notification
+                    registration_token = get_room.user.firebase_token
+                    message = f'Order received from room number {get_room.room_number}'
+                    notification = messaging.Notification(
+                        title=f'Order received from room number {get_room.room_number}',
+                        body=message,
                     )
-                    order.items.add(order_item)
+                    message = messaging.Message(
+                        notification=notification,
+                        token=registration_token,
+                    )
+                    messaging.send(message)
+                    telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Order")
 
-                order.total_price = total_amount
-                order.save()
-                cart_items.delete()
-                # Send push notification
-                registration_token = get_room.user.firebase_token
-                message = f'Order received from room number {get_room.room_number}'
-                notification = messaging.Notification(
-                    title=f'Order received from room number {get_room.room_number}',
-                    body=message,
-                )
-                message = messaging.Message(
-                    notification=notification,
-                    token=registration_token,
-                )
-                messaging.send(message)
-                telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Order")
-
-                return JsonResponse(
-                    {
-                        "success": "Order has been Placed.",
-                        "room_id": get_room.room_token,
-                        "order_id": order_id,
-                    }
-                    # status=status.HTTP_201_CREATED,
-                )
-            else:
-                return JsonResponse(
-                    {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
-                )
+                    return JsonResponse(
+                        {
+                            "success": "Order has been Placed.",
+                            "room_id": get_room.room_token,
+                            "order_id": order_id,
+                        }
+                        # status=status.HTTP_201_CREATED,
+                    )
+                else:
+                    return JsonResponse(
+                        {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
+                    )
+        except:
+            import traceback
+            traceback.print_exc()
 
 
 class OrderStatusViewPage(TemplateView):
