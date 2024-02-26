@@ -749,8 +749,6 @@ class OutdoorOrderModelView(APIView):
     def post(self, request, *args, **kwargs):
         try:
             data = request.data
-            # serializer = CustomOutdoorOrderSerializer(data=data)
-            # if serializer.is_valid():
             get_room = User.objects.get(outdoor_token=data['user'])
             cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=data['anonymous_user_id'])
             if cart_items:
@@ -772,6 +770,11 @@ class OutdoorOrderModelView(APIView):
                 # here i can associate the order_id in temp_users
                 temp_user = Temporary_Users.objects.get(anonymous_user_id=data['anonymous_user_id'])
                 temp_user.custom_order_id = order_id
+                temp_user.order_total = total_amount
+                temp_user.customer_name = data['name']
+                temp_user.customer_email = data['email']
+                temp_user.customer_phone = data['phone']
+                temp_user.customer_address = data['address']
                 temp_user.save()
                 # Send push notification
                 message = f'A new order received'
@@ -781,7 +784,7 @@ class OutdoorOrderModelView(APIView):
                 )
                 message = messaging.Message(
                     notification=notification,
-                    token=get_room.firebase_token,
+                    token=get_room.firebase_token
                 )
                 messaging.send(message)
                 # telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Order")

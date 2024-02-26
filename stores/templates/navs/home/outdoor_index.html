@@ -228,83 +228,99 @@
     }
 </script>
 <script>
+    var selectedPaymentMode;
     $(document).ready(function() {
         $('.modal').on('shown.bs.modal', function() {
             $(this).find('.price-input:first').prop('checked', true);
         });
     });
 
+    function fillUserDetails() {
+        const username = localStorage.getItem("username");
+        if (username) {
+            document.getElementById('username').value = username;
+        }
+        const phone = localStorage.getItem("phone");
+        if (phone) {
+            document.getElementById('phone').value = phone;
+        }
+        const email = localStorage.getItem("email");
+        if (email) {
+            document.getElementById('email').value = email;
+        }
+        const address = localStorage.getItem("address");
+        if (address) {
+            document.getElementById('address').value = address;
+        }        
+    }
+
     function proceedPayment() {
         // Get the selected payment mode
-        var selectedPaymentMode = document.querySelector('input[name="flexRadioDefault"]:checked').id;
+        selectedPaymentMode = document.querySelector('input[name="flexRadioDefault"]:checked').id;
         // Perform logic based on the selected payment mode
         if (selectedPaymentMode === 'cod') {
-            // Handle Cash On Delivery logic
-            const roomId = '{{room_id}}';
-            const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-            $.ajax({
-                headers: {
-                    'X-CSRFToken': token,
-                },
-                type: 'POST',
-                url: '/outdoor-order/',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    user: roomId,
-                    anonymous_user_id: "{{anonymous_user_id}}"
-                }),
-                success: function (response) {
-                    $('.response')
-                        .empty()
-                        .show()
-                        .html(
-                        '<div class="alert alert-success" role="alert">Your order has been placed.</div>'
-                        )
-                        .delay(2000)
-                        .fadeOut(500)
-                    $('.cart-icon span').text('0')
-                    $('.cart').remove()
-                    $('.total_price').text('₹ 0')
-                    console.log('Get data', response)
-                    location.href =
-                        '/order_status/' + response.room_id + '/' + response.order_id + '/'
-                },
-                error: function (error) {
-                    $('.response')
-                        .empty()
-                        .show()
-                        .html('<div class="alert alert-danger">' + error + '</div>')
-                        .delay(1500)
-                        .fadeOut(3000)
-                },
-            });
+            var ask_the_user_modal = new bootstrap.Modal(document.getElementById('asktheuser'));
+            ask_the_user_modal.hide();
+            fillUserDetails();
+            var ask_the_user_details_modal = new bootstrap.Modal(document.getElementById('asktheuserdetails'));
+            ask_the_user_details_modal.show();
         } else if (selectedPaymentMode === 'online') {
             // Handle Online payment logic
             var ask_the_user_modal = new bootstrap.Modal(document.getElementById('asktheuser'));
             ask_the_user_modal.hide();
-            // here we can check if we have the basic user details stored in localstorage
-            const username = localStorage.getItem("username");
-            if (username) {
-                document.getElementById('username').value = username;
-            }
-            const phone = localStorage.getItem("phone");
-            if (phone) {
-                document.getElementById('phone').value = phone;
-            }
-            const email = localStorage.getItem("email");
-            if (email) {
-                document.getElementById('email').value = email;
-            }
-            const address = localStorage.getItem("address");
-            if (address) {
-                document.getElementById('address').value = address;
-            }
+            fillUserDetails();
             var ask_the_user_details_modal = new bootstrap.Modal(document.getElementById('asktheuserdetails'));
             ask_the_user_details_modal.show();
         } else {
             // Handle other cases if needed
             alert('Invalid payment mode');
         }
+    }
+
+    function codOrderPayment() {
+        // Handle Cash On Delivery logic
+        const roomId = '{{room_id}}';
+        const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        $.ajax({
+            headers: {
+                'X-CSRFToken': token,
+            },
+            type: 'POST',
+            url: '/outdoor-order/',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                user: roomId,
+                anonymous_user_id: "{{anonymous_user_id}}",
+                name: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value
+            }),
+            success: function (response) {
+                $('.response')
+                    .empty()
+                    .show()
+                    .html(
+                    '<div class="alert alert-success" role="alert">Your order has been placed.</div>'
+                    )
+                    .delay(2000)
+                    .fadeOut(500)
+                $('.cart-icon span').text('0')
+                $('.cart').remove()
+                $('.total_price').text('₹ 0')
+                console.log('Get data', response)
+                location.href =
+                    '/order_status/' + response.room_id + '/' + response.order_id + '/'
+            },
+            error: function (error) {
+                $('.response')
+                    .empty()
+                    .show()
+                    .html('<div class="alert alert-danger">' + error + '</div>')
+                    .delay(1500)
+                    .fadeOut(3000)
+            },
+        });
     }
     
     function createPayment() {
@@ -317,6 +333,11 @@
         localStorage.setItem("address", address);
         var email = document.getElementById('email').value;
         localStorage.setItem("email", email);
+
+        if (selectedPaymentMode === 'cod') {
+            return codOrderPayment();
+        }
+
         var data = {
             username: username,
             phone: phone,
