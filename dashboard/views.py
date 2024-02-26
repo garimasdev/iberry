@@ -112,7 +112,11 @@ class RoomUpdateAPIView(UserAccessMixin, UpdateAPIView):
     # serializer_class = RoomUpdateSerializer
     def update(self, request, *args, **kwargs):
         obj = self.get_object()
-        obj.status = request.data.get('status', json.loads(request.body).get('status', False))
+        if request.body.decode('utf-8').split('=')[1] == 'false':
+            obj.status = False
+        else:
+            obj.status = True
+
         obj.auth_token = ''.join(random.choices(string.ascii_letters+string.digits, k=6))
         obj.save()
         return Response("New token generated")
