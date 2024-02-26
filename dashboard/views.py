@@ -763,21 +763,33 @@ class JanusDeleteView(UserAccessMixin, DeleteView):
         self.object = self.get_object()
         self.object.delete()
         return JsonResponse({'message': 'Object deleted successfully'})
+
+
+# @csrf_exempt
+# def GlobalUpdateAPIView(request):
+#     if request.method == 'POST':
+#         try:
+#             print('called')
+#             print(request.body)
+#         except:
+#             import traceback
+#             traceback.print_exc()
     
-    
-    
-class GlobalUpdateAPIView(UserAccessMixin, UpdateAPIView):
-    queryset = Global.objects.all()
-    # serializer_class = GlobalUpdateSerializer
-    def update(self, request,  *args, **kwargs):
-        instance  = self.get_object()
-        instance.config_value = request.data.get('config_value', json.loads(request.body).get('config_value'))
-        if instance.config_value == 'Y':
-            Room.objects.filter(user=self.request.user).update(status=True)
-        else:
-            Room.objects.filter(user=self.request.user).update(status=False)
-        instance.save()
-        return Response("Configuration Saved")
+# class GlobalUpdateAPIView(UserAccessMixin, UpdateAPIView):
+#     queryset = Global.objects.all()
+#     serializer_class = GlobalUpdateSerializer
+#     def update(self, request,  *args, **kwargs):
+#         print('called')
+#         instance  = self.get_object()
+#         # print(json.loads(request.body))
+#         print(request.data)
+#         instance.config_value = request.data.get('config_value', json.loads(request.body).get('config_value'))
+#         if instance.config_value == 'Y':
+#             Room.objects.filter(user=self.request.user).update(status=True)
+#         else:
+#             Room.objects.filter(user=self.request.user).update(status=False)
+#         instance.save()
+#         return Response("Configuration Saved")
     
 
 class GlobalViewPage(UserAccessMixin, ListView):

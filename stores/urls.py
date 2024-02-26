@@ -45,5 +45,5 @@ urlpatterns = [
     #Service
     path('service-order/', views.ServiceOrderPlaceAPIView.as_view(), name="service-order-place"),
     path('service_order_status/<str:room_token>/<str:order_id>/', views.ServiceOrderStatusViewPage.as_view(), name="order_status"),
-    
+    path('configuration/global', views.GlobalUpdateAPIView, name='global-update'),
 ]+ router.urls

@@ -93,7 +93,7 @@ urlpatterns = [
     path('configuration/janus/delete/<int:pk>/', views.JanusDeleteView.as_view(), name="janus-delete"),
     
     path('configuration/global/', views.GlobalViewPage.as_view(), name="global-list"),
-    path('configuration/global/<int:pk>/', views.GlobalUpdateAPIView.as_view(), name='global-update'),
+    # path('configuration/global/<pk>/', views.GlobalUpdateAPIView, name='global-update'),
     
     #Report Order
     path('reports/', views.OrderReportView.as_view(), name='order_report'),

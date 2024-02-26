@@ -2,6 +2,7 @@ import json
 import os
 import string
 import random
+from dashboard.models import Global
 import uuid
 import razorpay
 
@@ -1127,3 +1128,24 @@ class ServiceOrderModelView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return ServiceOrder.objects.all()
+
+def GlobalUpdateAPIView(request):
+    if request.method == 'GET':
+        try:
+            config_value = request.GET.get('config_value').upper()
+            if config_value == 'Y':
+                Room.objects.filter(user=request.user).update(status=True)
+            else:
+                Room.objects.filter(user=request.user).update(status=False)
+            
+            # update the global
+            Global.objects.filter(user=request.user).update(
+              config_value=config_value
+            )
+            return JsonResponse({
+                'status': True
+            })
+        except:
+            return JsonResponse({
+                'status': False
+            })

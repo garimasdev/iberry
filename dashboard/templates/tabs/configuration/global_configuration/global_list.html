@@ -81,23 +81,36 @@
             const field_name = document.getElementById("field_name").value;
             const field_value = document.getElementById("globalConfigInput").value;
             const token = "{{csrf_token}}";
-            $.ajax({
-                headers: {
-                    "X-CSRFToken": token
-                },
-                url: "/dashboard/configuration/global/" + global_id + '/', // Replace with the actual update URL
-                type: "PUT",
-                data: {
-                    config_value: field_value
-                },
-                success: function(response) {
-                    $('.response').empty().show().html('<div class="alert alert-success"> The global has been updated.</div>').delay(3000).fadeOut(300);
-                    window.location.reload();
-                },
-                error: function(xhr, status, error) {
-                    $('.response').empty().show().html('<div class="alert alert-danger">' + error + '</div>').delay(3000).fadeOut(300);
-                }
-            });
+            console.log(token);
+            const url = `/configuration/global?config_value=${field_value}`;
+            const headers = {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': token,
+            };
+
+            const requestBody = {
+                'config_value': field_value,
+            };
+
+            fetch(url, {
+                method: 'GET',
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Failed with status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.status === true){
+                        window.location.reload();
+                    } else {
+                        alert('sorry status not updated');
+                    }
+                })
+                .catch((error) => {
+                    alert('sorry cannot updated');
+                });
         }
     }
 </script>
