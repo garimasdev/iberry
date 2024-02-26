@@ -38,6 +38,7 @@ urlpatterns = [
     # path('order/', views.PlaceOrderAPIView.as_view(), name="place-order"),
     path('order/', views.PlaceOrderAPIView, name="place-order"),
     path('order_status/<str:room_token>/<str:order_id>/', views.OrderStatusViewPage.as_view(), name="order_status"),
+    path('outdoor_order_status/<str:room_token>/<str:order_id>/', views.OutdoorOrderStatusViewPage.as_view(), name="outdoor_order_status"),
     
     # # room paths
     # path('room/list/', views.RoomViewPage.as_view(), name="room-list"),

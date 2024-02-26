@@ -309,8 +309,7 @@
                 $('.cart').remove()
                 $('.total_price').text('₹ 0')
                 console.log('Get data', response)
-                location.href =
-                    '/order_status/' + response.room_id + '/' + response.order_id + '/'
+                location.href = '/outdoor_order_status/' + response.room_id + '/' + response.order_id + '/';
             },
             error: function (error) {
                 $('.response')

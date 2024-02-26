@@ -12,7 +12,8 @@ import firebase_admin
 from django.db.models import Q
 from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -34,6 +35,7 @@ from dashboard.serializers import (
     ExtensionSerializer,
     FoodCategoriesSerializer,
     FoodItemsSerializer,
+    FoodOutdoorOrdersSerializer,
     FoodOrdersSerializer,
     FoodSubCategoriesSerializer,
     PhoneDialerSerializer,
@@ -455,11 +457,24 @@ def paymentCheckoutSuccess(request):
                         token=get_room.firebase_token
                     )
                     messaging.send(message)
+                    return redirect(reverse('stores:outdoor_order_status', kwargs={
+                        'room_token': request.GET.get('token'),
+                        'order_id': order_id
+                    }))
             else:
-                print('nhi hui')
+                get_room = User.objects.get(outdoor_token=request.GET.get('token'))
+                cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
+                cart_items.delete()
+                return redirect(reverse('stores:foods-outdoor-items', kwargs={
+                    'room_token': request.GET.get('token')
+                }))
         except:
-            import traceback
-            traceback.print_exc()
+            get_room = User.objects.get(outdoor_token=request.GET.get('token'))
+            cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
+            cart_items.delete()
+            return redirect(reverse('stores:foods-outdoor-items', kwargs={
+                'room_token': request.GET.get('token')
+            }))
 
 
 class BarPageView(TemplateView):
@@ -881,6 +896,25 @@ class OrderStatusViewPage(TemplateView):
 
         context["order"] = FoodOrdersSerializer(order).data
 
+        return context
+
+
+class OutdoorOrderStatusViewPage(TemplateView):
+    template_name = "navs/order/outdoor_order_status.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        room_token = self.kwargs.get("room_token")
+        order_id = self.kwargs.get("order_id")
+        if room_token and order_id:
+            try:
+                order = OutdoorOrder.objects.get(order_id=order_id)
+            except OutdoorOrder.DoesNotExist:
+                raise Http404("Order does not exist.")
+        else:
+            raise Http404("Order does not exist.")
+
+        context['order'] = FoodOutdoorOrdersSerializer(order).data
         return context
 
 
