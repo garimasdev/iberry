@@ -223,7 +223,6 @@ class Complain(models.Model):
         # Update the updated_at field when the status changes
         if self.pk is not None:
             original_instance = Complain.objects.get(pk=self.pk)
-            telegram_notification(self.room.room_number, self.room.user.channel_name, self.room.room_token, request, "Complaint")
             if original_instance.status != self.status:
                 self.updated_at = datetime.now()
 

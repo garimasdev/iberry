@@ -1,5 +1,6 @@
 import json
 import os
+from urllib import request
 import uuid
 
 import firebase_admin
@@ -453,7 +454,10 @@ def PlaceOrderAPIView(request):
                     token=registration_token,
                 )
                 messaging.send(message)
-                telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Order")
+                # telegram notification for order received
+                order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foors/orders/?token={get_room.room_token}'
+                message = f'You have received the order from {get_room.room_number}. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                telegram_notification(get_room.user.channel_name, message)
 
                 return JsonResponse(
                     {
@@ -566,6 +570,9 @@ class ComplainCreateView(CreateView):
         else:
             raise Http404("Room does not exist.")
 
+        complaint_url = f'{self.request.scheme}://{self.request.get_host()}/store/{room.room_token}/complain/{self.object.complain_id}/'
+        message = f'You have received the complaint from {room.room_token}. View the complaint here: \n<a href="{complaint_url}">Click here</a>'
+        telegram_notification(room.user.channel_name, message)
         context["room_id"] = room.id
         return context
 
@@ -583,13 +590,14 @@ class ComplainDetailsView(TemplateView):
         context = super().get_context_data(**kwargs)
         room_token = self.kwargs.get("room_token")
         complain_id = self.kwargs.get("complain_id")
+        room  = Room.objects.get(room_token=room_token)
         if room_token and complain_id:
             try:
                 complain = Complain.objects.get(complain_id=complain_id)
             except Complain.DoesNotExist:
-                raise Http404("Complain does not exist.")
+                raise Http404("Complaint does not exist.")
         else:
-            raise Http404("Complain does not exist.")
+            raise Http404("Complaint does not exist.")
 
         context["complain"] = ComplainSerializer(complain).data
 
@@ -658,11 +666,11 @@ class ServiceOrderPlaceAPIView(APIView):
     def post(self, request, format=None):
         serializer = CustomOrderSerializer(data=request.data)
         if serializer.is_valid():
-            get_room = Room.objects.get(id=serializer.data["room"])
-            cart_items = ServiceCart.objects.filter(room=get_room)
+            room = Room.objects.get(id=serializer.data["room"])
+            cart_items = ServiceCart.objects.filter(room=room)
             if cart_items:
                 order_id = str(uuid.uuid4().int & (10**8 - 1))
-                order = ServiceOrder.objects.create(order_id=order_id, room=get_room)
+                order = ServiceOrder.objects.create(order_id=order_id, room=room)
                 order.save()
                 total_amount = 0
                 for cart in cart_items:
@@ -681,10 +689,10 @@ class ServiceOrderPlaceAPIView(APIView):
                 order.save()
                 cart_items.delete()
                 # Send push notification
-                # registration_token = get_room.user.firebase_token
-                # message = f'Order received from room number {get_room.room_number}'
+                # registration_token = room.user.firebase_token
+                # message = f'Order received from room number {room.room_number}'
                 # notification = messaging.Notification(
-                #     title=f'Order received from room number {get_room.room_number}',
+                #     title=f'Order received from room number {room.room_number}',
                 #     body=message,
                 # )
                 # message = messaging.Message(
@@ -692,11 +700,15 @@ class ServiceOrderPlaceAPIView(APIView):
                 #     token=registration_token,
                 # )
                 # messaging.send(message)
-                telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Service")
+
+                # telegram notification for service received 
+                service_url = f'{request.scheme}://{request.get_host()}/service_order_status/{room.room_token}/{order_id}/'
+                message = f'You have received the service from {room.room_token}. View the service here: \n<a href="{service_url}">Click here</a>'
+                telegram_notification(room.user.channel_name, message)
                 return Response(
                     {
                         "success": "Order has been Placed.",
-                        "room_id": get_room.room_token,
+                        "room_id": room.room_token,
                         "order_id": order_id,
                     },
                     status=status.HTTP_201_CREATED,
