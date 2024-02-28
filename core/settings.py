@@ -163,8 +163,8 @@ PUSH_NOTIFICATIONS_SETTINGS = {
 }
 
 TELEGRAM = {
-    # "bot_token": "6954115938:AAHSdZOJaCFz4qduUE3ppMBB7mHUVfYg8q8"
-    "bot_token": "6071425680:AAGWmXo37l0FdD415w8zxXdghbm_E8IvN44"
+    "bot_token": "6954115938:AAHSdZOJaCFz4qduUE3ppMBB7mHUVfYg8q8"
+    # "bot_token": "6071425680:AAGWmXo37l0FdD415w8zxXdghbm_E8IvN44"
 }
 
 # Internationalization
