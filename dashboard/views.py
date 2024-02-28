@@ -66,7 +66,6 @@ class DashboardViewPage(UserAccessMixin, TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
         context['total_rooms'] = Room.objects.filter(user=self.request.user).count()
         context['total_active_rooms'] = Room.objects.filter(user=self.request.user, status=True).count()
         context['total_in_active_rooms'] = context['total_rooms'] - context['total_active_rooms']
@@ -74,6 +73,7 @@ class DashboardViewPage(UserAccessMixin, TemplateView):
         context['total_orders'] = Order.objects.filter(room__user=self.request.user).count()
         context['completed_orders'] = Order.objects.filter(room__user=self.request.user, status=2).count()
         context['ordered_orders'] = Order.objects.filter(Q(room__user=self.request.user) & Q(status=0) | Q(status=1)).count()
+        context['outdoor_token'] = self.request.user.outdoor_token
         return context
     
 

@@ -33,10 +33,22 @@
                         <hr class="dropdown-divider">
                     </li>
                     <li>
+                        <a class="dropdown-item d-flex align-items-center" href="#" onclick="javascript:generate_outdoor_qr(this);" data-url="{{ request.scheme }}://{{ request.get_host }}/store/{{outdoor_token}}/">
+                            <i class="bi bi-eye"></i>
+                            <span>View MyQR</span>
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
                         <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
                             <i class="bi bi-key"></i>
                             <span>Change Password</span>
                         </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
                     </li>
                     <li>
                         <a class="dropdown-item d-flex align-items-center" href="/logout/">
@@ -70,6 +82,7 @@
     </div>
 </header>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="/static/vendor/qrcodejs/qrcode.js"></script>
 <script>
     $(document).ready(function() {
         $(".notification-icon-btn").click(function() {
@@ -116,4 +129,25 @@
             });
         });
     });
+
+    const generate_outdoor_qr = (e) => {
+        document.getElementById("outdoor_qrcode").innerHTML = "";
+        const outdoorqrcode = new QRCode(document.getElementById("outdoor_qrcode"), {
+            text: e.dataset.url,
+            width: 256,
+            height: 256,
+            colorDark: "#0d6efd",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+        document.getElementById("outdoorqrCodeOpener").click();
+        setTimeout(() => {
+            let qelem = document.querySelector('#outdoor_qrcode img');
+            let dlink = document.querySelector('#outdoorqrdl');
+            let qr = qelem.getAttribute('src');
+            dlink.setAttribute('href', qr);
+            dlink.setAttribute('download', 'outdoor_qrcode.png');
+        }, 500);
+    }
+
 </script>

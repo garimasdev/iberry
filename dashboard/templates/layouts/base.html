@@ -61,7 +61,7 @@
         <div class="modal-dialog" style="max-width: 500px;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="changePasswordModalLabel">Modal title</h1>
+                    <h1 class="modal-title fs-5" id="changePasswordModalLabel">Change Password</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -82,6 +82,25 @@
         </div>
     </div>
 
+    <!-- view outdoor token QR modal -->
+    <div class="modal fade" id="outdoorTokenModal" tabindex="-1" aria-labelledby="outdoorTokenModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 500px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="outdoorTokenModalLabel">Outdoor QR Code</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="outdoor_qrcode">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-success" onclick="javascript:window.print();"><i class="bi bi-printer-fill"></i> Print</button>
+                    <a class="btn btn-outline-primary" href="#" id="outdoorqrdl"><i class="bi bi-download"></i> Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- use to open outdoor qr code -->
+    <span id="outdoorqrCodeOpener" data-bs-toggle="modal" data-bs-target="#outdoorTokenModal" style="display: none;"></span>
 
     {% include 'includes/header.html' %} {% include 'includes/sidebar.html' %}
 
