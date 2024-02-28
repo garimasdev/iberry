@@ -97,11 +97,11 @@ $(document).ready(function() {
                     '</div>');
             },
             success: function(response) {
-                console.log("This data", response)
+                console.log(response);
                 $("#print-modal .modal-body .spinner-border").hide();
                 // Construct the HTML for table rows using a loop
                 var tableRows = '';
-                response.items.forEach(function(element) {
+                response.outdoor_orders.items.forEach(function(element) {
                     tableRows += '<tr>' +
                         '<td>' + element.item.title + '</td>' +
                         '<td>' + element.quantity + '</td>' +
@@ -114,8 +114,11 @@ $(document).ready(function() {
                     '<p class="lead">Order Voucher</p>' +
                     '<hr>' +
                     '<div class="row">' +
-                    '<div class="col-md-6">' +
-                    '<p><strong>Order ID:</strong> ' + response.order_id + '</p>' +
+                    '<div class="col-md-4">' +
+                    '<p><strong>Order ID:</strong> ' + response.outdoor_orders.order_id + '</p>' +
+                    '</div>' +
+                    '<div class="col-md-8">' +
+                    '<p><strong>Customer Name:</strong> ' + response.name + '</p>' +
                     '</div>' +
                     '</div>' +
                     '<table class="table">' +
@@ -129,8 +132,12 @@ $(document).ready(function() {
                     '    <tbody>' + tableRows +
                     '    </tbody>' +
                     '</table>' +
-                    '<p class="text-right"><strong>Total Price:</strong> ₹ ' + response.total_price + '</p>' +
-                    '<p class="text-right"><strong>Date:</strong> ' + response.created_at + '<strong></p>' +
+                    '<p class="text-right"><strong>Total Price:</strong> ₹ ' + response.outdoor_orders.total_price + '</p>' +
+                    '<p class="text-right"><strong>Mobile:</strong> ' + response.phone + '</p>' +
+                    '<p class="text-right"><strong>Email:</strong> ' + response.email + '</p>' +
+                    '<hr>' +
+                    '<p class="text-right"><strong>Address:</strong> ' + response.address + '</p>' +
+                    '<p class="text-right"><strong>Date:</strong> ' + response.outdoor_orders.created_at + '<strong></p>' +
                     '<hr>' +
                     '<p><em>Note: Thank you for your order!</em></p>' +
                     '</div>');

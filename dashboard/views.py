@@ -25,7 +25,7 @@ from django.http import HttpResponse
 from openpyxl.styles import Alignment
 from django.http import JsonResponse
 from django.urls import reverse_lazy
-from stores.models import Category, Item, OutdoorOrder, Order, Price, ServiceOrder, SubCategory
+from stores.models import Category, Item, OutdoorOrder, Order, Price, ServiceOrder, SubCategory, Temporary_Users
 from django_filters.views import FilterView
 from .filters import OrderFilter
 import openpyxl
@@ -414,6 +414,7 @@ class FoodsOutdoorOrdersViewPage(UserAccessMixin, ListView):
             object_list = self.model.objects.filter(user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
+
 class OrderExportPageView(UserAccessMixin, APIView):
     permission_required = 'stores.view_order'
     serializer_class = FoodOrdersSerializer
@@ -437,10 +438,17 @@ class OutdoorOrderExportPageView(UserAccessMixin, APIView):
     def post(self, request, pk):
         try:
             query = OutdoorOrder.objects.get(id=pk)
-            data = FoodOutdoorOrdersSerializer(query);
-            return Response(data=data.data)
-        except OutdoorOrder.DoesNotExist:
-            return Response(data={"error": "Invalid Format of data"}, status=status.HTTP_400_BAD_REQUEST)
+            data = FoodOutdoorOrdersSerializer(query)
+            user_detail = Temporary_Users.objects.get(custom_order_id=query.order_id)
+            return Response({
+                'outdoor_orders': data.data,
+                'name': user_detail.customer_name.capitalize(),
+                'email': user_detail.customer_email,
+                'phone': user_detail.customer_phone,
+                'address': user_detail.customer_address
+            })
+        except (OutdoorOrder.DoesNotExist, Temporary_Users.DoesNotExist):
+            return Response({"error": "Invalid Format of data"}, status=status.HTTP_400_BAD_REQUEST)
     
 
 """
