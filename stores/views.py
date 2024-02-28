@@ -2,6 +2,8 @@ import json
 import os
 import string
 import random
+import telegram
+from telegram import ParseMode
 from dashboard.models import Global
 import uuid
 import razorpay
@@ -802,8 +804,10 @@ class OutdoorOrderModelView(APIView):
                     token=get_room.firebase_token
                 )
                 messaging.send(message)
-                # telegram_notification(get_room.room_number, get_room.user.channel_name, get_room.room_token, request, "Order")
-
+                order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
+                message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                bot = telegram.Bot(token=settings.TELEGRAM['bot_token'])
+                bot.send_message(chat_id=f'@{get_room.channel_name}', text=message, parse_mode=ParseMode.HTML)
                 return Response(
                     {
                         "success": "Order has been Placed.",
