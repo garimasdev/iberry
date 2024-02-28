@@ -4,7 +4,7 @@ from django.contrib.auth.models import AnonymousUser
 from rest_framework import serializers
 from django.utils import dateparse
 from dashboard.models import Complain, ComplainType, Dialer, Extension, Global, Janus, Pbx, Room, Service
-from stores.models import Category, Item, Order, OrderItem, Price, ServiceOrder, ServiceOrderItem, SubCategory
+from stores.models import Category, Item, OutdoorOrder, Order, OrderItem, OutdoorOrderItem, Price, ServiceOrder, ServiceOrderItem, SubCategory
                 
 
 """
@@ -159,7 +159,13 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = '__all__'  # Specify the fields you want to include
 
-                
+
+class OutdoorOrderItemSerializer(serializers.ModelSerializer):
+    item = FoodItemsSerializer()
+
+    class Meta:
+        model = OutdoorOrderItem
+        fields = '__all__'  # Specify the fields you want to include
 
 class FoodOrdersSerializer(serializers.ModelSerializer):
     STATUS = (
@@ -181,6 +187,25 @@ class FoodOrdersSerializer(serializers.ModelSerializer):
         model = Order
         fields = '__all__'
 
+
+class FoodOutdoorOrdersSerializer(serializers.ModelSerializer):
+    STATUS = (
+        (0, "Ordered"),
+        (1, "Processing"),
+        (2, "Completed"),
+        (3, "Canceled"),
+    )
+
+    items = OutdoorOrderItemSerializer(many=True, read_only=True)
+    status = serializers.ChoiceField(choices=STATUS, source='get_status_display')
+    created_at = serializers.SerializerMethodField(read_only=True)
+    
+    def get_created_at(self, obj) -> str:
+        return dateparse.parse_datetime(str(obj.created_at))
+    
+    class Meta:
+        model = OutdoorOrder
+        fields = '__all__'
 
 
 """

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from stores.models import Cart, Category, Image, Item, Order, OrderItem, Price, ServiceCart, ServiceOrder, SubCategory
+from stores.models import Cart, OutdoorCart, OutdoorOrder, Category, Image, Item, Order, OrderItem, Price, ServiceCart, ServiceOrder, SubCategory, Temporary_Users
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
@@ -48,8 +48,11 @@ class SubCategoryAdmin(SubCategoryAdmin):
     
 admin.site.register(Image)
 admin.site.register(Cart)
+admin.site.register(OutdoorCart)
 admin.site.register(OrderItem)
 admin.site.register(Order)
+admin.site.register(Temporary_Users)
+admin.site.register(OutdoorOrder)
 admin.site.register(Price)
 admin.site.register(ServiceCart)
 admin.site.register(ServiceOrder)

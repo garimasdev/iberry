@@ -1,5 +1,4 @@
 from datetime import datetime
-import uuid
 from django.db import models
 # from django.contrib.auth.models import User
 from accounts.models import User
@@ -71,11 +70,43 @@ class Item(models.Model):
 
 class Image(models.Model):
     file = models.ImageField(upload_to='items/')
+
+
+class Temporary_Users(models.Model):
+    anonymous_user_id = models.CharField(max_length=80, null=True, blank=True, unique=True)
+    custom_order_id = models.CharField(max_length=80, null=True, blank=True)
+    razorpay_order_id = models.CharField(max_length=80, null=True, blank=True)
+    receipt = models.CharField(max_length=16, null=True, blank=True)
+    order_total = models.CharField(max_length=60, null=True, blank=True)
+    customer_name = models.CharField(max_length=60, null=True, blank=True)
+    customer_email = models.CharField(max_length=60, null=True, blank=True)
+    customer_phone = models.CharField(max_length=60, null=True, blank=True)
+    customer_address = models.TextField(null=True, blank=True)
+    class Meta:
+        db_table = 'temp_users'
+
+class OutdoorCart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    anonymous_user_id = models.CharField(max_length=80, null=True, blank=True)
+    price = models.IntegerField()
+    quantity = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+  
+    def placeOrder(self):
+        self.save()
+  
+    @staticmethod
+    def get_orders_by_customer(user):
+        return OutdoorCart.objects.filter(user=user).order_by('-created_at')
     
+    class Meta:
+        unique_together = ('user', 'item')
+        ordering = ['-created_at']
 
 
 class Cart(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, null=True, blank=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     price = models.IntegerField()
     quantity = models.IntegerField(default=1)
@@ -101,6 +132,12 @@ class OrderItem(models.Model):
     price = models.IntegerField(editable=False)
     quantity = models.PositiveSmallIntegerField()
     
+
+class OutdoorOrderItem(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='outdoor_order_items')
+    order = models.ForeignKey('OutdoorOrder', on_delete=models.CASCADE)
+    price = models.IntegerField(editable=False)
+    quantity = models.PositiveSmallIntegerField()
 
 
 class Order(models.Model):
@@ -139,6 +176,43 @@ class Order(models.Model):
                 self.updated_at = datetime.now()
 
         super(Order, self).save(*args, **kwargs)
+
+
+class OutdoorOrder(models.Model):
+    STATUS = (
+        (0, "Ordered"),
+        (1, "Processing"),
+        (2, "Completed"),
+        (3, "Canceled"),
+    )
+    order_id = models.CharField(max_length=8, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    items = models.ManyToManyField(OutdoorOrderItem, related_name='stores_outdoor_order_items')
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    status = models.SmallIntegerField(choices=STATUS, default=0)
+    note = models.CharField(max_length=250, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    @staticmethod
+    def has_read_permission(request):
+        return True
+    
+    @staticmethod
+    def has_write_permission(request):
+        return True
+    
+    class Meta:
+        ordering = ['-created_at']
+        
+    def save(self, *args, **kwargs):
+        # Update the updated_at field when the status changes
+        if self.pk is not None:
+            original_instance = OutdoorOrder.objects.get(pk=self.pk)
+            if original_instance.status != self.status:
+                self.updated_at = datetime.now()
+
+        super(OutdoorOrder, self).save(*args, **kwargs)
 
 
 

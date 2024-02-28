@@ -95,15 +95,13 @@
                                         <h5><b>Description: </b></h5>
                                         {{item.description}}
                                     </p>
-
-
                                 </div>
-
                             </div>
                         </div>
                         <div class="modal-footer">
                             {% if item.quantity >= 1 %}
-                            <button class="add-to-cart cart-btn" id="{{item.id}}" room_id="{{room_id}}" token="{{csrf_token}}">Add to Cart</button> {%endif%}
+                                <button class="add-to-cart cart-btn" id="{{item.id}}" room_id="{{room_id}}" token="{{csrf_token}}">Add to Cart</button> 
+                            {%endif%}
                         </div>
                     </div>
                 </div>
@@ -133,7 +131,6 @@
             {%endfor%}
         </ul>
         <button class="place-order" room_id="{{room_id}}"><span class="checkout">Checkout</span> <span class="total_price">₹ {{total_price}}</span></button>
-
     </aside>
 
     <!-- Floating Cart Bar-->

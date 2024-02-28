@@ -17,17 +17,17 @@ class UserAdmin(BaseUserAdmin):
     
     fieldsets = (
         (None, {'fields': ('username', 'name')}),
-        (_('Personal info'), {'fields': ('email', 'picture', 'address', 'channel_name')}),
+        (_('Personal info'), {'fields': ('email', 'picture', 'address', 'channel_name', 'outdoor_token')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions',)}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'name', 'password1', 'password2', 'channel_name', 'picture', 'is_staff',
+            'fields': ('email', 'name', 'password1', 'password2', 'channel_name', 'outdoor_token', 'picture', 'is_staff',
                        'is_superuser'),
         }),
     )
-    list_display = ('username', 'name', 'email', 'is_superuser', 'channel_name', 'firebase_token')
+    list_display = ('username', 'name', 'email', 'is_superuser', 'channel_name', 'outdoor_token', 'firebase_token')
     search_fields = ('username', 'email', 'name')
     ordering = ('created_at',)
     # readonly_fields = ('username',)

@@ -1,0 +1,36 @@
+{% extends "layouts/main_base.html" %} 
+
+{% block title %} Order Status-{{order.order_id}} {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/order/order_status.css">
+<link rel="stylesheet" href="/static/css/foods/cart.css"> 
+{% endblock stylesheets %} 
+
+{% block content %}
+
+<section class="main-section">
+    <div class="response"></div>
+    <div class="order-box">
+        <span class="time-box">
+            <i class="bi bi-clock-fill"></i>
+            {{order.created_at}}
+        </span>
+        <h5>Order Id: {{order.order_id}}</h5>
+        {%if order.status != 'Canceled'%}
+        <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%;height: 10px;">
+            <div class="progress-bar {%if order.status == 'Ordered'%}w-25{%elif order.status == 'Processing'%}w-50{%else%} w-100{%endif%}"></div>
+        </div>
+        {%endif%}
+        <p>{{order.status}} <br><br>Your order has been received.<br><br>Your order has been received and will be with you shortly.</p>
+    </div>
+    <!-- {{perms}}-->
+
+</section>
+{%endblock content%} 
+
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+<script src="/static/js/foods/foods.js"></script>
+{% endblock javascripts %}
