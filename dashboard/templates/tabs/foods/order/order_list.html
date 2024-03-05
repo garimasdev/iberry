@@ -67,19 +67,13 @@
                             </thead>
                             <tbody>
                                 {% for order in object_list %}
-                                if else for color change
-                                <!-- <tr style="background-color
-                                {% if order.status == 'ordered' %} lightblue;
-                                {% elif order.status == 'processing' %} lightgreen;
-                                {% elif order.status == 'completed' %} lightgray;
-                                {% elif order.status == 'cancelled' %} lightcoral;
-                                {% endif %}" class="order-{{order.id}}"> -->
-                                <tr style="background-color:
-                                {% if order.status == 'Ordered' %}  royalblue,
-                                {% elif order.status == 'Processing' %} goldenrod,
-                                {% elif order.status == 'Completed' %} forestgreen,
-                                {% elif order.status == 'Canceled' %} crimson,
-                                {% endif %}" class="order-{{ order.id }}">
+
+                                {% if order.status  == 'Ordered' %} <tr style='background-color: royalblue;' class="order-{{ order.id }}">
+                                    {%  elif order.status == 'Processing' %} <tr style='background-color: goldenrod;' class="order-{{ order.id }}">
+                                    {%  elif order.status == 'Completed' %} <tr style='background-color: forestgreen;' class="order-{{ order.id }}">
+                                    {%  else %} <tr style='background-color: crimson;' class="order-{{ order.id }}">
+                                {%endif%}
+
                                 <td scope="row">{{order.id}}</td>
                                 <td>{{order.order_id}}</td>
                                 <td>{{order.room.room_number}}</td>
