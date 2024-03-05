@@ -100,6 +100,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'iberry',
         'USER': 'root',
+        # 'PASSWORD': 'password123',
         'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '3306'
@@ -162,7 +163,8 @@ PUSH_NOTIFICATIONS_SETTINGS = {
 }
 
 TELEGRAM = {
-    "bot_token": "6954115938:AAHSdZOJaCFz4qduUE3ppMBB7mHUVfYg8q8"
+    # "bot_token": "6954115938:AAHSdZOJaCFz4qduUE3ppMBB7mHUVfYg8q8"
+    "bot_token": "6071425680:AAGWmXo37l0FdD415w8zxXdghbm_E8IvN44"
 }
 
 # Internationalization
@@ -212,3 +214,5 @@ CSRF_COOKIE_SAMESITE = 'Lax'  # Adjust as needed ('Lax', 'Strict', 'None')
 CSRF_TRUSTED_ORIGINS = ['https://iberry.caucasianbarrels.com', 'https://iberry.caucasianbarrels.com']
 
 
+RAZORPAY_CLIENT_ID= 'rzp_test_8ZwgsznY2VAfPP'
+RAZORPAY_CLIENT_SECRET= 'MOFA1TdFPjB9uPNztJrXnacB'

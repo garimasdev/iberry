@@ -56,6 +56,52 @@
 
 <body>
 
+    <!-- change password modal form -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 500px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="changePasswordModalLabel">Change Password</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new_password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm_password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="change_password_submit" token="{{csrf_token}}">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- view outdoor token QR modal -->
+    <div class="modal fade" id="outdoorTokenModal" tabindex="-1" aria-labelledby="outdoorTokenModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="max-width: 500px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="outdoorTokenModalLabel">Outdoor QR Code</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="outdoor_qrcode">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-success" onclick="javascript:window.print();"><i class="bi bi-printer-fill"></i> Print</button>
+                    <a class="btn btn-outline-primary" href="#" id="outdoorqrdl"><i class="bi bi-download"></i> Download</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- use to open outdoor qr code -->
+    <span id="outdoorqrCodeOpener" data-bs-toggle="modal" data-bs-target="#outdoorTokenModal" style="display: none;"></span>
+
     {% include 'includes/header.html' %} {% include 'includes/sidebar.html' %}
 
     <main class="content">

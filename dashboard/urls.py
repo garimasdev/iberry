@@ -11,9 +11,8 @@ app_name = 'dashboard'
 router.register(r'food/price', views.FoodPriceModelView, basename='food-price')
 urlpatterns = [
     path('', views.DashboardViewPage.as_view(), name="dashboard"),
-    # path('save/token',views.SaveToken.as_view(), name="fcm-token"),
+    path('user/change_password/', views.UserChangePassword, name="user-change-password"),
     path('save/token',views.savetoken, name="fcm-token"),
-    
     # room paths
     path('room/list/', views.RoomViewPage.as_view(), name="room-list"),
     path('room/add/', views.RoomCreateView.as_view(), name="room-add"),
@@ -39,6 +38,8 @@ urlpatterns = [
     path('foods/category/sub-category/delete/<int:pk>/', views.FoodsSubCategoryDeleteView.as_view(), name="foods-sub-category-delete"),
     path('foods/get_subcategories/', views.SubcategoryView.as_view(), name='get_subcategories'),
     
+    path('foods/outdoor-orders/', views.FoodsOutdoorOrdersViewPage.as_view(), name="foods-outdoor-orders"),
+    path('foods/outdoor-orders/<int:pk>/', views.OutdoorOrderExportPageView.as_view(), name="foods-outdoor-orders-print"),
     path('foors/orders/', views.FoodsOrdersViewPage.as_view(), name="foods-orders"),
     path('foors/orders/<int:pk>/', views.OrderExportPageView.as_view(), name="foods-orders-print"),
     # /dashboard/foods/category/add
@@ -92,7 +93,7 @@ urlpatterns = [
     path('configuration/janus/delete/<int:pk>/', views.JanusDeleteView.as_view(), name="janus-delete"),
     
     path('configuration/global/', views.GlobalViewPage.as_view(), name="global-list"),
-    path('configuration/global/<int:pk>/', views.GlobalUpdateAPIView.as_view(), name='global-update'),
+    # path('configuration/global/<pk>/', views.GlobalUpdateAPIView, name='global-update'),
     
     #Report Order
     path('reports/', views.OrderReportView.as_view(), name='order_report'),

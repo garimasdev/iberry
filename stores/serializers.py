@@ -1,9 +1,7 @@
-import uuid
-from django.contrib.auth import get_user_model
 from dashboard.models import Service
 from dashboard.serializers import FoodItemsSerializer, OrderRoomSerializer, PriceSerializer
 from rest_framework import serializers
-from stores.models import Cart, Item, Order, OrderItem, ServiceCart, ServiceOrder
+from stores.models import Cart, OutdoorCart, Item, Order, OutdoorOrder, OrderItem, OutdoorOrderItem, ServiceCart, ServiceOrder
 from django.utils import dateparse
                 
 
@@ -16,15 +14,22 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = '__all__'
 
+class OutdoorCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OutdoorCart
+        fields = '__all__'
 
 class CartItemSerializer(serializers.ModelSerializer):
     item = FoodItemsSerializer()
     class Meta:
         model = Cart
         fields = '__all__'
-        
 
-
+class OutdoorCartItemSerializer(serializers.ModelSerializer):
+    item = FoodItemsSerializer()
+    class Meta:
+        model = OutdoorCart
+        fields = '__all__'
 
 class OrderItemSerializer(serializers.ModelSerializer):
     # product_id = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all())
@@ -38,10 +43,24 @@ class OrderItemSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Quantity must be greater than zero.')
         return value
 
+
+class OutdoorOrderItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OutdoorOrderItem
+        fields = ('item', 'quantity')
+
+    def validate_quantity(self, value):
+        if value <= 0:
+            raise serializers.ValidationError('Quantity must be greater than zero.')
+        return value
+
+
 class CustomOrderSerializer(serializers.Serializer):
     room = serializers.IntegerField()
-    
-    
+
+class CustomOutdoorOrderSerializer(serializers.Serializer):
+    user = serializers.CharField(max_length=10)
+
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True)
     total_price = serializers.HiddenField(default=0)
@@ -49,8 +68,17 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('order_id', 'room', 'items', 'total_price')
- 
- 
+
+
+class OutdoorOrderSerializer(serializers.ModelSerializer):
+    items = OutdoorOrderItemSerializer(many=True)
+    total_price = serializers.HiddenField(default=0)
+    
+    class Meta:
+        model = OutdoorOrder
+        fields = ('order_id', 'user', 'items', 'total_price')
+
+
 class ItemSerializer(serializers.ModelSerializer):
     prices = PriceSerializer(many=True)   
     
@@ -64,7 +92,12 @@ class UpdateOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['status', 'note']
-        
+
+class UpdateOutdoorOrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OutdoorOrder
+        fields = ['status', 'note']
+
 
 """
 Service cart
