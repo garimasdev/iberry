@@ -68,10 +68,10 @@
                             <tbody>
                                 {% for order in object_list %}
 
-                                {% if order.status  == 'Ordered' %} <tr class="order-{{ order.id }} table-primary">
-                                    {%  elif order.status == 'Processing' %} <tr class="order-{{ order.id }} table-warning">
-                                    {%  elif order.status == 'Completed' %} <tr class="order-{{ order.id }} table-success">
-                                    {%  else %} <tr class="order-{{ order.id }} table-danger">
+                                {% if order.status  == 'Ordered' %} <tr class="order-{{ order.id }} bg-primary">
+                                    {%  elif order.status == 'Processing' %} <tr class="order-{{ order.id }} bg-warning">
+                                    {%  elif order.status == 'Completed' %} <tr class="order-{{ order.id }} bg-success">
+                                    {%  else %} <tr class="order-{{ order.id }} bg-danger">
                                 {%endif%}
 
                                 <td scope="row">{{order.id}}</td>
