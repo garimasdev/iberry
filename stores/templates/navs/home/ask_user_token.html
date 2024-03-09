@@ -43,7 +43,7 @@
             })
         };
         // Make the Fetch API call
-        url = `http://localhost:8000/validate/store/` + '{{room_token}}' + `/config`;
+        url = `{{request.scheme}}://{{request.get_host}}/validate/store/` + '{{room_token}}' + `/config`;
         fetch(url, fetchOptions)
             .then(response => {
                 if (!response.ok) {
