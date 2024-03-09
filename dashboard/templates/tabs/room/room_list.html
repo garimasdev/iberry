@@ -55,7 +55,7 @@
                                             <input class="form-check-input" type="checkbox" onclick="changeStatus(this)" data-token="{{room.auth_token}}" data-id="{{room.id}}" {%if room.status%}checked{%endif%}>
                                         </div>
                                     </td>
-                                    <td><a onclick="javascript:generate_qr(this);" data-url="{{ request.scheme }}://{{ request.get_host }}/store/{{room.room_token}}/"><i class="bi bi-columns-gap"></i></a></td>
+                                    <td><a onclick="javascript:generate_qr(this);" data-url="{{ request.scheme }}://{{ request.get_host }}/check/store/{{room.room_token}}/config"><i class="bi bi-columns-gap"></i></a></td>
                                     <td><a onclick="javascript:send_sms(this);" data-url="{{room.short_url}}" data-token="{{room.auth_token}}"><i class="bi bi-chat-left-dots-fill"></i></a></td>
                                     <td>
                                         <div class="dropdown">

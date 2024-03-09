@@ -1,0 +1,69 @@
+{% extends "layouts/new_main_base.html" %} 
+
+{% block title %} Enter Room config token {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="/static/css/modules/modules.css"> {% endblock stylesheets %}
+
+
+{% block content %}
+
+<section class="main-section">
+    <div class="modules">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mb-3">
+                    <label for="qr_token_config" class="form-label">Enter QR Token</label>
+                    <input type="email" class="form-control" id="qr_token_config">
+                </div>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" type="button" onclick="send_qrTokenConfig();">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{%endblock %} 
+
+{% block javascripts %} 
+<script>
+    document.getElementById('back_btn_basehtml').style.display = 'None';
+    function send_qrTokenConfig() {
+        const token_config_value = document.getElementById('qr_token_config').value.trim();
+        // Options for the Fetch API, including method, headers, and body
+        const fetchOptions = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Adjust the content type based on your API requirements
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify({
+                'qr_room_token': token_config_value
+            })
+        };
+        // Make the Fetch API call
+        url = `http://localhost:8000/validate/store/` + '{{room_token}}' + `/config`;
+        fetch(url, fetchOptions)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json(); // Assuming the response is in JSON format
+            })
+            .then(data => {
+                if (data.status === true) {
+                    window.location.href = data.uri;
+                } else {
+                    alert('you have entered wrong qr token');
+                    document.getElementById('qr_token_config').value = '';
+                }
+            })
+            .catch(error => {
+                alert('you have entered wrong qr token');
+                document.getElementById('qr_token_config').value = '';
+            });
+    }
+</script>
+
+{% endblock javascripts %}
