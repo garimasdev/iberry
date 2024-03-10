@@ -86,7 +86,12 @@
   </head>
 
   <body>
-    {% include 'includes/menu.html' %}
+    
+    {% if request.path == '/store/'|add:room_id|add:'/foods/outdoor_items/' %}
+      {% include 'includes/outdoor_menu.html' %}
+    {% else %}
+      {% include 'includes/menu.html' %}
+    {% endif %}
 
     <main class="content">
       {% include 'includes/sub_menu.html' %} {% block content %} {% endblock %}
