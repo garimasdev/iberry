@@ -1210,9 +1210,9 @@ def CheckConfigStoreToken(request, *args, **kwargs):
     if request.method == 'GET':
         try:
             room_token = kwargs.get('room_token')
-            global_conf = Global.objects.filter(user=request.user).first()
+            user = Room.objects.get(room_token=room_token).user
+            global_conf = Global.objects.filter(user=user).first()
             if global_conf.config_value == 'Y':
-                print('hi')
                 return render(request, 'navs/home/ask_user_token.html', {
                     'room_token': room_token
                 })
