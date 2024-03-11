@@ -4,7 +4,7 @@ import string
 from django.db.models import Count, Q
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView
 from django.contrib.auth.views import LoginView
@@ -85,7 +85,9 @@ def savetoken(request):
         user = User.objects.get(email=email)
         user.firebase_token = fcm_token
         user.save()
-        return JsonResponse("Token saved successfully")
+        return JsonResponse({
+            'message': "Token saved successfully"
+        })
 
 
 
@@ -636,8 +638,44 @@ class ExtensionCreateView(UserAccessMixin, CreateView):
         kwargs = super(ExtensionCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-    
-    
+
+
+def RegisterNewClient(request):
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body)
+            User.objects.create_user(username=payload['username'], email=payload['email'], password=payload['password'], channel_name=payload['teleChannel'])
+            print('hua na')
+            return JsonResponse({
+                'status': True
+            })
+        except:
+            import traceback
+            traceback.print_exc()
+            return JsonResponse({
+                'status': False
+            })
+
+
+def ChangeSetClientPassword(request):
+    if request.method == 'GET':
+        return render(request, 'tabs/extension/client_setchange_pass.html')
+
+def SetClientPassword(request):
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body)
+            user = User.objects.get(email=payload['email'])
+            user.set_password(payload['password'])
+            user.save()
+            return JsonResponse({
+                'status': True
+            })
+        except User.DoesNotExist:
+            return JsonResponse({
+                'status': False
+            })
+
 class ExtensionViewPage(UserAccessMixin, ListView):
     permission_required = 'dashboard.view_extension'
     template_name = "tabs/extension/extension_list.html"

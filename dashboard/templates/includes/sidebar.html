@@ -138,6 +138,15 @@
                 </li>
             </ul>
         </li>
+
+        {% if request.user.is_superuser == True %}
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="/dashboard/change/client/password">
+                    <i class="bi bi-puzzle"></i>
+                    <span>Set Client Password</span>
+                </a>
+            </li>
+        {% endif %}
         <!-- End Icons Nav -->
     </ul>
 

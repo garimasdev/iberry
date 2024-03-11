@@ -77,6 +77,9 @@ urlpatterns = [
     
     path('extension/', views.ExtensionViewPage.as_view(), name="extension-list"),
     path('extension/add/', views.ExtensionCreateView.as_view(), name="extension-add"),
+    path('change/client/password', views.ChangeSetClientPassword, name="Change_Set_Client_Password"),
+    path('register/new/client', views.RegisterNewClient, name="Register_NewClient"),
+    path('set/client/password', views.SetClientPassword, name="Set_Client_Password"),
     path('extension/update/<int:pk>/', views.ExtensionUpdateView.as_view(), name="extension-update"),
     path('extension/delete/<int:pk>/', views.ExtensionDeleteAPIView.as_view(), name="extension-delete"),
     
