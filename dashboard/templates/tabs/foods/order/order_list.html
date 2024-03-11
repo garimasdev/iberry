@@ -186,7 +186,7 @@
     // Function to check for new orders
     function checkForNewOrders() {
         $.ajax({
-            url: '/path/to/your/check/orders/endpoint', // Specify the endpoint to check for new orders
+            url: 'https://qr.nukadscan.com/dashboard/foors/orders/',
             type: 'GET',
             success: function(response) {
                 if (response.newOrders) {
@@ -198,6 +198,6 @@
     }
 
     // Call the function every 5 seconds to check for new orders
-    setInterval(checkForNewOrders, 5000);
+    setInterval(checkForNewOrders, 10000);
 </script>
 {% endblock javascripts %}
