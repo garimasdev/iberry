@@ -85,7 +85,9 @@ def savetoken(request):
         user = User.objects.get(email=email)
         user.firebase_token = fcm_token
         user.save()
-        return JsonResponse("Token saved successfully")
+        return JsonResponse({
+            'message': "Token saved successfully"
+        })
 
 
 
