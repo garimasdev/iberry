@@ -68,10 +68,10 @@
                             <tbody>
                                 {% for order in object_list %}
 
-                                {% if order.status  == 'Ordered' %} <tr class="order-{{ order.id }} bg-primary">
-                                    {%  elif order.status == 'Processing' %} <tr class="order-{{ order.id }} bg-warning">
-                                    {%  elif order.status == 'Completed' %} <tr class="order-{{ order.id }} bg-success">
-                                    {%  else %} <tr class="order-{{ order.id }} bg-danger">
+                                {% if order.status  == 'Ordered' %} <tr class="order-{{ order.id }} table-primary">
+                                    {%  elif order.status == 'Processing' %} <tr class="order-{{ order.id }} table-warning">
+                                    {%  elif order.status == 'Completed' %} <tr class="order-{{ order.id }} table-success">
+                                    {%  else %} <tr class="order-{{ order.id }} table-danger">
                                 {%endif%}
 
                                 <td scope="row">{{order.id}}</td>
@@ -176,4 +176,28 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.min.js"></script>
 <script src="/static/js/dashboard/order.js"></script>
+<!-- <script>
+    // Auto-refresh the page every 5 seconds
+    setInterval(function () {
+        location.reload();
+    }, 5000);
+</script> -->
+<script>
+    // Function to check for new orders
+    function checkForNewOrders() {
+        $.ajax({
+            url: '/path/to/your/check/orders/endpoint', // Specify the endpoint to check for new orders
+            type: 'GET',
+            success: function(response) {
+                if (response.newOrders) {
+                    // Reload the page if new orders are detected
+                    location.reload();
+                }
+            }
+        });
+    }
+
+    // Call the function every 5 seconds to check for new orders
+    setInterval(checkForNewOrders, 5000);
+</script>
 {% endblock javascripts %}
