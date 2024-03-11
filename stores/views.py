@@ -1204,3 +1204,39 @@ def GlobalUpdateAPIView(request):
             return JsonResponse({
                 'status': False
             })
+
+
+def CheckConfigStoreToken(request, *args, **kwargs):
+    if request.method == 'GET':
+        try:
+            room_token = kwargs.get('room_token')
+            global_conf = Global.objects.filter(user=request.user).first()
+            if global_conf.config_value == 'Y':
+                print('hi')
+                return render(request, 'navs/home/ask_user_token.html', {
+                    'room_token': room_token
+                })
+            else:
+                return redirect(reverse('stores:my_url', kwargs={
+                    'room_token': room_token
+                }))
+        except:
+            import traceback
+            traceback.print_exc()
+
+class ValidateConfigStoreToken(APIView):
+
+    def post(self, request, **kwargs):
+        try:
+            room_token = kwargs.get('room_token')
+            qr_room_token = request.data['qr_room_token']
+            Room.objects.get(room_token=room_token, auth_token=qr_room_token)
+            return Response({
+                'status': True,
+                'uri': f'{request.scheme}://{request.get_host()}/store/{room_token}/'
+            })
+        except Room.DoesNotExist:
+            return Response({
+                'status': False
+            })
+

@@ -1,0 +1,24 @@
+<link rel="stylesheet" type="text/css" href="/static/css/includes/menu.css" />
+<nav id="header" class="header fixed-top d-flex align-items-center">
+  <div
+    class="d-flex align-items-center justify-content-between menu-first-part"
+  >
+    <a href="/" class="logo d-flex align-items-center">
+      <img src="/media/img/logo.png" alt="" />
+      <span class="d-none d-lg-block menu-title">Iberry</span>
+    </a>
+    <!-- <form action="" method="get" class="search-box">
+      {% csrf_token %}
+      <i class="bi bi-search"></i>
+      <input type="text" class="search-text" name="q" placeholder="Search" />
+    </form> -->
+  </div>
+  <!-- End Logo -->
+
+  <ul class="cart-list menu-list d-flex align-items-center">
+    <li class="cart-icon">
+      <i class="bi bi-bag"></i>
+      <span id="cart-badge">{{cart_count}}</span>
+    </li>
+  </ul>
+</nav>

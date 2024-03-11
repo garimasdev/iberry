@@ -1,7 +1,7 @@
 <link rel="stylesheet" type="text/css" href="/static/css/includes/sub_menu.css">
 <div class="top-back-and-types">
     {%if '/store/'|add:room_number|add:'/' != request.path %}
-    <button type="button" onclick="history.back()" class="back-btn"><i class="bi bi-arrow-left-short"></i> <span>Back</span></button>
+    <button id="back_btn_basehtml" type="button" onclick="history.back()" class="back-btn"><i class="bi bi-arrow-left-short"></i> <span >Back</span></button>
     <!--another button-->
     {%if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/bar/' in request.path%} {% with request.GET.urlencode as current_params %}
     <ul class="item-types">

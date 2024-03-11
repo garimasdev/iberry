@@ -47,4 +47,7 @@ urlpatterns = [
     path('service-order/', views.ServiceOrderPlaceAPIView.as_view(), name="service-order-place"),
     path('service_order_status/<str:room_token>/<str:order_id>/', views.ServiceOrderStatusViewPage.as_view(), name="order_status"),
     path('configuration/global', views.GlobalUpdateAPIView, name='global-update'),
+    path('check/store/<room_token>/config', views.CheckConfigStoreToken, name='check-config-store'),
+    path('validate/store/<room_token>/config', views.ValidateConfigStoreToken.as_view(), name='validate-config-store'),
+
 ]+ router.urls
