@@ -176,4 +176,10 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.min.js"></script>
 <script src="/static/js/dashboard/order.js"></script>
+<script>
+    // Auto-refresh the page every 5 seconds
+    setInterval(function () {
+        location.reload();
+    }, 5000);
+</script>
 {% endblock javascripts %}
