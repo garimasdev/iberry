@@ -865,7 +865,7 @@ def PlaceOrderAPIView(request):
                     )
                     messaging.send(message)
                     # telegram notification for order received
-                    order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foors/orders/?token={get_room.room_token}'
+                    order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foors/orders/?token={get_room.room_token}&serialid={order.id}'
                     message = f'You have received the order from {get_room.room_number}. View the order list here: \n<a href="{order_list_url}">Click here</a>'
                     telegram_notification(get_room.user.channel_name, message)
                     return JsonResponse(

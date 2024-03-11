@@ -87,7 +87,7 @@
                                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"> Action </button>
                                     <ul class="dropdown-menu">
                                         <li>
-                                        <a class="dropdown-item view-order" href="#update-modal-{{order.id}}" data-bs-toggle="modal">View or Update</a>
+                                        <a class="dropdown-item view-order" href="#update-modal-{{order.id}}" id="update-modal-{{order.id}}" data-bs-toggle="modal">View or Update</a>
                                         </li>
                                         <li>
                                         <a class="dropdown-item print-order-btn" href="#print-modal" id="{{order.id}}" token="{{csrf_token}}" data-bs-toggle="modal">Print Order</a>
@@ -199,5 +199,10 @@
 
     // Call the function every 5 seconds to check for new orders
     setInterval(checkForNewOrders, 10000);
+
+    const serial_id = '{{serialid}}';
+    if (serial_id !== '' && serial_id !== null) {
+        document.getElementById('update-modal-{{serialid}}').click();
+    }
 </script>
 {% endblock javascripts %}

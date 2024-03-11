@@ -388,6 +388,7 @@ class FoodsOrdersViewPage(UserAccessMixin, ListView):
 
     def get_queryset(self):
         q = self.request.GET.get('q')
+        serialid = self.request.GET.get('serialid')
         if q:
             object_list = self.model.objects.filter(
                 Q(name__icontains=q) | Q(email__icontains=q) | Q(user_type__icontains=q) | Q(user_id__icontains=q)
@@ -395,7 +396,11 @@ class FoodsOrdersViewPage(UserAccessMixin, ListView):
         else:
             get_rooms = Room.objects.filter(user=self.request.user)
             object_list = self.model.objects.filter(room__in=get_rooms)
-        return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+        
+        context_dict = {'request': self.request}
+        if serialid is not None:
+            context_dict['serialid'] = serialid
+        return self.serializer_class(object_list, context=context_dict, many=True).data
 
 
 class FoodsOutdoorOrdersViewPage(UserAccessMixin, ListView):
