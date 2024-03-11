@@ -1,0 +1,136 @@
+{% extends "layouts/base.html" %} {% block title %} Add New Extension {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+
+<main id="main" class="main">
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Create New User</h5>
+            <div class="mb-3">
+                <label for="new_client_email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="new_client_email">
+              </div>
+              <div class="mb-3">
+                <label for="new_client_username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="new_client_username">
+              </div>
+              <div class="mb-3">
+                <label for="tele_channel" class="form-label">Telegram Channel Name</label>
+                <input type="text" class="form-control" id="tele_channel">
+              </div>
+              <div class="mb-3">
+                <label for="new_client_pass" class="form-label">Password</label>
+                <input type="password" class="form-control" id="new_client_pass">
+              </div>
+              <button type="submit" class="btn btn-primary" onclick="newClient();">Submit</button>
+        </div>
+    </div>
+    <hr>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Change Client Password</h5>
+            <div class="mb-3">
+                <label for="client_email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="client_email">
+              </div>
+              <div class="mb-3">
+                <label for="client_pass" class="form-label">Password</label>
+                <input type="password" class="form-control" id="client_pass">
+              </div>
+              <button type="submit" class="btn btn-primary" onclick="submitForm();">Submit</button>
+        </div>
+    </div>
+</main>
+<!-- End #main -->
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+    function submitForm() {
+        // Get values from input fields
+        var email = document.getElementById('client_email').value.trim();
+        var password = document.getElementById('client_pass').value.trim();
+
+        // Create an object with the data
+        var data = {
+            email: email,
+            password: password
+        };
+
+        // Make a fetch request to your server
+        fetch('/dashboard/set/client/password', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === true) {
+                alert('Password changed successfully.');
+            } else {
+                alert('Password not changed.');
+            }
+            alert('Password changed successfully.');
+            window.location.reload();
+            // Handle success response from the server
+        })
+        .catch((error) => {
+            alert('Password not changed.');
+            window.location.reload();
+            // Handle error
+        });
+    }
+
+    function newClient() {
+        // Get values from input fields
+        var email = document.getElementById('new_client_email').value.trim();
+        var username = document.getElementById('new_client_username').value.trim();
+        var teleChannel = document.getElementById('tele_channel').value.trim();
+        var password = document.getElementById('new_client_pass').value.trim();
+
+        // Create an object with the data
+        var data = {
+            email: email,
+            username: username,
+            teleChannel: teleChannel,
+            password: password
+        };
+
+        // Make a fetch request to your server
+        fetch('/dashboard/register/new/client', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.status === true) {
+                alert('new user created');
+            } else {
+                alert('new user does not created');
+            }
+            window.location.reload();
+            // Handle success response from the server
+        })
+        .catch((error) => {
+            alert('new user does not created');
+            // Handle error
+            window.location.reload();
+        });
+    }
+
+
+
+</script>
+
+
+{% endblock javascripts %}
