@@ -398,8 +398,6 @@ class FoodsOrdersViewPage(UserAccessMixin, ListView):
             object_list = self.model.objects.filter(room__in=get_rooms)
         
         context_dict = {'request': self.request}
-        if serialid is not None:
-            context_dict['serialid'] = serialid
         return self.serializer_class(object_list, context=context_dict, many=True).data
 
 
