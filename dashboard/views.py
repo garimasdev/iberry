@@ -176,7 +176,9 @@ class SendSMSAPIView(APIView):
         unicode = 'false'
         message_type = 'text'
         sms_text = urllib.parse.quote(sms_text)
+        sms_text = 'Click'
         url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username={settings.SMS_USERNAME}&password={settings.SMS_PASSWORD}&unicode={unicode}&from={settings.SMS_FROM}&to={sms_to}&dltPrincipalEntityId={settings.SMS_DLT_PRINCIPAL_ID}&dltContentId={settings.SMS_DLT_CONTENT_ID}&text={sms_text}"
+        # url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username=iberrtrpg.trans&password=atwFc&unicode=false&from=IBWIFI&to=9855021117&dltPrincipalEntityId=1301160933730426574&dltContentId=1307168136868522350&text=Click"
         
 
         try:
