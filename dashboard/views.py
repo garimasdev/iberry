@@ -8,6 +8,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.models import Group
 from accounts.models import User
 # from dashboard.serializers import AdmissionsSerializer
 from rest_framework.views import APIView
@@ -647,14 +648,14 @@ def RegisterNewClient(request):
     if request.method == 'POST':
         try:
             payload = json.loads(request.body)
-            User.objects.create_user(username=payload['username'], email=payload['email'], password=payload['password'], channel_name=payload['teleChannel'])
-            print('hua na')
+            user = User.objects.create_user(username=payload['username'], email=payload['email'], password=payload['password'], channel_name=payload['teleChannel'])
+            group = Group.objects.get(name='All Permission')
+            user.groups.add(group)
+            user.save()
             return JsonResponse({
                 'status': True
             })
         except:
-            import traceback
-            traceback.print_exc()
             return JsonResponse({
                 'status': False
             })
