@@ -282,10 +282,10 @@
     function codOrderPayment() {
         // Handle Cash On Delivery logic
         const roomId = '{{room_id}}';
-        const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        // const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
         $.ajax({
             headers: {
-                'X-CSRFToken': token,
+                'X-CSRFToken': '{{csrf_token}}',
             },
             type: 'POST',
             url: '/outdoor-order/',
