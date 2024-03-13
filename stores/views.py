@@ -459,6 +459,10 @@ def paymentCheckoutSuccess(request):
                         token=get_room.firebase_token
                     )
                     messaging.send(message)
+                    # telegram notification for order received
+                    order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
+                    message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                    telegram_notification(get_room.channel_name, message)                    
                     return redirect(reverse('stores:outdoor_order_status', kwargs={
                         'room_token': request.GET.get('token'),
                         'order_id': order_id
