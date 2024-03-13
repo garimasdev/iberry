@@ -408,7 +408,7 @@ def paymentCheckout(request):
             'email': temp_user.customer_email,
             'name': temp_user.customer_name,
             # 'picture': user.picture.url,
-            'company_name': user.name.capitalize(),
+            # 'company_name': user.name.capitalize(),
             'user_id': anonymous_user_id,
             'user_token': user_token
         })
