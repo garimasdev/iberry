@@ -182,15 +182,18 @@ class SendSMSAPIView(APIView):
         # url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username=iberrtrpg.trans&password=atwFc&unicode=false&from=IBWIFI&to=9855021117&dltPrincipalEntityId=1301160933730426574&dltContentId=1307168136868522350&text=Click"
         
 
+        import requests
         try:
-            with urlopen(url_sms) as response:
-                sms_return = json.loads(response.read())
-                if sms_return['state'] == "SUBMIT_ACCEPTED":
-                    return JsonResponse({"status": "SUCCESS", "msg": f"SMS has been sent successfully to {sms_to}.", "response": sms_return})
-                else:
-                    return JsonResponse({"status": "ERROR", "msg": "Failed to send SMS.", "response": sms_return})
+            resp = requests.get(url_sms)
+            sms_return = resp.json()
+            if sms_return['state'] == "SUBMIT_ACCEPTED":
+                return Response({"status": "SUCCESS", "msg": f"SMS has been sent successfully to {sms_to}.", "response": sms_return})
+            else:
+                return Response({"status": "ERROR", "msg": "Failed to send SMS.", "response": sms_return})
         except Exception as e:
-            return JsonResponse({"status": "ERROR", "msg": f"Failed to send SMS: {str(e)}"})
+            import traceback
+            traceback.print_exc()
+            return Response({"status": "ERROR", "msg": f"Failed to send SMS: {str(e)}"})
 
 
 """
