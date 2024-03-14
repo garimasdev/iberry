@@ -182,10 +182,12 @@ class SendSMSAPIView(APIView):
         # url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username=iberrtrpg.trans&password=atwFc&unicode=false&from=IBWIFI&to=9855021117&dltPrincipalEntityId=1301160933730426574&dltContentId=1307168136868522350&text=Click"
         
 
+        urlopen(url_sms)
         import requests
         # try:
         resp = requests.get(url_sms)
         sms_return = resp.json()
+        
         if sms_return['state'] == "SUBMIT_ACCEPTED":
             return Response({"status": "SUCCESS", "msg": f"SMS has been sent successfully to {sms_to}.", "response": sms_return})
         else:
