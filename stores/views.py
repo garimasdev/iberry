@@ -1036,6 +1036,7 @@ class ComplainDetailsView(TemplateView):
             print("if case")
             try:
                 print("try")
+
                 complain = Complain.objects.get(complain_id=complain_id, status=0, room__room_token=room_token)
                 print("try case complain")
             except Complain.DoesNotExist:
@@ -1046,7 +1047,7 @@ class ComplainDetailsView(TemplateView):
             raise Http404("Complaint does not exist.")
         
         print("complaint generated")
-        complaint_url = f'{self.request.scheme}://{self.request.get_host()}/store/{room_token}/complain/{complain_id}/'
+        complaint_url = f'{self.request.scheme}://{self.request.get_host()}/dashboard/complaints/'
         print(complaint_url)
         message = f'You have received the complaint from {room_token}. View the complaint here: \n<a href="{complaint_url}">Click here</a>'
         print(message)
