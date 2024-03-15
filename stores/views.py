@@ -1157,7 +1157,7 @@ class ServiceOrderPlaceAPIView(APIView):
                 # messaging.send(message)
 
                 # telegram notification for service received 
-                service_url = f'{request.scheme}://{request.get_host()}/service_order_status/{room.room_token}/{order_id}/'
+                service_url = f'{request.scheme}://{request.get_host()}/dashboard/services/orders/'
                 message = f'You have received the service from {room.room_token}. View the service here: \n<a href="{service_url}">Click here</a>'
                 telegram_notification(room.user.channel_name, message)
                 return Response(
