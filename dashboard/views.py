@@ -8,6 +8,7 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.generic import ListView, TemplateView, UpdateView, DeleteView, CreateView
 from django.contrib.auth.views import LoginView
+from django.contrib.auth.models import Group
 from accounts.models import User
 # from dashboard.serializers import AdmissionsSerializer
 from rest_framework.views import APIView
@@ -161,6 +162,7 @@ class RoomViewPage(UserAccessMixin, ListView):
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
 
+from urllib.parse import quote
 
 class SendSMSAPIView(APIView):
     def post(self, request):
@@ -173,23 +175,28 @@ class SendSMSAPIView(APIView):
         if not sms_text:
             return JsonResponse({"status": "ERROR", "msg": "SMS Content is required."})
 
-        unicode = 'false'
-        message_type = 'text'
-        sms_text = urllib.parse.quote(sms_text)
-        sms_text = 'Click'
-        url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username={settings.SMS_USERNAME}&password={settings.SMS_PASSWORD}&unicode={unicode}&from={settings.SMS_FROM}&to={sms_to}&dltPrincipalEntityId={settings.SMS_DLT_PRINCIPAL_ID}&dltContentId={settings.SMS_DLT_CONTENT_ID}&text={sms_text}"
+        # unicode = 'false'
+        sms_text = quote(sms_text.replace('https://', ''))
+        url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username=iberrtrpg.trans&password=atwFc&unicode=false&from=IBWIFI&to={sms_to}&dltPrincipalEntityId=1301160933730426574&dltContentId=1307168136868522350&text={sms_text}"
+        print(url_sms)
         # url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username=iberrtrpg.trans&password=atwFc&unicode=false&from=IBWIFI&to=9855021117&dltPrincipalEntityId=1301160933730426574&dltContentId=1307168136868522350&text=Click"
         
 
-        try:
-            with urlopen(url_sms) as response:
-                sms_return = json.loads(response.read())
-                if sms_return['state'] == "SUBMIT_ACCEPTED":
-                    return JsonResponse({"status": "SUCCESS", "msg": f"SMS has been sent successfully to {sms_to}.", "response": sms_return})
-                else:
-                    return JsonResponse({"status": "ERROR", "msg": "Failed to send SMS.", "response": sms_return})
-        except Exception as e:
-            return JsonResponse({"status": "ERROR", "msg": f"Failed to send SMS: {str(e)}"})
+        urlopen(url_sms)
+        print('hii')
+        import requests
+        # try:
+        resp = requests.get(url_sms)
+        sms_return = resp.json()
+        
+        if sms_return['state'] == "SUBMIT_ACCEPTED":
+            return Response({"status": "SUCCESS", "msg": f"SMS has been sent successfully to {sms_to}.", "response": sms_return})
+        else:
+            return Response({"status": "ERROR", "msg": "Failed to send SMS.", "response": sms_return})
+        # except Exception as e:
+        #     import traceback
+        #     traceback.print_exc()
+        #     return Response({"status": "ERROR", "msg": f"Failed to send SMS: {str(e)}"})
 
 
 """
@@ -649,14 +656,14 @@ def RegisterNewClient(request):
     if request.method == 'POST':
         try:
             payload = json.loads(request.body)
-            User.objects.create_user(username=payload['username'], email=payload['email'], password=payload['password'], channel_name=payload['teleChannel'])
-            print('hua na')
+            user = User.objects.create_user(username=payload['username'], email=payload['email'], password=payload['password'], channel_name=payload['teleChannel'])
+            group = Group.objects.get(name='All Permission')
+            user.groups.add(group)
+            user.save()
             return JsonResponse({
                 'status': True
             })
         except:
-            import traceback
-            traceback.print_exc()
             return JsonResponse({
                 'status': False
             })
