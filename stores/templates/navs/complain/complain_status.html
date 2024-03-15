@@ -12,7 +12,7 @@
             <i class="bi bi-clock-fill"></i>
             {{complain.created_at}}
         </span>
-        <h5>Complain Id: {{complain.complain_id}}</h5>
+        <h5>Complain Id: {{complain.id}}</h5>
         {%if complain.status != 'Canceled'%}
         <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%;height: 10px;">
             <div class="progress-bar {%if complain.status == 'Complained'%}w-25{%elif complain.status == 'Processing'%}w-50{%else%} w-100{%endif%}"></div>
