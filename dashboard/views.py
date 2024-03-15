@@ -162,7 +162,7 @@ class RoomViewPage(UserAccessMixin, ListView):
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
 
-from urllib.parse import urlencode, quote
+from urllib.parse import quote
 
 class SendSMSAPIView(APIView):
     def post(self, request):
@@ -175,14 +175,15 @@ class SendSMSAPIView(APIView):
         if not sms_text:
             return JsonResponse({"status": "ERROR", "msg": "SMS Content is required."})
 
-        unicode = 'false'
-        sms_text = quote(sms_text)
-        url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username={settings.SMS_USERNAME}&password={settings.SMS_PASSWORD}&unicode={unicode}&from={settings.SMS_FROM}&to={sms_to}&dltPrincipalEntityId={settings.SMS_DLT_PRINCIPAL_ID}&dltContentId={settings.SMS_DLT_CONTENT_ID}&text={sms_text}"
+        # unicode = 'false'
+        sms_text = quote(sms_text.replace('https://', ''))
+        url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username=iberrtrpg.trans&password=atwFc&unicode=false&from=IBWIFI&to={sms_to}&dltPrincipalEntityId=1301160933730426574&dltContentId=1307168136868522350&text={sms_text}"
         print(url_sms)
         # url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username=iberrtrpg.trans&password=atwFc&unicode=false&from=IBWIFI&to=9855021117&dltPrincipalEntityId=1301160933730426574&dltContentId=1307168136868522350&text=Click"
         
 
         urlopen(url_sms)
+        print('hii')
         import requests
         # try:
         resp = requests.get(url_sms)
