@@ -2,12 +2,10 @@ import json
 import os
 import string
 import random
-import telegram
-from telegram import ParseMode
 from dashboard.models import Global
 import uuid
-import razorpay
 
+import razorpay
 from accounts.models import User
 from django.shortcuts import render
 import firebase_admin
@@ -43,7 +41,6 @@ from dashboard.serializers import (
     PhoneDialerSerializer,
     ServiceSerializer,
 )
-from notification.helpers import telegram_notification
 from stores.models import (
     Cart,
     Temporary_Users,
@@ -78,6 +75,15 @@ from stores.serializers import (
     UpdateOrderSerializer,
     UpdateOutdoorOrderSerializer
 )
+
+
+import sys
+if sys.platform == 'linux':
+    import telegram
+    from telegram import ParseMode
+
+from notification.helpers import telegram_notification
+
 
 credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
 # Initialize Firebase Admin SDK
@@ -992,6 +998,7 @@ class ComplainCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # complain_id = self.kwargs.get("complain_id")
         pk = self.kwargs.get("room_token")
         if pk:
             try:
@@ -1001,9 +1008,6 @@ class ComplainCreateView(CreateView):
         else:
             raise Http404("Room does not exist.")
 
-        complaint_url = f'{self.request.scheme}://{self.request.get_host()}/store/{room.room_token}/complain/{self.object.complain_id}/'
-        message = f'You have received the complaint from {room.room_token}. View the complaint here: \n<a href="{complaint_url}">Click here</a>'
-        telegram_notification(room.user.channel_name, message)
         context["room_id"] = room.id
         return context
 
@@ -1020,15 +1024,30 @@ class ComplainDetailsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         room_token = self.kwargs.get("room_token")
+        print(room_token)
         complain_id = self.kwargs.get("complain_id")
+        print(complain_id)
         room  = Room.objects.get(room_token=room_token)
         if room_token and complain_id:
+            print("if case")
             try:
-                complain = Complain.objects.get(complain_id=complain_id)
+                print("try")
+                complain = Complain.objects.get(complain_id=complain_id, status=0, room__room_token=room_token)
+                print("try case complain")
             except Complain.DoesNotExist:
+                print("exception")
                 raise Http404("Complaint does not exist.")
         else:
+            print("else case")
             raise Http404("Complaint does not exist.")
+        
+        print("complaint generated")
+        complaint_url = f'{self.request.scheme}://{self.request.get_host()}/store/{room_token}/complain/{complain_id}/'
+        print(complaint_url)
+        message = f'You have received the complaint from {room_token}. View the complaint here: \n<a href="{complaint_url}">Click here</a>'
+        print(message)
+        telegram_notification(room.user.channel_name, message)
+
 
         context["complain"] = ComplainSerializer(complain).data
 
