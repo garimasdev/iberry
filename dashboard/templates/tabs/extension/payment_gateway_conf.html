@@ -1,0 +1,64 @@
+{% extends "layouts/base.html" %} {% block title %} Add New Extension {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+
+<main id="main" class="main">
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Razorpay Configuration</h5>
+            <div class="mb-3">
+                <label for="razorpay_client_id" class="form-label">Razorpay Client ID</label>
+                <input type="text" class="form-control" id="razorpay_client_id">
+              </div>
+              <div class="mb-3">
+                <label for="razorpay_client_secret" class="form-label">Razorpay Client Secret</label>
+                <input type="text" class="form-control" id="razorpay_client_secret">
+              </div>
+              <button type="submit" class="btn btn-primary" onclick="createRazorpayConfigurations();">Submit</button>
+        </div>
+    </div>
+</main>
+<!-- End #main -->
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+    function createRazorpayConfigurations() {
+        // Get values from input fields
+        var razorpay_client_id = document.getElementById('razorpay_client_id').value.trim();
+        var razorpay_client_secret = document.getElementById('razorpay_client_secret').value.trim();
+        // Create an object with the data
+        var data = {
+            razorpay_client_id: razorpay_client_id,
+            razorpay_client_secret: razorpay_client_secret
+        };
+
+        // Make a fetch request to your server
+        fetch('/dashboard/save/payment_gateway/configuration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === true) {
+                alert('Payment gateway configuration saved successfully.');
+            } else {
+                alert('Payment gateway configuration not saved.');
+            }
+            window.location.reload();
+        })
+        .catch((error) => {
+            alert('Payment gateway configuration not saved.');
+            window.location.reload();
+        });
+    }
+
+</script>
+
+{% endblock javascripts %}

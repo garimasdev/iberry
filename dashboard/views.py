@@ -44,6 +44,28 @@ class UserAccessMixin(PermissionRequiredMixin):
         return super(UserAccessMixin, self).dispatch(request, *args, **kwargs)
 
 
+def savepaymentGatewayConfiguration(request):
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body)
+            user = User.objects.get(pk=request.user.pk)
+            user.razorpay_clientid = payload['razorpay_client_id']
+            user.razorpay_clientsecret = payload['razorpay_client_secret']
+            user.save()
+            return JsonResponse({
+                'status': True
+            })
+        except:
+            return JsonResponse({
+                'status': False
+            })
+
+
+def paymentGatewayConfiguration(request):
+    if request.method == 'GET':
+        return render(request, 'tabs/extension/payment_gateway_conf.html')
+
+
 def UserChangePassword(request):
     if request.method == 'POST':
         try:

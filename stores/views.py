@@ -364,10 +364,11 @@ def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
             payload = json.loads(request.body)
+            user = request.user
             cart_items = OutdoorCart.objects.filter(anonymous_user_id=payload['anonymous_user_id'])
             cart_total = sum([item.quantity * item.price for item in cart_items])
             receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
-            client = razorpay.Client(auth=(settings.RAZORPAY_CLIENT_ID, settings.RAZORPAY_CLIENT_SECRET))
+            client = razorpay.Client(auth=(user.razorpay_clientid, user.razorpay_clientsecret))
             order_payload = {
                 "amount": cart_total * 100,
                 "currency": "INR",
@@ -407,7 +408,7 @@ def paymentCheckout(request):
         user = User.objects.get(outdoor_token=user_token)
         temp_user = Temporary_Users.objects.get(anonymous_user_id=anonymous_user_id)
         return render(request, 'navs/home/checkout.html', {
-            'key_id': settings.RAZORPAY_CLIENT_ID,
+            'key_id': user.razorpay_clientid,
             'amount': int(temp_user.order_total),
             'order_id': temp_user.razorpay_order_id,
             'phone': temp_user.customer_phone,
@@ -425,14 +426,14 @@ def paymentCheckoutSuccess(request):
     if request.method == 'POST':
         try:
             payload = request.POST
-            client = razorpay.Client(auth=(settings.RAZORPAY_CLIENT_ID, settings.RAZORPAY_CLIENT_SECRET))
+            get_room = User.objects.get(outdoor_token=request.GET.get('token'))
+            client = razorpay.Client(auth=(get_room.razorpay_clientid, get_room.razorpay_clientsecret))
             status = client.utility.verify_payment_signature({
                 'razorpay_order_id': payload['razorpay_order_id'],
                 'razorpay_payment_id': payload['razorpay_payment_id'],
                 'razorpay_signature': payload['razorpay_signature']
             })
             if status is True:
-                get_room = User.objects.get(outdoor_token=request.GET.get('token'))
                 cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
                 if cart_items:
                     order_id = str(uuid.uuid4().int & (10**8 - 1))
