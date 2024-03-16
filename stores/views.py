@@ -1031,13 +1031,13 @@ class ComplainDetailsView(TemplateView):
         print(room_token)
         complain_id = self.kwargs.get("complain_id")
         print(complain_id)
-        room  = Room.objects.get(room_token=room_token)
+        room = Room.objects.get(room_token=room_token)
         if room_token and complain_id:
             print("if case")
             try:
                 print("try")
 
-                complain = Complain.objects.get(complain_id=complain_id, status=0, room__room_token=room_token)
+                complain = Complain.objects.filter(complain_id=complain_id, status=0).order_by('-created_at')[0]
                 print("try case complain")
             except Complain.DoesNotExist:
                 print("exception")

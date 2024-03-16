@@ -4,7 +4,6 @@ from django.db import models
 from accounts.models import User
 from dashboard.utils import generateAuthToken
 from datetime import datetime
-from notification.helpers import telegram_notification
 
 
 # Create your models here.
