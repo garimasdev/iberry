@@ -397,7 +397,8 @@ def CreatePaymentOrder(request):
             import traceback
             traceback.print_exc()
             return JsonResponse({
-                'status': False
+                'status': False,
+                'traceback': json.dumps(traceback.format_exc())
             })
 
 
