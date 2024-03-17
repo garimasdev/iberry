@@ -354,6 +354,8 @@ class OutdoorHomeViewPage(TemplateView):
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
             context["total_price"] = amounts
             context["anonymous_user_id"] = temp_user_id.anonymous_user_id
+            context["razorpay_clientid"] = room.razorpay_clientid
+            context["razorpay_clientsecret"] = room.razorpay_clientsecret
             return context
         except:
             import traceback
@@ -364,11 +366,12 @@ def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
             payload = json.loads(request.body)
-            user = request.user
+            razorpay_clientid = request.GET.get('cid')
+            razorpay_clientsecret = request.GET.get('secret')
             cart_items = OutdoorCart.objects.filter(anonymous_user_id=payload['anonymous_user_id'])
             cart_total = sum([item.quantity * item.price for item in cart_items])
             receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
-            client = razorpay.Client(auth=(user.razorpay_clientid, user.razorpay_clientsecret))
+            client = razorpay.Client(auth=(razorpay_clientid, razorpay_clientsecret))
             order_payload = {
                 "amount": cart_total * 100,
                 "currency": "INR",
@@ -398,7 +401,6 @@ def CreatePaymentOrder(request):
             })
         except:
             import traceback
-            traceback.print_exc()
             return JsonResponse({
                 'status': False,
                 'traceback': json.dumps(traceback.format_exc())
