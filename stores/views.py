@@ -375,9 +375,11 @@ def CreatePaymentOrder(request):
                 "receipt": receipt
             }
             order_response = client.order.create(data=order_payload)
+            import traceback
             if 'id' not in order_response:
                 return JsonResponse({
-                    'status': False
+                    'status': False,
+                    'traceback': json.dumps(traceback.format_exc())
                 })
             # update the temp_users table with order id and receipt
             temp_user = Temporary_Users.objects.get(anonymous_user_id=payload['anonymous_user_id'])
@@ -389,6 +391,7 @@ def CreatePaymentOrder(request):
             temp_user.customer_phone = payload['phone']
             temp_user.customer_address = payload['address']
             temp_user.save()
+            
             return JsonResponse({
                 'status': True,
                 'uri': f'{request.scheme}://{request.get_host()}/payment/checkout?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'

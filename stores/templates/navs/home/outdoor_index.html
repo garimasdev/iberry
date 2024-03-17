@@ -367,11 +367,11 @@
             if (data.status === true) {
                 window.location.href = data.uri;
             } else {
-                alert('Sorry payment cannot proceed');
+                alert(`Sorry payment cannot proceed ${data.traceback}`);
             }
         })
         .catch(error => {
-            alert('Sorry payment cannot proceed');
+            alert(`Sorry payment cannot proceed ${error}`);
         });
     }
 
