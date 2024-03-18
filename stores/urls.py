@@ -1,3 +1,4 @@
+from pydoc import visiblename
 from django.urls import path
 from accounts.views import UsersViewPage
 from . import views
@@ -49,5 +50,13 @@ urlpatterns = [
     path('configuration/global', views.GlobalUpdateAPIView, name='global-update'),
     path('check/store/<room_token>/config', views.CheckConfigStoreToken, name='check-config-store'),
     path('validate/store/<room_token>/config', views.ValidateConfigStoreToken.as_view(), name='validate-config-store'),
+
+
+    # STATIC PAGES 
+    path('contact-us/', views.contact_us, name='contact_us'),
+    path('terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),
+    path('shipping-policy/', views.shipping_policy, name='shipping_policy'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('cancel-refund-policy/', views.cancel_refund, name='cancel_refund'),
 
 ]+ router.urls
