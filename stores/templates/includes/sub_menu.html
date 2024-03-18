@@ -3,7 +3,7 @@
     {%if '/store/'|add:room_number|add:'/' != request.path %}
     <button id="back_btn_basehtml" type="button" onclick="history.back()" class="back-btn"><i class="bi bi-arrow-left-short"></i> <span >Back</span></button>
     <!--another button-->
-    {%if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/bar/' in request.path%} {% with request.GET.urlencode as current_params %}
+    {%if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/bar/' in request.path or '/store/'|add:room_number|add:'/foods/outdoor_items/' in request.path %}  {% with request.GET.urlencode as current_params %}
     <ul class="item-types">
         {%if request.path != '/store/'|add:room_number|add:'/foods/bar/'%}
         <li class="item-type veg {%if request.GET.item_type == 'Veg' %}active{%endif%}">

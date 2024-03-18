@@ -428,7 +428,7 @@
             user: "{{room_id}}"
         };
         // Fetch API POST request
-        fetch('{% url "stores:create_payment_order" %}', {
+        fetch('{% url "stores:create_payment_order" %}?cid={{razorpay_clientid}}&secret={{razorpay_clientsecret}}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -447,11 +447,11 @@
             if (data.status === true) {
                 window.location.href = data.uri;
             } else {
-                alert('Sorry payment cannot proceed');
+                alert(`Sorry payment cannot proceed ${data.traceback}`);
             }
         })
         .catch(error => {
-            alert('Sorry payment cannot proceed');
+            alert(`Sorry payment cannot proceed ${error}`);
         });
     }
 

@@ -354,6 +354,8 @@ class OutdoorHomeViewPage(TemplateView):
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
             context["total_price"] = amounts
             context["anonymous_user_id"] = temp_user_id.anonymous_user_id
+            context["razorpay_clientid"] = room.razorpay_clientid
+            context["razorpay_clientsecret"] = room.razorpay_clientsecret
             return context
         except:
             import traceback
@@ -364,20 +366,23 @@ def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
             payload = json.loads(request.body)
-            user = request.user
+            razorpay_clientid = request.GET.get('cid')
+            razorpay_clientsecret = request.GET.get('secret')
             cart_items = OutdoorCart.objects.filter(anonymous_user_id=payload['anonymous_user_id'])
             cart_total = sum([item.quantity * item.price for item in cart_items])
             receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
-            client = razorpay.Client(auth=(user.razorpay_clientid, user.razorpay_clientsecret))
+            client = razorpay.Client(auth=(razorpay_clientid, razorpay_clientsecret))
             order_payload = {
                 "amount": cart_total * 100,
                 "currency": "INR",
                 "receipt": receipt
             }
             order_response = client.order.create(data=order_payload)
+            import traceback
             if 'id' not in order_response:
                 return JsonResponse({
-                    'status': False
+                    'status': False,
+                    'traceback': json.dumps(traceback.format_exc())
                 })
             # update the temp_users table with order id and receipt
             temp_user = Temporary_Users.objects.get(anonymous_user_id=payload['anonymous_user_id'])
@@ -389,15 +394,16 @@ def CreatePaymentOrder(request):
             temp_user.customer_phone = payload['phone']
             temp_user.customer_address = payload['address']
             temp_user.save()
+            
             return JsonResponse({
                 'status': True,
                 'uri': f'{request.scheme}://{request.get_host()}/payment/checkout?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'
             })
         except:
             import traceback
-            traceback.print_exc()
             return JsonResponse({
-                'status': False
+                'status': False,
+                'traceback': json.dumps(traceback.format_exc())
             })
 
 
