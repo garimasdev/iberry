@@ -1280,7 +1280,7 @@ def contact_us(request):
 
 # terms and condition static page
 def terms_and_conditions(request):
-    return render(request, 'navs/home/terms_and_conditions.html')
+    return render(request, 'navs/home/terms_conditions.html')
 
 
 # shipping policy static page 
