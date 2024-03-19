@@ -1275,7 +1275,7 @@ class ValidateConfigStoreToken(APIView):
 
 # contact us static page
 def contact_us(request):
-    return render(request, 'stores/navs/home/contact_us.html')
+    return render(request, 'stores/navs/home/contact_us')
 
 
 # terms and condition static page
