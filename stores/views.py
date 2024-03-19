@@ -1275,24 +1275,24 @@ class ValidateConfigStoreToken(APIView):
 
 # contact us static page
 def contact_us(request):
-    return render(request, 'pages/contact_us.html')
+    return render(request, 'stores/navs/home/contact_us.html')
 
 
 # terms and condition static page
 def terms_and_conditions(request):
-    return render(request, 'pages/terms_and_conditions.html')
+    return render(request, 'stores/navs/home/terms_and_conditions.html')
 
 
 # shipping policy static page 
 def shipping_policy(request):
-    return render(request, 'pages/shipping_policy.html')
+    return render(request, 'stores/navs/home/shipping_policy.html')
 
 
 # privacy policy static page
 def privacy_policy(request):
-    return render(request, 'pages/privacy_policy.html')
+    return render(request, 'stores/navs/home/privacy_policy.html')
 
 
 # cancel refund static page
 def cancel_refund(request):
-    return render(request, 'pages/cancel_refund.html')
+    return render(request, 'stores/navs/home/cancel_refund.html')
