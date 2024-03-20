@@ -17,17 +17,17 @@ class UserAdmin(BaseUserAdmin):
     
     fieldsets = (
         (None, {'fields': ('username', 'name')}),
-        (_('Personal info'), {'fields': ('email', 'picture', 'address', 'channel_name', 'outdoor_token', 'razorpay_clientid', 'razorpay_clientsecret')}),
+        (_('Personal info'), {'fields': ('email', 'phone', 'picture', 'address', 'channel_name', 'outdoor_token', 'razorpay_clientid', 'razorpay_clientsecret')}),
         (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions',)}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'name', 'password1', 'password2', 'channel_name', 'outdoor_token', 'razorpay_clientid', 'razorpay_clientsecret', 'picture', 'is_staff',
+            'fields': ('email', 'name', 'phone', 'password1', 'password2', 'channel_name', 'outdoor_token', 'razorpay_clientid', 'razorpay_clientsecret', 'picture', 'is_staff',
                        'is_superuser'),
         }),
     )
-    list_display = ('username', 'name', 'email', 'is_superuser', 'channel_name', 'outdoor_token', 'razorpay_clientid', 'razorpay_clientsecret', 'firebase_token')
+    list_display = ('username', 'name', 'email', 'phone', 'is_superuser', 'channel_name', 'outdoor_token', 'razorpay_clientid', 'razorpay_clientsecret', 'firebase_token')
     search_fields = ('username', 'email', 'name')
     ordering = ('created_at',)
     # readonly_fields = ('username',)
