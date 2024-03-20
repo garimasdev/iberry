@@ -1278,7 +1278,7 @@ class ValidateConfigStoreToken(APIView):
 # contact us static page
 def contact_us(request):
     room_id = request.GET.get('room_id')
-    user = User.objects.get(outdoor_token=room_id)
+    user = User.objects.filter(outdoor_token=room_id)[0]
     return render(request, 'navs/home/contact_us.html',{
         'address': user.address,
         'phone': user.phone,
