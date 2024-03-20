@@ -211,7 +211,7 @@
     <!-- Remove the container if you want to extend the Footer to full width. -->
     <div class="container my-5">
         <!-- Footer -->
-        <footer class="text-center text-white" style="background-color: #3f51b5">
+        <footer class="text-center text-white" style="background-color: #4154f1">
         <!-- Grid container -->
         <div class="container">
             <!-- Section: Links -->
@@ -221,7 +221,7 @@
                 <!-- Grid column -->
                 <div class="col-md-2">
                 <h6 class="text-uppercase font-weight-bold">
-                    <a href="{% url 'stores:contact_us' %}" class="text-white">Contact us</a>
+                    <a href="{% url 'stores:contact_us' %}?room_id={{room_id}}" class="text-white">Contact us</a>
                 </h6>
                 </div>
                 <!-- Grid column -->

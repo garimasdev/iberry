@@ -1275,7 +1275,13 @@ class ValidateConfigStoreToken(APIView):
 
 # contact us static page
 def contact_us(request):
-    return render(request, 'navs/home/contact_us.html')
+    room_id = request.GET.get('room_id')
+    user = User.objects.get(outdoor_token=room_id)
+    return render(request, 'navs/home/contact_us.html', {
+        'address': user.address,
+        'phone': user.phone,
+        'email': user.email
+    })
 
 
 # terms and condition static page
