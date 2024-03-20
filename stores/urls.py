@@ -58,5 +58,6 @@ urlpatterns = [
     path('shipping-policy/', views.shipping_policy, name='shipping_policy'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('cancel-refund-policy/', views.cancel_refund, name='cancel_refund'),
+    path('contact/send', views.contact_send, name='contact_send'),
 
 ]+ router.urls

@@ -119,7 +119,7 @@
                 </div>
                 <div class="col-12">
                   <div class="d-grid">
-                    <button class="btn btn-primary btn-lg" type="submit">Send Message</button>
+                    <button class="btn btn-primary btn-lg" type="submit" onclick="send_message()">Send Message</button>
                   </div>
                 </div>
               </div>
@@ -213,4 +213,45 @@
     </div>
     <!-- End of .container -->
 
+
+<script>
+    function send_message(){
+        // Collect form data
+        const formData = {
+            fullname: document.getElementById('fullname').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            subject: document.getElementById('subject').value,
+            message: document.getElementById('message').value,
+            room_id: '{{room_id}}'
+        };
+
+        // Make POST request using fetch
+        fetch('{% url "contact_us" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            document.getElementById('responseMessage').innerText = data.message;
+            // Optionally, you can redirect the user to a different page after successful submission
+            // window.location.href = '/success-page';
+        })
+        .catch(error => {
+            console.error('There was an error with the fetch operation:', error);
+        });
+    }
+</script>
+
+
 {% endblock %}
+
+

@@ -5,6 +5,8 @@ import random
 from dashboard.models import Global
 import uuid
 
+from django.core.mail import send_mail
+
 import razorpay
 from accounts.models import User
 from django.shortcuts import render
@@ -1277,11 +1279,39 @@ class ValidateConfigStoreToken(APIView):
 def contact_us(request):
     room_id = request.GET.get('room_id')
     user = User.objects.get(outdoor_token=room_id)
-    return render(request, 'navs/home/contact_us.html', {
+    return render(request, 'navs/home/contact_us.html',{
         'address': user.address,
         'phone': user.phone,
-        'email': user.email
+        'email': user.email,
+        'room_id': room_id
     })
+
+
+def contact_send(request):
+    if request.method == 'POST':
+        fullname = request.POST.get('fullname', '')
+        email = request.POST.get('email', '')
+        phone = request.POST.get('phone', '')
+        subject = request.POST.get('subject', '')
+        message = request.POST.get('message', '')
+
+        room_id = request.POST.get('room_id', '')
+        token = User.objects.get(outdoor_token=room_id)
+
+        # Send email
+        send_mail(
+            subject,
+            f"From: {fullname}\nEmail: {email}\nPhone: {phone}\n\n{message}",
+            email,  # Replace with your email address
+            [token.email],  # Replace with recipient email address
+            fail_silently=False,
+        )
+
+        # Return JSON response
+        return JsonResponse({'message': 'Message sent successfully!'})
+    else:
+        return render(request, 'contact_us.html')
+
 
 
 # terms and condition static page
