@@ -227,7 +227,7 @@
         };
 
         // Make POST request using fetch
-        fetch('{% url "contact_us" %}', {
+        fetch('{% url "stores:contact_send" %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
