@@ -1316,19 +1316,35 @@ def contact_send(request):
 
 # terms and condition static page
 def terms_and_conditions(request):
-    return render(request, 'navs/home/terms_conditions.html')
+    room_id = request.GET.get('room_id')
+    user = User.objects.get(outdoor_token=room_id)
+    return render(request, 'navs/home/terms_conditions.html', {
+        'email': user.email
+    })
 
 
 # shipping policy static page 
 def shipping_policy(request):
-    return render(request, 'navs/home/shipping_policy.html')
+    room_id = request.GET.get('room_id')
+    user = User.objects.get(outdoor_token=room_id)
+    return render(request, 'navs/home/shipping_policy.html', {
+        'email': user.email
+    })
 
 
 # privacy policy static page
 def privacy_policy(request):
-    return render(request, 'navs/home/privacy_policy.html')
+    room_id = request.GET.get('room_id')
+    user = User.objects.get(outdoor_token=room_id)
+    return render(request, 'navs/home/privacy_policy.html', {
+        'email': user.email
+    })
 
 
 # cancel refund static page
 def cancel_refund(request):
-    return render(request, 'navs/home/cancel_refund.html')
+    room_id = request.GET.get('room_id')
+    user = User.objects.get(outdoor_token=room_id)
+    return render(request, 'navs/home/cancel_refund.html', {
+        'email': user.email
+    })
