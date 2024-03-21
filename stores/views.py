@@ -351,6 +351,8 @@ class OutdoorHomeViewPage(TemplateView):
             context["sub_categories"] = FoodSubCategoriesSerializer(
                 get_sub_category, many=True
             ).data
+            outdoor_token = User.objects.get(outdoor_token=pk)
+            context['phone'] = outdoor_token.phone
             context["items"] = items
             context["room_id"] = pk
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
