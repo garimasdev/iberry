@@ -1291,13 +1291,16 @@ def contact_us(request):
 
 def contact_send(request):
     if request.method == 'POST':
-        fullname = request.POST.get('fullname', '')
-        email = request.POST.get('email', '')
-        phone = request.POST.get('phone', '')
-        subject = request.POST.get('subject', '')
-        message = request.POST.get('message', '')
+        payloads = json.loads(request.body)
+        fullname = payloads.get('fullname', '')
+        email = payloads.get('email', '')
+        phone = payloads.get('phone', '')
+        subject = payloads.get('subject', '')
+        message = payloads.get('message', '')
 
-        room_id = request.POST.get('room_id', '')
+
+        
+        room_id = payloads.get('room_id', '')
         token = User.objects.filter(outdoor_token=room_id)[0]
 
         # Send email
