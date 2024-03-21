@@ -4,7 +4,7 @@
 
 {% block content %}
 <!--Section: Contact v.2-->
-<section class="bg-light py-3 py-xl-8">
+<section class="bg-light py-3 py-xl-8" id="{{room_id}}">
     <div class="container">
       <div class="row gy-3 gy-md-4 gy-lg-0 align-items-md-center">
         <div class="col-12 col-lg-6">
@@ -137,7 +137,7 @@
       <!-- Remove the container if you want to extend the Footer to full width. -->
       <div class="container my-5">
         <!-- Footer -->
-        <footer class="text-center text-white" style="background-color: #4154f1" id="footer-nav">
+        <footer class="text-center text-white" style="background-color: #4154f1">
         <!-- Grid container -->
         <div class="container">
             <!-- Section: Links -->
@@ -219,19 +219,21 @@
     function send_message(){
         // Collect form data
         const formData = {
-            room_id: '{{room_id}}',
-            fullname: document.getElementById('fullname').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            subject: document.getElementById('subject').value,
-            message: document.getElementById('message').value
+            "room_id": "{{room_id}}",
+            "fullname": document.getElementById('fullname').value,
+            "email": document.getElementById('email').value,
+            "phone": document.getElementById('phone').value,
+            "subject": document.getElementById('subject').value,
+            "message": document.getElementById('message').value
         };
+        // console.log(room_id)
 
         // Make POST request using fetch
-        fetch('{% url "stores:contact_send" %}', {
+        fetch('{% url "stores:contact_send" %}?room_id={{room_id}}', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
             },
             body: JSON.stringify(formData)
         })

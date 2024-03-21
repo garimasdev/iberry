@@ -1,7 +1,10 @@
+from encodings import utf_8_sig
+from inspect import trace
 import json
 import os
 import string
 import random
+import traceback
 from dashboard.models import Global
 import uuid
 
@@ -1290,32 +1293,43 @@ def contact_us(request):
 
 
 def contact_send(request):
-    if request.method == 'POST':
-        payloads = request.data
-        fullname = payloads.get('fullname', '')
-        email = payloads.get('email', '')
-        phone = payloads.get('phone', '')
-        subject = payloads.get('subject', '')
-        message = payloads.get('message', '')
+    try:
+        if request.method == 'POST':
+            # payloads = request.POST
+            # payloads =  json.loads(request.body.decode('utf-8'))
+            payloads = request.POST
+            print(payloads)
+            fullname = payloads.get('fullname', '')
+            email = payloads.get('email', '')
+            phone = payloads.get('phone', '')
+            subject = payloads.get('subject', '')
+            message = payloads.get('message', '')
 
 
-        
-        room_id = payloads.get('room_id', '')
-        token = User.objects.filter(outdoor_token=room_id)[0]
+            
+            # room_id = payloads.get('room_id', '')
+            # room_id = request.GET.get('room_id', '')
 
-        # Send email
-        send_mail(
-            subject,
-            f"From: {fullname}\nEmail: {email}\nPhone: {phone}\n\n{message}",
-            email,  # Replace with your email address
-            [token.email],  # Replace with recipient email address
-            fail_silently=False,
-        )
+            # print(room_id)
+            # token = User.objects.filter(outdoor_token=room_id)[0]
 
-        # Return JSON response
-        return JsonResponse({'message': 'Message sent successfully!'})
-    else:
-        return render(request, 'contact_us.html')
+            # Send email
+            send_mail(
+                subject,
+                f"From: {fullname}\nEmail: {email}\nPhone: {phone}\n\n{message}",
+                email,  # Replace with your email address
+                # [token.email],
+                ['garimasachdeva25@gmail.com'],  # Replace with recipient email address
+                fail_silently=False,
+            )
+            # print(token.email)
+        #     send_mail("Subject", "text body", "raturi002@gmail.com",
+        #   ["garimasachdeva25@gmail.com"], html_message="<html>html body</html>")
+
+            # Return JSON response
+            return JsonResponse({'message': 'Message sent successfully!'})
+    except:
+        traceback.print_exc()
 
 
 
