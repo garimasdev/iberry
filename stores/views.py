@@ -1291,7 +1291,7 @@ def contact_us(request):
 
 def contact_send(request):
     if request.method == 'POST':
-        payloads = json.loads(request.body)
+        payloads = request.data
         fullname = payloads.get('fullname', '')
         email = payloads.get('email', '')
         phone = payloads.get('phone', '')
