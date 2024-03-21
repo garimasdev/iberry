@@ -1298,7 +1298,7 @@ def contact_send(request):
         message = request.POST.get('message', '')
 
         room_id = request.POST.get('room_id', '')
-        token = User.objects.get(outdoor_token=room_id)
+        token = User.objects.filter(outdoor_token=room_id)[0]
 
         # Send email
         send_mail(
