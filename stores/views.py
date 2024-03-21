@@ -1321,7 +1321,8 @@ def terms_and_conditions(request):
     room_id = request.GET.get('room_id')
     user = User.objects.filter(outdoor_token=room_id)[0]
     return render(request, 'navs/home/terms_conditions.html', {
-        'email': user.email
+        'email': user.email,
+        'room_id': room_id
     })
 
 
@@ -1330,7 +1331,8 @@ def shipping_policy(request):
     room_id = request.GET.get('room_id')
     user = User.objects.filter(outdoor_token=room_id)[0]
     return render(request, 'navs/home/shipping_policy.html', {
-        'email': user.email
+        'email': user.email,
+        'room_id': room_id
     })
 
 
@@ -1339,7 +1341,8 @@ def privacy_policy(request):
     room_id = request.GET.get('room_id')
     user = User.objects.filter(outdoor_token=room_id)[0]
     return render(request, 'navs/home/privacy_policy.html', {
-        'email': user.email
+        'email': user.email,
+        'room_id': room_id
     })
 
 
@@ -1348,5 +1351,6 @@ def cancel_refund(request):
     room_id = request.GET.get('room_id')
     user = User.objects.filter(outdoor_token=room_id)[0]
     return render(request, 'navs/home/cancel_refund.html', {
-        'email': user.email
+        'email': user.email,
+        'room_id': room_id
     })
