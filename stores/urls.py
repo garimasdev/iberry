@@ -54,10 +54,13 @@ urlpatterns = [
 
     # STATIC PAGES 
     path('contact-us/', views.contact_us, name='contact_us'),
+    path('contact/send', views.contact_send, name='contact_send'),
     path('terms-and-conditions/', views.terms_and_conditions, name='terms_and_conditions'),
     path('shipping-policy/', views.shipping_policy, name='shipping_policy'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('cancel-refund-policy/', views.cancel_refund, name='cancel_refund'),
-    path('contact/send', views.contact_send, name='contact_send'),
+
+    # logo 
+    path('company-logo/', views.render_logo, name='display_logo'),
 
 ]+ router.urls
