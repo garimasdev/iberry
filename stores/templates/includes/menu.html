@@ -5,8 +5,8 @@
   >
   <!-- logo display -->
     <a href="/" class="logo d-flex align-items-center">
-      <img src="/media/img/logo.png" alt="" />
-      <span class="d-none d-lg-block menu-title">Iberry</span>
+      <img src="{{logo}}" alt="" />
+      <span class="d-none d-lg-block menu-title">{{hotel_name|title}}</span>
     </a>
     <form action="" method="get" class="search-box">
       {% csrf_token %}

@@ -274,6 +274,8 @@ class HomeViewPage(TemplateView):
         context["room_id"] = room.id
         context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
         context["total_price"] = amounts
+        context["logo"] = room.user.picture.url
+        context["hotel_name"] = room.user.username
 
         return context
 
