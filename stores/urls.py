@@ -62,5 +62,6 @@ urlpatterns = [
 
     # logo 
     path('company-logo/', views.render_logo, name='display_logo'),
+    path('outdoor_logo', views.outdoor_render_logo, name='outdoor_logo'),
 
 ]+ router.urls

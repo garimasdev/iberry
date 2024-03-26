@@ -1390,7 +1390,8 @@ def render_logo(request):
         return HttpResponseBadRequest("User with specified room_id does not exist")
 
     # Render the template with the user's picture
-    return render(request, ['navs/includes/menu.html', 'navs/includes/outdoor_menu.html'], {'picture': user.picture})
+    return render(request, 'navs/includes/menu.html', {'picture': user.picture.url})
+
 
 
     # room_id = request.GET.get('room_id')
@@ -1398,3 +1399,18 @@ def render_logo(request):
     # return render(request, 'navs/includes/menu.html', {
     #     'picture': user.picture
     # })
+
+
+def outdoor_render_logo(request):
+    room_id = request.GET.get('room_id')
+    if not room_id:
+        return HttpResponseBadRequest("Room ID is missing in request parameters")
+
+    # Retrieve the user with the specified picture (room_id)
+    try:
+        user = User.objects.get(picture=room_id)
+    except User.DoesNotExist:
+        return HttpResponseBadRequest("User with specified room_id does not exist")
+
+    # Render the template with the user's picture
+    return render(request, 'navs/includes/outdoor_menu.html', {'picture': user.picture.url})
