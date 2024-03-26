@@ -1390,7 +1390,7 @@ def render_logo(request):
         return HttpResponseBadRequest("User with specified room_id does not exist")
 
     # Render the template with the user's picture
-    return render(request, 'navs/includes/menu.html', {'picture': user.picture})
+    return render(request, ['navs/includes/menu.html', 'navs/includes/outdoor_menu.html'], {'picture': user.picture})
 
 
     # room_id = request.GET.get('room_id')
