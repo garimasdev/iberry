@@ -364,6 +364,8 @@ class OutdoorHomeViewPage(TemplateView):
             context["room_id"] = pk
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
             context["total_price"] = amounts
+            context['logo'] = room.picture.url
+            context['hotel_name'] = room.username
             context["anonymous_user_id"] = temp_user_id.anonymous_user_id
             context["razorpay_clientid"] = room.razorpay_clientid
             context["razorpay_clientsecret"] = room.razorpay_clientsecret
