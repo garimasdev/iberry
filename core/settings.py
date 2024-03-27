@@ -103,9 +103,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'iberry',
         'USER': 'root',
-        'PASSWORD': 'password123',
+        # 'PASSWORD': 'password123',
         # 'PASSWORD': 'password',
-        # 'PASSWORD': '',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306'
     }
