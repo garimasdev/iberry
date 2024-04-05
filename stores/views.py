@@ -89,7 +89,7 @@ if sys.platform == 'linux':
     import telegram
     from telegram import ParseMode
 
-# from notification.helpers import telegram_notification
+from notification.helpers import telegram_notification
 
 
 credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
@@ -1402,17 +1402,3 @@ def render_logo(request):
     #     'picture': user.picture
     # })
 
-
-def outdoor_render_logo(request):
-    room_id = request.GET.get('room_id')
-    if not room_id:
-        return HttpResponseBadRequest("Room ID is missing in request parameters")
-
-    # Retrieve the user with the specified picture (room_id)
-    try:
-        user = User.objects.get(picture=room_id)
-    except User.DoesNotExist:
-        return HttpResponseBadRequest("User with specified room_id does not exist")
-
-    # Render the template with the user's picture
-    return render(request, 'navs/includes/outdoor_menu.html', {'picture': user.picture.url})
