@@ -81,6 +81,9 @@
 
     <link href="/static/css/style.css" rel="stylesheet" />
 
+    <!-- pwa manifest -->
+    <link rel="manifest" href="/manifest.json">
+
     <!-- Specific Page JS goes HERE  -->
     {% block stylesheets %}{% endblock stylesheets %}
   </head>
@@ -113,11 +116,17 @@
     </main>
 
     {# {% include 'includes/scripts.html' %} #}
-    <a
-      href="#"
-      class="back-to-top d-flex align-items-center justify-content-center"
-      ><i class="bi bi-arrow-up-short"></i
-    ></a>
+
+    <!-- upward arrow -->
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+      <i class="bi bi-arrow-up-short"></i>
+    </a>
+
+    <!-- Downward arrow -->
+    <a href="#" class="back-to-down d-flex align-items-center justify-content-center">
+      <i class="bi bi-arrow-down-short"></i>
+    </a>
+
     <input type="hidden" name="room_ID" id="room_ID" value="{{room_id}}" />
     <input type="hidden" name="user" id="user" value="{{request.user.name}}" />
     <script src="/static/vendor/apexcharts/apexcharts.min.js"></script>
@@ -129,6 +138,21 @@
     <script src="/static/vendor/tinymce/tinymce.min.js"></script>
     <script src="/static/vendor/php-email-form/validate.js"></script>
     <script src="/static/js/main.js"></script>
+    <!-- pwa manifest -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/static/js/service-worker.js')
+            .then((registration) => {
+              console.log('Service Worker registered:', registration);
+            })
+            .catch((error) => {
+              console.log('Service Worker registration failed:', error);
+            });
+        });
+      }
+    </script>
+    
     <!-- Specific Page JS goes HERE  -->
     {% block javascripts %} {% endblock javascripts %}
   </body>

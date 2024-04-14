@@ -89,7 +89,7 @@ if sys.platform == 'linux':
     import telegram
     from telegram import ParseMode
 
-from notification.helpers import telegram_notification
+# from notification.helpers import telegram_notification
 
 
 credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
@@ -1401,4 +1401,25 @@ def render_logo(request):
     # return render(request, 'navs/includes/menu.html', {
     #     'picture': user.picture
     # })
+
+def manifestview(request):
+    if request.method == 'GET':
+        manifest = {
+            "name": "iberry",
+            "short_name": "iberry",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#000000",
+            "icons": [
+                {
+                    "src": "/static/images/iberry_logo.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        }
+        return JsonResponse(manifest)
+
+
 
