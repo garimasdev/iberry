@@ -24,7 +24,7 @@ class SubCategory(models.Model):
     
     class Meta:
         unique_together = ('category', 'name')
-        verbose_name_plural = 'categories'
+        verbose_name_plural = 'sub categories'
     
     def __str__(self):
         return self.name;
