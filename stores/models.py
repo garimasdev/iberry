@@ -66,6 +66,9 @@ class Item(models.Model):
     class Meta:
         verbose_name_plural = 'Items'
         ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.user.username + self.category.name
         
 
 class Image(models.Model):
