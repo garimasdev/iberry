@@ -118,6 +118,9 @@ nav .menu-list li.cart-icon span {
     .back-to-top {
         display: none !important;
     }
+    .back-to-down {
+        display: none !important;
+    }
 }
 
 @media only screen and (max-width: 550px) {
