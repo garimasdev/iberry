@@ -98,7 +98,7 @@
   let backtotop = select('.back-to-top')
   if (backtotop) {
     const toggleBacktotop = () => {
-      if (window.scrollY > 100) {
+      if (window.scrollY > 100){
         backtotop.classList.add('active')
       } else {
         backtotop.classList.remove('active')
@@ -107,6 +107,23 @@
     window.addEventListener('load', toggleBacktotop)
     onscroll(document, toggleBacktotop)
   }
+
+/**
+ * Top to down button
+ */
+  let backtodown = select('.back-to-down');
+  if (backtodown) {
+    const toggleBacktodown = () => {
+      if (window.scrollY > 100) {
+        backtodown.classList.add('active');
+      } else {
+        backtodown.classList.remove('active');
+      }
+    };
+    window.addEventListener('load', toggleBacktodown);
+    onscroll(document, toggleBacktodown);
+  }
+
 
   /**
    * Initiate tooltips
