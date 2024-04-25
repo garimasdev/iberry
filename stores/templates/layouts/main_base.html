@@ -136,10 +136,10 @@
     <script src="/static/vendor/tinymce/tinymce.min.js"></script>
     <script src="/static/vendor/php-email-form/validate.js"></script>
     <script src="/static/js/main.js"></script>
+    
     <!-- pwa manifest -->
     <script>
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
           navigator.serviceWorker.register('/static/js/service-worker.js')
             .then((registration) => {
               console.log('Service Worker registered:', registration);
@@ -147,8 +147,31 @@
             .catch((error) => {
               console.log('Service Worker registration failed:', error);
             });
-        });
       }
+
+      // Function to handle deferredPrompt
+      function handleDeferredPrompt(deferredPrompt) {
+        if (deferredPrompt) {
+          // Show the install prompt
+          deferredPrompt.prompt();
+
+          // Wait for the user to respond
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              console.log('User accepted the install prompt');
+            } else {
+              console.log('User dismissed the install prompt');
+            }
+            deferredPrompt = null;  // Reset the deferredPrompt variable
+          });
+        }
+      }
+
+      // Call the function after 10 seconds
+      setTimeout(() => {
+        handleDeferredPrompt(deferredPrompt);
+      }, 10000);
+
     </script>
     
     <!-- Specific Page JS goes HERE  -->

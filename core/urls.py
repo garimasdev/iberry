@@ -37,7 +37,7 @@ urlpatterns = [
 
     # pwa
     # path('manifest.json', manifestview),
-    path("", include('pwa.urls')),
+    # path("", include('pwa.urls')),
     
 ]
 urlpatterns += [
