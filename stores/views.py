@@ -1,5 +1,3 @@
-from encodings import utf_8_sig
-from inspect import trace
 import json
 import os
 import string
@@ -10,7 +8,7 @@ import uuid
 from django.http import HttpResponseBadRequest
 
 # phonepe import 
-from phonepe.sdk.pg.payments.v1.payment_client import PhonePePaymentClient
+# from phonepe.sdk.pg.payments.v1.payment_client import PhonePePaymentClient
 
 
 
@@ -385,12 +383,12 @@ class OutdoorHomeViewPage(TemplateView):
 
 # phonepe payment gateway integration 
 import uuid  
-from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
+# from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
 
 def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
-            phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SALT_KEY, salt_index=1, env=settings.ENV)
+            # phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SALT_KEY, salt_index=1, env=settings.ENV)
             unique_transaction_id = str(uuid.uuid4())[:-2]
             ui_redirect_url = f"{request.scheme}://{request.get_host()}/payment/checkout/success"  
             s2s_callback_url = f"{request.scheme}://{request.get_host()}/payment/checkout"  
@@ -402,9 +400,9 @@ def CreatePaymentOrder(request):
             receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
             id_assigned_to_user_by_merchant = receipt
             amount = cart_total * 100
-            pay_page_request = PgPayRequest.pay_page_pay_request_builder(merchant_transaction_id=unique_transaction_id, amount=amount, merchant_user_id=id_assigned_to_user_by_merchant, callback_url=s2s_callback_url, redirect_url=ui_redirect_url)
-            pay_page_response = phonepe_client.pay(pay_page_request)  
-            pay_page_url = pay_page_response.data.instrument_response.redirect_info.url
+            # pay_page_request = PgPayRequest.pay_page_pay_request_builder(merchant_transaction_id=unique_transaction_id, amount=amount, merchant_user_id=id_assigned_to_user_by_merchant, callback_url=s2s_callback_url, redirect_url=ui_redirect_url)
+            # pay_page_response = phonepe_client.pay(pay_page_request)  
+            # pay_page_url = pay_page_response.data.instrument_response.redirect_info.url
             
 
             # update the temp_users table with order id and receipt
@@ -419,7 +417,7 @@ def CreatePaymentOrder(request):
             
             return JsonResponse({
                 'status': True,
-                'uri': pay_page_url + f'?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'
+                # 'uri': pay_page_url + f'?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'
             })
         except:
             import traceback
