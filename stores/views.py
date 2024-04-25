@@ -1411,25 +1411,25 @@ def render_logo(request):
     #     'picture': user.picture
     # })
 
-# def manifestview(request):
-#     if request.method == 'GET':
-#         manifest = {
-#             "name": "iberry",
-#             "short_name": "iberry",
-#             "start_url": f"/store/{request.GET.get('token')}/foods/outdoor_items/",
-#             # "start_url": "/",
-#             "display": "standalone",
-#             "background_color": "#ffffff",
-#             "theme_color": "#000000",
-#             "icons": [
-#                 {
-#                     "src": "/static/images/iberry_logo.png",
-#                     "sizes": "320x200",
-#                     "type": "image/png"
-#                 }
-#             ]
-#         }
-#         return JsonResponse(manifest)
+def manifestview(request):
+    if request.method == 'GET':
+        manifest = {
+            "name": "iberry",
+            "short_name": "iberry",
+            # "start_url": f"/store/{request.GET.get('token')}/foods/outdoor_items/",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#000000",
+            "icons": [
+                {
+                    "src": "/static/images/iberry_logo.png",
+                    "sizes": "320x200",
+                    "type": "image/png"
+                }
+            ]
+        }
+        return JsonResponse(manifest)
 
 
 

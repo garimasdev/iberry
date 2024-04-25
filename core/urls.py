@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views #new
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from django.conf.urls.static import static
-from stores.views import NotFoundPageView
+from stores.views import NotFoundPageView, manifestview
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,7 +36,7 @@ urlpatterns = [
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 
     # pwa
-    # path('manifest.json', manifestview),
+    path('manifest.json', manifestview),
     # path("", include('pwa.urls')),
     
 ]
