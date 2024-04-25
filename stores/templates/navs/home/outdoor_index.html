@@ -3,14 +3,15 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
 <!-- pwa manifest -->
-<link rel="manifest" href="/manifest.json?token={{room_id}}">
-<!-- <link rel="manifest" href="/manifest.json"> -->
+{% load pwa %}
+{% progressive_web_app_meta %}
+<!-- <link rel="manifest" href="/manifest.json?token={{room_id}}"> -->
+<link rel="manifest" href="/manifest.json">
 
 <link rel="stylesheet" href="/static/css/foods/style.css">
 <link rel="stylesheet" href="/static/css/foods/categories.css">
 <link rel="stylesheet" href="/static/css/foods/item.css">
-<link rel="stylesheet" href="/static/css/foods/float_cart.css"
-/>
+<link rel="stylesheet" href="/static/css/foods/float_cart.css"/>
 <link rel="stylesheet" href="/static/css/foods/cart.css"> {% endblock stylesheets %} {% block content %}
 
 <section class="main-section">
@@ -221,7 +222,9 @@
 
 {%endblock content%} {% block javascripts %}
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+
 <script src="/static/js/foods/outdoor_foods.js"></script>
+
 <script>
 
     document.getElementById('back_btn_basehtml').style.display = 'None';
@@ -239,6 +242,8 @@
         }
     }
 </script>
+
+
 <script>
     var selectedPaymentMode;
     $(document).ready(function() {

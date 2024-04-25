@@ -9,6 +9,10 @@ from dashboard.models import Global
 import uuid
 from django.http import HttpResponseBadRequest
 
+# phonepe import 
+from phonepe.sdk.pg.payments.v1.payment_client import PhonePePaymentClient
+
+
 
 from django.core.mail import send_mail
 
@@ -364,7 +368,10 @@ class OutdoorHomeViewPage(TemplateView):
             context["room_id"] = pk
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
             context["total_price"] = amounts
-            context['logo'] = room.picture.url
+            if room.picture is not None:
+                context['logo'] = room.picture.url
+            else:
+                context['logo'] = None
             context['hotel_name'] = room.username
             context["anonymous_user_id"] = temp_user_id.anonymous_user_id
             context["razorpay_clientid"] = room.razorpay_clientid
@@ -375,31 +382,33 @@ class OutdoorHomeViewPage(TemplateView):
             traceback.print_exc()
 
 
+
+# phonepe payment gateway integration 
+import uuid  
+from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
+
 def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
+            phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SALT_KEY, salt_index=1, env=settings.ENV)
+            unique_transaction_id = str(uuid.uuid4())[:-2]
+            ui_redirect_url = f"{request.scheme}://{request.get_host()}/payment/checkout/success"  
+            s2s_callback_url = f"{request.scheme}://{request.get_host()}/payment/checkout"  
+            
+            
             payload = json.loads(request.body)
-            razorpay_clientid = request.GET.get('cid')
-            razorpay_clientsecret = request.GET.get('secret')
             cart_items = OutdoorCart.objects.filter(anonymous_user_id=payload['anonymous_user_id'])
             cart_total = sum([item.quantity * item.price for item in cart_items])
             receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
-            client = razorpay.Client(auth=(razorpay_clientid, razorpay_clientsecret))
-            order_payload = {
-                "amount": cart_total * 100,
-                "currency": "INR",
-                "receipt": receipt
-            }
-            order_response = client.order.create(data=order_payload)
-            import traceback
-            if 'id' not in order_response:
-                return JsonResponse({
-                    'status': False,
-                    'traceback': json.dumps(traceback.format_exc())
-                })
+            id_assigned_to_user_by_merchant = receipt
+            amount = cart_total * 100
+            pay_page_request = PgPayRequest.pay_page_pay_request_builder(merchant_transaction_id=unique_transaction_id, amount=amount, merchant_user_id=id_assigned_to_user_by_merchant, callback_url=s2s_callback_url, redirect_url=ui_redirect_url)
+            pay_page_response = phonepe_client.pay(pay_page_request)  
+            pay_page_url = pay_page_response.data.instrument_response.redirect_info.url
+            
+
             # update the temp_users table with order id and receipt
             temp_user = Temporary_Users.objects.get(anonymous_user_id=payload['anonymous_user_id'])
-            temp_user.razorpay_order_id = order_response['id']
             temp_user.receipt = receipt
             temp_user.order_total = str(cart_total * 100)
             temp_user.customer_name = payload['username']
@@ -410,7 +419,7 @@ def CreatePaymentOrder(request):
             
             return JsonResponse({
                 'status': True,
-                'uri': f'{request.scheme}://{request.get_host()}/payment/checkout?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'
+                'uri': pay_page_url + f'?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'
             })
         except:
             import traceback
@@ -421,11 +430,13 @@ def CreatePaymentOrder(request):
 
 
 def paymentCheckout(request):
-    if request.method == 'GET':
+    if request.method == 'GET': #post method
         anonymous_user_id = request.GET.get('user_id')
         user_token = request.GET.get('user')
         user = User.objects.get(outdoor_token=user_token)
         temp_user = Temporary_Users.objects.get(anonymous_user_id=anonymous_user_id)
+        
+# response = json.loads(request.body)
         return render(request, 'navs/home/checkout.html', {
             'key_id': user.razorpay_clientid,
             'amount': int(temp_user.order_total),

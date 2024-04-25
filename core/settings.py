@@ -12,9 +12,14 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
+# from phonepe.sdk.pg.env import Env
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# pwa service worker
+PWA_SERVICE_WORKER_PATH = os.path.join(BASE_DIR, 'static/js', 'serviceworker.js')
 
 
 # Quick-start development settings - unsuitable for production
@@ -53,6 +58,8 @@ INSTALLED_APPS = [
     'sslserver',
     'django_filters',
     'import_export',
+    'pwa',
+
     
 ]
 
@@ -104,8 +111,8 @@ DATABASES = {
         'NAME': 'iberry',
         'USER': 'root',
         # 'PASSWORD': 'password123',
-        'PASSWORD': 'password',
-        # 'PASSWORD': '',
+        # 'PASSWORD': 'password',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306'
     }
@@ -225,3 +232,45 @@ CSRF_TRUSTED_ORIGINS = ['https://iberry.caucasianbarrels.com', 'https://iberry.c
 
 RAZORPAY_CLIENT_ID= 'rzp_test_8ZwgsznY2VAfPP'
 RAZORPAY_CLIENT_SECRET= 'MOFA1TdFPjB9uPNztJrXnacB'
+
+
+# Phonepe payment gateway
+# MERCHANT_ID= "YOUR_MERCHANT_ID"  
+# SALT_KEY= "YOUR_SALT_KEY"  
+# SALT_INDEX= 1 
+# ENV= Env.UAT
+
+
+
+# pwa manifest.json 
+PWA_APP_NAME = 'Iberry'
+PWA_APP_DESCRIPTION = "Iberry PWA"
+PWA_APP_THEME_COLOR = '#4154f1'
+PWA_APP_BACKGROUND_COLOR = '#f6f9ff'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+# PWA_APP_START_URL = '/'
+PWA_APP_START_URL = '/store/97599568/foods/outdoor_items/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+	{
+		'src': 'static/images/iberry_logo.png',
+		# 'sizes': '160x160'
+        'sizes': '320x320'
+	}
+]
+PWA_APP_ICONS_APPLE = [
+	{
+		'src': 'static/images/iberry_logo.png',
+		'sizes': '320x320'
+	}
+]
+PWA_APP_SPLASH_SCREEN = [
+	{
+		'src': 'static/images/icon.png',
+		'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+	}
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-US'
