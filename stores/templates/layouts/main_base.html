@@ -151,16 +151,6 @@
 
       let deferredPrompt;
 
-      // Check if the browser supports the beforeinstallprompt event
-window.addEventListener('beforeinstallprompt', function(event) {
-  // Prevent the default behavior of the browser's install prompt
-  event.preventDefault();
-  
-  // Store the event for later use
-  deferredPrompt = event;
-
-});
-
       // Function to handle deferredPrompt
       function handleDeferredPrompt() {
         if (deferredPrompt) {
@@ -179,10 +169,25 @@ window.addEventListener('beforeinstallprompt', function(event) {
         }
       }
 
-      // Call the function after 10 seconds
-      setTimeout(() => {
-        handleDeferredPrompt();
-      }, 10000);
+      // Check if the browser supports the beforeinstallprompt event
+window.addEventListener('beforeinstallprompt', function(event) {
+  // Prevent the default behavior of the browser's install prompt
+  event.preventDefault();
+  
+  // Store the event for later use
+  deferredPrompt = event;
+  document.getElementById("pwa").onclick=function(){
+    handleDeferredPrompt()
+  };
+
+});
+
+      
+
+      // // Call the function after 10 seconds
+      // setTimeout(() => {
+      //   handleDeferredPrompt();
+      // }, 10000);
 
     </script>
     
