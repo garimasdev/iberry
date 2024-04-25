@@ -151,27 +151,28 @@
 
       let deferredPrompt;
 
+      // Check if the browser supports the beforeinstallprompt event
+window.addEventListener('beforeinstallprompt', function(event) {
+  // Prevent the default behavior of the browser's install prompt
+  event.preventDefault();
+  
+  // Store the event for later use
+  deferredPrompt = event;
+
+});
+
       // Function to handle deferredPrompt
-      function handleDeferredPrompt(deferredPrompt) {
+      function handleDeferredPrompt() {
         if (deferredPrompt) {
           // Show the install prompt
           deferredPrompt.prompt();
 
-          // Wait for the user to respond
-          deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-              console.log('User accepted the install prompt');
-            } else {
-              console.log('User dismissed the install prompt');
-            }
-            deferredPrompt = null;  // Reset the deferredPrompt variable
-          });
         }
       }
 
       // Call the function after 10 seconds
       setTimeout(() => {
-        handleDeferredPrompt(deferredPrompt);
+        handleDeferredPrompt();
       }, 10000);
 
     </script>
