@@ -186,18 +186,34 @@ window.addEventListener('beforeinstallprompt', function(event) {
       
 
       // Call the function after 10 seconds
-      setTimeout(() => {
-        let result = confirm("Do you want to install?");
-        if (result === true) {
-          // User clicked OK
-          deferredPrompt.prompt();
-          // handleDeferredPrompt();
-        } else {
-          // User clicked Cancel
-          alert("You clicked Cancel!");
-        }
+      // setTimeout(() => {
+      //   let result = confirm("Do you want to install?");
+      //   if (result === true) {
+      //     // User clicked OK
+      //     deferredPrompt.prompt();
+      //     // handleDeferredPrompt();
+      //   } else {
+      //     // User clicked Cancel
+      //     alert("You clicked Cancel!");
+      //   }
 
+      // }, 10000);
+
+      setTimeout(() => {
+        const button = document.getElementById('pwa');
+       // Check if the button exists
+        if (button) {
+          // Trigger the button click
+          button.click();
+
+          // Run the handleDeferredPrompt function
+          handleDeferredPrompt();
+        } else {
+          console.error('Button not found');
+        }
       }, 10000);
+
+
 
     </script>
     
