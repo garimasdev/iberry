@@ -190,7 +190,8 @@ window.addEventListener('beforeinstallprompt', function(event) {
         let result = confirm("Do you want to install?");
         if (result === true) {
           // User clicked OK
-          handleDeferredPrompt();
+          deferredPrompt.prompt();
+          // handleDeferredPrompt();
         } else {
           // User clicked Cancel
           alert("You clicked Cancel!");
