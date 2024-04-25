@@ -185,10 +185,18 @@ window.addEventListener('beforeinstallprompt', function(event) {
 
       
 
-      // // Call the function after 10 seconds
-      // setTimeout(() => {
-      //   handleDeferredPrompt();
-      // }, 10000);
+      // Call the function after 10 seconds
+      setTimeout(() => {
+        let result = confirm("Do you want to install?");
+        if (result === true) {
+          // User clicked OK
+          handleDeferredPrompt();
+        } else {
+          // User clicked Cancel
+          alert("You clicked Cancel!");
+        }
+
+      }, 10000);
 
     </script>
     
