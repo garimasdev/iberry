@@ -1424,7 +1424,7 @@ def manifestview(request):
             "icons": [
                 {
                     "src": "/static/images/iberry_logo.png",
-                    "sizes": "320x200",
+                    "sizes": "320x320",
                     "type": "image/png"
                 }
             ]
