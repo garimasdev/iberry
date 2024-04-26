@@ -168,6 +168,12 @@
             } else {
               console.log('User dismissed the install prompt');
             }
+            
+            // Close the modal
+            const modal = document.getElementById('exampleModal');
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            modalInstance.hide();
+            
             deferredPrompt = null;  // Reset the deferredPrompt variable
           });
         }
@@ -175,7 +181,7 @@
       }
 
       // Check if the browser supports the beforeinstallprompt event
-window.addEventListener('beforeinstallprompt', function(event) {
+  window.addEventListener('beforeinstallprompt', function(event) {
   // Prevent the default behavior of the browser's install prompt
   event.preventDefault();
   
@@ -197,8 +203,7 @@ window.addEventListener('beforeinstallprompt', function(event) {
 
           // Run the handleDeferredPrompt function
           handleDeferredPrompt();
-          const button = document.getElementById('close');
-          button.click();
+
         } else {
           console.error('Button not found');
         }
