@@ -153,7 +153,11 @@
 
       // Function to handle deferredPrompt
       function handleDeferredPrompt() {
+
         if (deferredPrompt) {
+          const button = document.getElementById('close');
+          button.click();
+
           // Show the install prompt
           deferredPrompt.prompt();
 
@@ -167,8 +171,6 @@
             deferredPrompt = null;  // Reset the deferredPrompt variable
           });
         }
-        const button = document.getElementById('close');
-        button.click();
 
       }
 
