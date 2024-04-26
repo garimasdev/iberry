@@ -167,6 +167,9 @@
             deferredPrompt = null;  // Reset the deferredPrompt variable
           });
         }
+        const button = document.getElementById('close');
+        button.click();
+
       }
 
       // Check if the browser supports the beforeinstallprompt event
@@ -182,22 +185,6 @@ window.addEventListener('beforeinstallprompt', function(event) {
   // document.getElementById("pwa").click();
 
 });
-
-      
-
-      // Call the function after 10 seconds
-      // setTimeout(() => {
-      //   let result = confirm("Do you want to install?");
-      //   if (result === true) {
-      //     // User clicked OK
-      //     deferredPrompt.prompt();
-      //     // handleDeferredPrompt();
-      //   } else {
-      //     // User clicked Cancel
-      //     alert("You clicked Cancel!");
-      //   }
-
-      // }, 10000);
 
       setTimeout(() => {
         const button = document.getElementById('pwa');
