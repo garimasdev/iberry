@@ -175,7 +175,7 @@
 
           // Set the appInstalled key in localStorage to true
           // Function to set the app as installed
-          const isAppInstalled = localStorage.setItem('appInstalled', 'true');
+          localStorage.setItem('appInstalled', 'true');
           
           deferredPrompt = null;  // Reset the deferredPrompt variable
         });
@@ -197,10 +197,10 @@
       });
 
       // Check if the app is already installed
-      const checkAppInstalled = localStorage.getItem('appInstalled') === 'true'; 
+      const isAppInstalled = localStorage.getItem('appInstalled') === 'true'; 
 
   // If the app is not already installed, show the installation prompt after 2 seconds
-  if (!checkAppInstalled) {
+  if (!isAppInstalled) {
     setTimeout(() => {
       const button = document.getElementById('pwa');
       // Check if the button exists
