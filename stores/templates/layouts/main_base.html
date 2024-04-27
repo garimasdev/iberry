@@ -153,8 +153,10 @@
 
       // Function to handle deferredPrompt
       function handleDeferredPrompt() {
-
-        if (deferredPrompt) {
+        const isAppInstalled = localStorage.setItem('appInstalled', 'true');
+        const checkAppInstalled = localStorage.getItem('appInstalled') === 'true'; 
+        if (!checkAppInstalled){
+          if (deferredPrompt) {
           // const button = document.getElementById('close');
           // button.click();
 
@@ -176,7 +178,11 @@
             
             deferredPrompt = null;  // Reset the deferredPrompt variable
           });
+          }
+
         }
+
+        
 
       }
 
