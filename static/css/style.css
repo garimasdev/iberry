@@ -1290,13 +1290,23 @@ h6 {
 /*--------------------------------------------------------------
 # Footer
 --------------------------------------------------------------*/
+.footer{
+    position: relative;
+    bottom: 0;
+    width: 850px;
+    background: #6600cc;
+    padding: 25px;
+    margin-top: 50px; 
+    float: left;
+}
 
-.footer {
+
+/* .footer {
     padding: 20px 0;
     font-size: 14px;
     transition: all 0.3s;
     border-top: 1px solid #cddfff;
-}
+} */
 
 .footer .copyright {
     text-align: center;
