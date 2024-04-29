@@ -1411,6 +1411,7 @@ def render_logo(request):
     #     'picture': user.picture
     # })
 
+# pwa manifest
 def manifestview(request):
     if request.method == 'GET':
         manifest = {
