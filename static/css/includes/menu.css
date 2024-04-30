@@ -115,12 +115,12 @@ nav .menu-list li.cart-icon span {
         left: auto;
         box-shadow: none;
     }
-    .back-to-top {
+    /* .back-to-top {
         display: none !important;
     }
     .back-to-down {
         display: none !important;
-    }
+    } */
 }
 
 @media only screen and (max-width: 550px) {
