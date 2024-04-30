@@ -361,6 +361,7 @@ class OutdoorHomeViewPage(TemplateView):
                 get_sub_category, many=True
             ).data
             outdoor_token = User.objects.get(outdoor_token=pk)
+            context['user'] = room
             context['phone'] = outdoor_token.phone
             context["items"] = items
             context["room_id"] = pk
@@ -760,18 +761,21 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             traceback.print_exc()
 
     def destroy(self, request, *args, **kwargs):
-        cart_id = self.kwargs["pk"]
-        instance = self.get_object()
-        cart = OutdoorCart.objects.get(id=cart_id)
-        self.perform_destroy(instance)
-        get_cart_items = OutdoorCart.objects.filter(user=cart.user)
-        amounts = sum(item.price * item.quantity for item in get_cart_items)
-        total_items = sum(item.quantity for item in get_cart_items)
-        response_data = {
-            "total_price": amounts,
-            "total_items": total_items,
-        }
-        return Response(response_data, status=status.HTTP_200_OK)
+        try:
+            cart_id = self.kwargs["pk"]
+            instance = self.get_object()
+            cart = OutdoorCart.objects.get(id=cart_id)
+            self.perform_destroy(instance)
+            get_cart_items = OutdoorCart.objects.filter(user=cart.user)
+            amounts = sum(item.price * item.quantity for item in get_cart_items)
+            total_items = sum(item.quantity for item in get_cart_items)
+            response_data = {
+                "total_price": amounts,
+                "total_items": total_items,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+        except:
+            traceback.print_exc()
 
 
 class OutdoorOrderView(viewsets.ModelViewSet):
