@@ -85,9 +85,9 @@ nav .menu-list li.cart-icon span {
     .menu-first-part {
         column-gap: 20px;
     }
-    .menu-first-part .menu-title {
+    /* .menu-first-part .menu-title {
         display: block !important;
-    }
+    } */
     nav .menu-list li a span {
         display: none;
     }
