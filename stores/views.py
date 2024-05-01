@@ -368,9 +368,9 @@ class OutdoorHomeViewPage(TemplateView):
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
             context["total_price"] = amounts
             if room.picture is not None:
-                context['logo'] = room.picture.url
+                context['picture'] = room.picture.url
             else:
-                context['logo'] = None
+                context['picture'] = None
             context['hotel_name'] = room.username
             context["anonymous_user_id"] = temp_user_id.anonymous_user_id
             context["razorpay_clientid"] = room.razorpay_clientid
