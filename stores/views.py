@@ -724,9 +724,11 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             room_id = self.request.POST.get("user")
 
             item = Item.objects.get(id=item_id)
+            print("item", item)
             price = 0
             if int(price_id) > 1:
                 get_price = Price.objects.get(id=price_id)
+                print("get_price", get_price)
                 if get_price.sell_price:
                     price = get_price.sell_price
                 else:
@@ -748,12 +750,15 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             user = User.objects.get(outdoor_token=room_id)
             cart_items = OutdoorCart.objects.filter(user=user, anonymous_user_id=request.data['anonymous_user_id'])
             total_items = sum(item.quantity for item in cart_items)
+            print("total_items", total_items)
             amounts = sum(item.price * item.quantity for item in cart_items)
+            print("amounts", amounts)
             extra_data = {
                 "id": object_id,
                 "total_price": amounts,
                 "total_items": total_items,
             }
+            print("extra_data", extra_data)
 
             return Response(extra_data, status=status.HTTP_201_CREATED)
         except:
@@ -765,17 +770,31 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             cart_id = self.kwargs["pk"]
             instance = self.get_object()
             cart = OutdoorCart.objects.get(id=cart_id)
+
             self.perform_destroy(instance)
+
+            # Check if the cart is empty after deleting the item
             get_cart_items = OutdoorCart.objects.filter(user=cart.user)
+            if not get_cart_items.exists():
+                cart.delete()
+
+            # Calculate total price and total items
             amounts = sum(item.price * item.quantity for item in get_cart_items)
+            print("amounts", amounts)
             total_items = sum(item.quantity for item in get_cart_items)
+
             response_data = {
                 "total_price": amounts,
                 "total_items": total_items,
             }
+            print("response_data", response_data)
             return Response(response_data, status=status.HTTP_200_OK)
-        except:
+        except OutdoorCart.DoesNotExist():
+            raise Http404("Cart not Found")
+        except Exception as e:
             traceback.print_exc()
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class OutdoorOrderView(viewsets.ModelViewSet):
