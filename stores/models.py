@@ -68,7 +68,7 @@ class Item(models.Model):
         ordering = ['-created_at']
     
     def __str__(self):
-        return self.user.username + "  " + self.category.name
+        return self.user.username +"  " + self.category.name
         
 
 class Image(models.Model):

@@ -1326,7 +1326,9 @@ def contact_us(request):
         'address': user.address,
         'phone': user.phone,
         'email': user.email,
-        'room_id': room_id
+        'room_id': room_id,
+        'user': user,
+        'picture': user.picture.url
     })
 
 
@@ -1377,7 +1379,9 @@ def terms_and_conditions(request):
     user = User.objects.filter(outdoor_token=room_id)[0]
     return render(request, 'navs/home/terms_conditions.html', {
         'email': user.email,
-        'room_id': room_id
+        'room_id': room_id,
+        'user': user,
+        'picture': user.picture.url
     })
 
 
@@ -1387,7 +1391,9 @@ def shipping_policy(request):
     user = User.objects.filter(outdoor_token=room_id)[0]
     return render(request, 'navs/home/shipping_policy.html', {
         'email': user.email,
-        'room_id': room_id
+        'room_id': room_id,
+        'user': user,
+        'picture': user.picture.url
     })
 
 
@@ -1397,7 +1403,9 @@ def privacy_policy(request):
     user = User.objects.filter(outdoor_token=room_id)[0]
     return render(request, 'navs/home/privacy_policy.html', {
         'email': user.email,
-        'room_id': room_id
+        'room_id': room_id,
+        'user': user,
+        'picture': user.picture.url
     })
 
 
@@ -1407,7 +1415,9 @@ def cancel_refund(request):
     user = User.objects.filter(outdoor_token=room_id)[0]
     return render(request, 'navs/home/cancel_refund.html', {
         'email': user.email,
-        'room_id': room_id
+        'room_id': room_id,
+        'user': user,
+        'picture': user.picture.url
     })
 
 
