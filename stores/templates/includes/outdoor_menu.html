@@ -39,6 +39,7 @@
 
   <ul class="menu-list d-flex align-items-center">
     
+   <!-- food button -->
     <li>
       <a href="{% url 'stores:foods-outdoor-items' room_id %}" class="{%if request.path == '/store/'|add:room_number|add:'/foods/'%}active{%endif%}">
         <svg xmlns="http://www.w3.org/2000/svg" class="{%if request.path == '/store/'|add:room_number|add:'/foods/'%}active{%endif%}" height="1em" viewBox="0 0 448 512">
@@ -58,10 +59,8 @@
         <span>CALL US</span>
       </a>
     </li>
-  </ul>
-  
 
-  <ul class="cart-list menu-list d-flex align-items-center">
+    <!-- cart buutton -->
     <li class="cart-icon">
       <i class="bi bi-bag"></i>
       <span id="cart-badge">{{cart_count}}</span>
