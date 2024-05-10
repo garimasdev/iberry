@@ -396,7 +396,8 @@ scheduler.timezone = pytz.timezone('Asia/Kolkata')  # Replace 'Asia/Kolkata' wit
 def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
-            phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SECRET_KEY, salt_index=1, env=settings.ENV)
+            # phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SECRET_KEY, salt_index=1, env=settings.ENV, timezone=pytz.timezone(settings.TIME_ZONE)))
+            phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SECRET_KEY, salt_index=settings.SALT_INDEX, env=settings.ENV, timezone=pytz.timezone(settings.TIME_ZONE))
             unique_transaction_id = str(uuid.uuid4())[:-2]
             ui_redirect_url = f"{request.scheme}://{request.get_host()}/payment/checkout/success"  
             s2s_callback_url = f"{request.scheme}://{request.get_host()}/payment/checkout"  
