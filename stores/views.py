@@ -383,6 +383,16 @@ import uuid
 from phonepe.sdk.pg.payments.v1.payment_client import PhonePePaymentClient
 from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
 
+import pytz
+from apscheduler.schedulers.background import BackgroundScheduler
+
+# Create a scheduler instance
+scheduler = BackgroundScheduler()
+
+# Set the timezone for the scheduler using pytz
+scheduler.timezone = pytz.timezone('Asia/Kolkata')  # Replace 'Asia/Kolkata' with your desired timezone
+
+
 def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
