@@ -9,14 +9,14 @@
         <div class="card-body">
             <h5 class="card-title">PhonePe Configuration</h5>
             <div class="mb-3">
-                <label for="razorpay_client_id" class="form-label">PhonePe Merchant ID</label>
-                <input type="text" class="form-control" id="razorpay_client_id">
+                <label for="phone_merchant_id" class="form-label">PhonePe Merchant ID</label>
+                <input type="text" class="form-control" id="phone_merchant_id">
               </div>
               <div class="mb-3">
-                <label for="razorpay_client_secret" class="form-label">PhonePe API Key</label>
-                <input type="text" class="form-control" id="razorpay_client_secret">
+                <label for="phonepe_api_key" class="form-label">PhonePe API Key</label>
+                <input type="text" class="form-control" id="phonepe_api_key">
               </div>
-              <button type="submit" class="btn btn-primary" onclick="createRazorpayConfigurations();">Submit</button>
+              <button type="submit" class="btn btn-primary" onclick="createPhonePeConfigurations();">Submit</button>
         </div>
     </div>
 </main>
@@ -25,14 +25,14 @@
 
 {% block javascripts %}
 <script>
-    function createRazorpayConfigurations() {
+    function createPhonePeConfigurations() {
         // Get values from input fields
-        var razorpay_client_id = document.getElementById('razorpay_client_id').value.trim();
-        var razorpay_client_secret = document.getElementById('razorpay_client_secret').value.trim();
+        var phonpe_merchant_id = document.getElementById('phone_merchant_id').value.trim();
+        var phonepe_api_key = document.getElementById('phonepe_api_key').value.trim();
         // Create an object with the data
         var data = {
-            razorpay_client_id: razorpay_client_id,
-            razorpay_client_secret: razorpay_client_secret
+            phone_merchant_id: phone_merchant_id,
+            phonepe_api_key: phonepe_api_key
         };
 
         // Make a fetch request to your server
@@ -48,6 +48,9 @@
         .then(data => {
             if (data.status === true) {
                 alert('Payment gateway configuration saved successfully.');
+            }
+            else if (Object.keys(data).length === 0) {
+                alert('PhonePe credentials are required. Please enter them.');
             } else {
                 alert('Payment gateway configuration not saved.');
             }
