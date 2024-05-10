@@ -12,7 +12,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
-# from phonepe.sdk.pg.env import Env
+
+# phonepe payment gateway
+from phonepe.sdk.pg.env import Env
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
