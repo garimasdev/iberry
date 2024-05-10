@@ -403,7 +403,7 @@ def CreatePaymentOrder(request):
             amount = cart_total * 100
             pay_page_request = PgPayRequest.pay_page_pay_request_builder(merchant_transaction_id=unique_transaction_id, amount=amount, merchant_user_id=id_assigned_to_user_by_merchant, callback_url=s2s_callback_url, redirect_url=ui_redirect_url)
             pay_page_response = phonepe_client.pay(pay_page_request)  
-            pay_page_url = pay_page_response.data.instrument_response.redirect_info.url
+            
             
 
             # update the temp_users table with order id and receipt
@@ -418,7 +418,7 @@ def CreatePaymentOrder(request):
             
             return JsonResponse({
                 'status': True,
-                'uri': pay_page_url + f'?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'
+                'uri': pay_page_response.data.instrument_response.redirect_info.url + f'?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'
             })
         except:
             import traceback
