@@ -14,7 +14,6 @@ from django.http import HttpResponseBadRequest
 
 from django.core.mail import send_mail
 
-import razorpay
 from accounts.models import User
 from django.shortcuts import render
 import firebase_admin
@@ -384,12 +383,12 @@ class OutdoorHomeViewPage(TemplateView):
 
 # phonepe payment gateway integration 
 import uuid  
-# from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
+from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
 
 def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
-            # phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SALT_KEY, salt_index=1, env=settings.ENV)
+            phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SECRET_KEY, salt_index=1, env=settings.ENV)
             unique_transaction_id = str(uuid.uuid4())[:-2]
             ui_redirect_url = f"{request.scheme}://{request.get_host()}/payment/checkout/success"  
             s2s_callback_url = f"{request.scheme}://{request.get_host()}/payment/checkout"  
@@ -401,9 +400,9 @@ def CreatePaymentOrder(request):
             receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
             id_assigned_to_user_by_merchant = receipt
             amount = cart_total * 100
-            # pay_page_request = PgPayRequest.pay_page_pay_request_builder(merchant_transaction_id=unique_transaction_id, amount=amount, merchant_user_id=id_assigned_to_user_by_merchant, callback_url=s2s_callback_url, redirect_url=ui_redirect_url)
-            # pay_page_response = phonepe_client.pay(pay_page_request)  
-            # pay_page_url = pay_page_response.data.instrument_response.redirect_info.url
+            pay_page_request = PgPayRequest.pay_page_pay_request_builder(merchant_transaction_id=unique_transaction_id, amount=amount, merchant_user_id=id_assigned_to_user_by_merchant, callback_url=s2s_callback_url, redirect_url=ui_redirect_url)
+            pay_page_response = phonepe_client.pay(pay_page_request)  
+            pay_page_url = pay_page_response.data.instrument_response.redirect_info.url
             
 
             # update the temp_users table with order id and receipt
@@ -456,12 +455,12 @@ def paymentCheckoutSuccess(request):
         try:
             payload = request.POST
             get_room = User.objects.get(outdoor_token=request.GET.get('token'))
-            client = razorpay.Client(auth=(get_room.razorpay_clientid, get_room.razorpay_clientsecret))
-            status = client.utility.verify_payment_signature({
-                'razorpay_order_id': payload['razorpay_order_id'],
-                'razorpay_payment_id': payload['razorpay_payment_id'],
-                'razorpay_signature': payload['razorpay_signature']
-            })
+            # client = razorpay.Client(auth=(get_room.razorpay_clientid, get_room.razorpay_clientsecret))
+            # status = client.utility.verify_payment_signature({
+            #     'razorpay_order_id': payload['razorpay_order_id'],
+            #     'razorpay_payment_id': payload['razorpay_payment_id'],
+            #     'razorpay_signature': payload['razorpay_signature']
+            # })
             if status is True:
                 cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
                 if cart_items:
