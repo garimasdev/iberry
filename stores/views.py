@@ -7,9 +7,6 @@ from dashboard.models import Global
 import uuid
 from django.http import HttpResponseBadRequest
 
-# phonepe import 
-# from phonepe.sdk.pg.payments.v1.payment_client import PhonePePaymentClient
-
 
 
 from django.core.mail import send_mail
@@ -383,6 +380,7 @@ class OutdoorHomeViewPage(TemplateView):
 
 # phonepe payment gateway integration 
 import uuid  
+from phonepe.sdk.pg.payments.v1.payment_client import PhonePePaymentClient
 from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
 
 def CreatePaymentOrder(request):
