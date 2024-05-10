@@ -383,20 +383,12 @@ import uuid
 from phonepe.sdk.pg.payments.v1.payment_client import PhonePePaymentClient
 from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
 
-import pytz
-from apscheduler.schedulers.background import BackgroundScheduler
-
-# Create a scheduler instance
-scheduler = BackgroundScheduler()
-
-# Set the timezone for the scheduler using pytz
-scheduler.timezone = pytz.timezone('Asia/Kolkata')  # Replace 'Asia/Kolkata' with your desired timezone
 
 
 def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
-            phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SECRET_KEY, salt_index=1, env=settings.ENV, timezone=scheduler.timezone)
+            phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SECRET_KEY, salt_index=1, env=settings.ENV)
             # phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SECRET_KEY, salt_index=settings.SALT_INDEX, env=settings.ENV, timezone=pytz.timezone(settings.TIME_ZONE))
             unique_transaction_id = str(uuid.uuid4())[:-2]
             ui_redirect_url = f"{request.scheme}://{request.get_host()}/payment/checkout/success"  
