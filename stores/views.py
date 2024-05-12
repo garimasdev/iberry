@@ -418,7 +418,7 @@ def CreatePaymentOrder(request):
             
             return JsonResponse({
                 'status': True,
-                'uri': pay_page_response.data.instrument_response.redirect_info.url + f'?user_id={payload["anonymous_user_id"]}&user={payload["user"]}'
+                'uri': pay_page_response.data.instrument_response.redirect_info.url
             })
         except:
             import traceback
