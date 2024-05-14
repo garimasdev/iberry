@@ -235,16 +235,16 @@ RAZORPAY_CLIENT_SECRET= 'MOFA1TdFPjB9uPNztJrXnacB'
 
 
 # Phonepe payment prod creds
-MERCHANT_ID= "M22LCRP3AUE3O"  
-SALT_KEY= "acff9b57-fe8b-42dc-bc46-9e5e0113a4be" 
-SALT_INDEX= 1 
-ENV= Env.PROD
+# MERCHANT_ID= "M22LCRP3AUE3O"  
+# SALT_KEY= "acff9b57-fe8b-42dc-bc46-9e5e0113a4be" 
+# SALT_INDEX= 1 
+# ENV= Env.PROD
 
 # Phonepe payment uat creds
-# MERCHANT_ID= "PGTESTPAYUAT"  
-# SALT_KEY= "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399" 
-# SALT_INDEX= 1 
-# ENV= Env.UAT
+MERCHANT_ID= "PGTESTPAYUAT"  
+SALT_KEY= "099eb0cd-02cf-4e2a-8aca-3e6c6aff0399" 
+SALT_INDEX= 1 
+ENV= Env.UAT
 
 
 
