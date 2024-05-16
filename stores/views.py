@@ -92,7 +92,7 @@ if sys.platform == 'linux':
     import telegram
     from telegram import ParseMode
 
-from notification.helpers import telegram_notification
+# from notification.helpers import telegram_notification
 
 
 credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
@@ -395,13 +395,13 @@ import base64
 def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
+            body = json.loads(request.body)
             merchantTransactionId = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
             merchantUserId = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
 
-            cart_items = OutdoorCart.objects.filter(anonymous_user_id=merchantUserId)
+            cart_items = OutdoorCart.objects.filter(anonymous_user_id=body['anonymous_user_id'])
             cart_total = sum([item.quantity * item.price for item in cart_items])
             receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
-            id_assigned_to_user_by_merchant = receipt
             amount = cart_total * 100
 
             payload = {
@@ -411,7 +411,7 @@ def CreatePaymentOrder(request):
                 "amount": amount,
                 "redirectUrl": f"{request.scheme}://{request.get_host()}/payment/checkout/success",
                 "redirectMode": "REDIRECT",
-                "callbackUrl": f"{request.scheme}://{request.get_host()}/payment/checkout",
+                "callbackUrl": f"{request.scheme}://{request.get_host()}/payment/checkout?token={body['user']}&user_id={body['anonymous_user_id']}",
                 "paymentInstrument": {
                     "type": "PAY_PAGE"
                 }
@@ -428,55 +428,36 @@ def CreatePaymentOrder(request):
                 'Content-Type': 'application/json',
                 'X-VERIFY': verify_header
             }
-            url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+            # url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+            url = "https://api.phonepe.com/apis/hermes/pg/v1/pay "
 
             data = {
                 'request': base64_encoded.decode('utf-8')
             }
             
             result = requests.post(url, json=data, headers=headers)
+            print(result.text)
 
             if result.status_code == 200:
-                result = result.json().get('data').get('instrumentResponse').get('redirectInfo').get('url')
-                telegram_notification(result)
-                # return redirect(result)
+                response_data = result.json()  # Extracting JSON data from the response
+                result_url = response_data.get('data', {}).get('instrumentResponse', {}).get('redirectInfo', {}).get('url')
+                # result = result.json().get('data').get('instrumentResponse').get('redirectInfo').get('url')
+                # telegram_notification(result)
+                print(result_url)
+                if result_url:
+                    temp_user = Temporary_Users.objects.get(anonymous_user_id=body['anonymous_user_id'])
+                    temp_user.receipt = receipt
+                    temp_user.order_total = str(cart_total * 100)
+                    temp_user.customer_name = body['username']
+                    temp_user.customer_email = body['email']
+                    temp_user.customer_phone = body['phone']
+                    temp_user.customer_address = body['address']
+                    temp_user.save()
+                    return JsonResponse({
+                            'status': True,
+                            'uri': result_url
+                        })
 
-            return JsonResponse({
-                    'status': True,
-                    'uri': result
-                })
-
-            
-            # unique_transaction_id = str(uuid.uuid4())[:-2]
-            
-
-            
-            
-            # payload = json.loads(request.body)
-            # cart_items = OutdoorCart.objects.filter(anonymous_user_id=payload['anonymous_user_id'])
-            # cart_total = sum([item.quantity * item.price for item in cart_items])
-            # receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
-            # id_assigned_to_user_by_merchant = receipt
-            # amount = cart_total * 100
-            # pay_page_request = PgPayRequest.pay_page_pay_request_builder(merchant_transaction_id=unique_transaction_id, amount=amount, merchant_user_id=id_assigned_to_user_by_merchant, callback_url=s2s_callback_url, redirect_url=ui_redirect_url)
-            # pay_page_response = phonepe_client.pay(pay_page_request)  
-            
-            
-
-            # update the temp_users table with order id and receipt
-            # temp_user = Temporary_Users.objects.get(anonymous_user_id=payload['anonymous_user_id'])
-            # temp_user.receipt = receipt
-            # temp_user.order_total = str(cart_total * 100)
-            # temp_user.customer_name = payload['username']
-            # temp_user.customer_email = payload['email']
-            # temp_user.customer_phone = payload['phone']
-            # temp_user.customer_address = payload['address']
-            # temp_user.save()
-            
-            # return JsonResponse({
-            #     'status': True,
-            #     'uri': pay_page_response.data.instrument_response.redirect_info.url
-            # })
         except:
             import traceback
             return JsonResponse({
@@ -485,95 +466,76 @@ def CreatePaymentOrder(request):
             })
 
 
-def paymentCheckout(request):
-    if request.method == 'GET': #post method
-        anonymous_user_id = request.GET.get('user_id')
-        user_token = request.GET.get('user')
-        user = User.objects.get(outdoor_token=user_token)
-        temp_user = Temporary_Users.objects.get(anonymous_user_id=anonymous_user_id)
-        
-# response = json.loads(request.body)
-        return render(request, 'navs/home/checkout.html', {
-            'key_id': user.razorpay_clientid,
-            'amount': int(temp_user.order_total),
-            'order_id': temp_user.razorpay_order_id,
-            'phone': temp_user.customer_phone,
-            'email': temp_user.customer_email,
-            'name': temp_user.customer_name,
-            # 'picture': user.picture.url,
-            # 'company_name': user.name.capitalize(),
-            'user_id': anonymous_user_id,
-            'user_token': user_token
-        })
-
 
 @csrf_exempt
-def paymentCheckoutSuccess(request):
+def paymentCheckout(request):
     if request.method == 'POST':
-        try:
-            payload = request.POST
+        payload = request.POST['response']
+        payload = base64.b64decode(payload.encode()).decode()
+        if payload['code'] == 'PAYMENT_SUCCESS':
             get_room = User.objects.get(outdoor_token=request.GET.get('token'))
-            # client = razorpay.Client(auth=(get_room.razorpay_clientid, get_room.razorpay_clientsecret))
-            # status = client.utility.verify_payment_signature({
-            #     'razorpay_order_id': payload['razorpay_order_id'],
-            #     'razorpay_payment_id': payload['razorpay_payment_id'],
-            #     'razorpay_signature': payload['razorpay_signature']
-            # })
-            if status is True:
-                cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
-                if cart_items:
-                    order_id = str(uuid.uuid4().int & (10**8 - 1))
-                    order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
-                    total_amount = 0
-                    for cart in cart_items:
-                        item = cart.item
-                        quantity = cart.quantity
-                        total_amount += cart.price * quantity
-                        order_item = OutdoorOrderItem.objects.create(
-                            order=order, item=item, quantity=quantity, price=cart.price
-                        )
-                        order.items.add(order_item)
+            cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
+            if cart_items:
+                order_id = str(uuid.uuid4().int & (10**8 - 1))
+                order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
+                total_amount = 0
+                for cart in cart_items:
+                    item = cart.item
+                    quantity = cart.quantity
+                    total_amount += cart.price * quantity
+                    order_item = OutdoorOrderItem.objects.create(
+                        order=order, item=item, quantity=quantity, price=cart.price
+                    )
+                    order.items.add(order_item)
 
-                    order.total_price = total_amount
-                    order.save()
-                    cart_items.delete()
-                    # here i can associate the order_id in temp_users
-                    temp_user = Temporary_Users.objects.get(anonymous_user_id=request.GET.get('user_id'))
-                    temp_user.custom_order_id = order_id
-                    temp_user.save()
-                    # Send push notification
-                    message = f'A new order received'
-                    notification = messaging.Notification(
-                        title=f'A new order received',
-                        body=message,
-                    )
-                    message = messaging.Message(
-                        notification=notification,
-                        token=get_room.firebase_token
-                    )
-                    messaging.send(message)
-                    # telegram notification for order received
-                    order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
-                    message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
-                    telegram_notification(get_room.channel_name, message)                    
-                    return redirect(reverse('stores:outdoor_order_status', kwargs={
-                        'room_token': request.GET.get('token'),
-                        'order_id': order_id
-                    }))
-            else:
-                get_room = User.objects.get(outdoor_token=request.GET.get('token'))
-                cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
+                order.total_price = total_amount
+                order.save()
                 cart_items.delete()
-                return redirect(reverse('stores:foods-outdoor-items', kwargs={
-                    'room_token': request.GET.get('token')
+                # here i can associate the order_id in temp_users
+                temp_user = Temporary_Users.objects.get(anonymous_user_id=request.GET.get('user_id'))
+                temp_user.custom_order_id = order_id
+                temp_user.save()
+                # Send push notification
+                message = f'A new order received'
+                notification = messaging.Notification(
+                    title=f'A new order received',
+                    body=message,
+                )
+                message = messaging.Message(
+                    notification=notification,
+                    token=get_room.firebase_token
+                )
+                messaging.send(message)
+                # telegram notification for order received
+                order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
+                message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                telegram_notification(get_room.channel_name, message)                    
+                return redirect(reverse('stores:outdoor_order_status', kwargs={
+                    'room_token': request.GET.get('token'),
+                    'order_id': order_id
                 }))
-        except:
+        else:
             get_room = User.objects.get(outdoor_token=request.GET.get('token'))
             cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
             cart_items.delete()
             return redirect(reverse('stores:foods-outdoor-items', kwargs={
                 'room_token': request.GET.get('token')
             }))
+
+
+
+
+@csrf_exempt
+def paymentCheckoutSuccess(request):
+    if request.method == 'GET':
+        code = request.GET.get('code')
+        if code == 'PAYMENT_SUCCESS':
+            return HttpResponse("Success")
+        else:
+            return HttpResponse("Failed, Try Again!")
+
+
+
 
 
 class BarPageView(TemplateView):
