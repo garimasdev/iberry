@@ -438,39 +438,44 @@ def CreatePaymentOrder(request):
 
             if result.status_code == 200:
                 result = result.json().get('data').get('instrumentResponse').get('redirectInfo').get('url')
-                return redirect(result)
+                # return redirect(result)
+
+            return JsonResponse({
+                    'status': True,
+                    'uri': result
+                })
 
             
-            unique_transaction_id = str(uuid.uuid4())[:-2]
+            # unique_transaction_id = str(uuid.uuid4())[:-2]
             
 
             
             
-            payload = json.loads(request.body)
-            cart_items = OutdoorCart.objects.filter(anonymous_user_id=payload['anonymous_user_id'])
-            cart_total = sum([item.quantity * item.price for item in cart_items])
-            receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
-            id_assigned_to_user_by_merchant = receipt
-            amount = cart_total * 100
-            pay_page_request = PgPayRequest.pay_page_pay_request_builder(merchant_transaction_id=unique_transaction_id, amount=amount, merchant_user_id=id_assigned_to_user_by_merchant, callback_url=s2s_callback_url, redirect_url=ui_redirect_url)
-            pay_page_response = phonepe_client.pay(pay_page_request)  
+            # payload = json.loads(request.body)
+            # cart_items = OutdoorCart.objects.filter(anonymous_user_id=payload['anonymous_user_id'])
+            # cart_total = sum([item.quantity * item.price for item in cart_items])
+            # receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
+            # id_assigned_to_user_by_merchant = receipt
+            # amount = cart_total * 100
+            # pay_page_request = PgPayRequest.pay_page_pay_request_builder(merchant_transaction_id=unique_transaction_id, amount=amount, merchant_user_id=id_assigned_to_user_by_merchant, callback_url=s2s_callback_url, redirect_url=ui_redirect_url)
+            # pay_page_response = phonepe_client.pay(pay_page_request)  
             
             
 
             # update the temp_users table with order id and receipt
-            temp_user = Temporary_Users.objects.get(anonymous_user_id=payload['anonymous_user_id'])
-            temp_user.receipt = receipt
-            temp_user.order_total = str(cart_total * 100)
-            temp_user.customer_name = payload['username']
-            temp_user.customer_email = payload['email']
-            temp_user.customer_phone = payload['phone']
-            temp_user.customer_address = payload['address']
-            temp_user.save()
+            # temp_user = Temporary_Users.objects.get(anonymous_user_id=payload['anonymous_user_id'])
+            # temp_user.receipt = receipt
+            # temp_user.order_total = str(cart_total * 100)
+            # temp_user.customer_name = payload['username']
+            # temp_user.customer_email = payload['email']
+            # temp_user.customer_phone = payload['phone']
+            # temp_user.customer_address = payload['address']
+            # temp_user.save()
             
-            return JsonResponse({
-                'status': True,
-                'uri': pay_page_response.data.instrument_response.redirect_info.url
-            })
+            # return JsonResponse({
+            #     'status': True,
+            #     'uri': pay_page_response.data.instrument_response.redirect_info.url
+            # })
         except:
             import traceback
             return JsonResponse({
