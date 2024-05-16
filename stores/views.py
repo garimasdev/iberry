@@ -423,7 +423,7 @@ def CreatePaymentOrder(request):
             base64_encoded = base64.b64encode(json_bytes)
             # Convert bytes to string (if needed)
             base64_encoded_str = base64_encoded.decode('utf-8') + "/pg/v1/pay" + settings.SALT_KEY
-            verify_header = sha256(base64_encoded_str) + '###' + '1'
+            verify_header = sha256(base64_encoded_str.encode('utf-8')) + '###' + '1'
             headers = {
                 'Content-Type': 'application/json',
                 'X-VERIFY': verify_header
