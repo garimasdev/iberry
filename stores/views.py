@@ -1,3 +1,4 @@
+from importlib.resources import path
 import json
 import os
 import string
@@ -6,6 +7,10 @@ import traceback
 from dashboard.models import Global
 import uuid
 from django.http import HttpResponseBadRequest
+import base64
+from hashlib import sha256
+import requests
+
 
 
 
@@ -382,17 +387,63 @@ class OutdoorHomeViewPage(TemplateView):
 import uuid  
 from phonepe.sdk.pg.payments.v1.payment_client import PhonePePaymentClient
 from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
+from hashlib import sha256
+import base64
 
 
 
 def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
-            phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SALT_KEY, salt_index=1, env=settings.ENV)
-            # phonepe_client = PhonePePaymentClient(merchant_id=settings.MERCHANT_ID, salt_key=settings.SECRET_KEY, salt_index=settings.SALT_INDEX, env=settings.ENV, timezone=pytz.timezone(settings.TIME_ZONE))
+            merchantTransactionId = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
+            merchantUserId = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
+
+            cart_items = OutdoorCart.objects.filter(anonymous_user_id=merchantUserId)
+            cart_total = sum([item.quantity * item.price for item in cart_items])
+            receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
+            id_assigned_to_user_by_merchant = receipt
+            amount = cart_total * 100
+
+            payload = {
+                "merchantId": settings.MERCHANT_ID,
+                "merchantTransactionId": merchantTransactionId,
+                "merchantUserId": merchantUserId,
+                "amount": amount,
+                "redirectUrl": f"{request.scheme}://{request.get_host()}/payment/checkout/success",
+                "redirectMode": "REDIRECT",
+                "callbackUrl": f"{request.scheme}://{request.get_host()}/payment/checkout",
+                "paymentInstrument": {
+                    "type": "PAY_PAGE"
+                }
+            }
+            json_str = json.dumps(payload)
+            # Encode the string as bytes
+            json_bytes = json_str.encode('utf-8')
+            # Encode the bytes using base64
+            base64_encoded = base64.b64encode(json_bytes)
+            # Convert bytes to string (if needed)
+            base64_encoded_str = base64_encoded.decode('utf-8') + "/pg/v1/pay" + settings.SALT_KEY
+            verify_header = sha256(base64_encoded_str) + '###' + '1'
+            headers = {
+                'Content-Type': 'application/json',
+                'X-VERIFY': verify_header
+            }
+            url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+
+            data = {
+                'request': base64_encoded.decode('utf-8')
+            }
+            
+            result = requests.post(url, json=data, headers=headers)
+
+            if result.status_code == 200:
+                result = result.json().get('data').get('instrumentResponse').get('redirectInfo').get('url')
+                return redirect(result)
+
+            
             unique_transaction_id = str(uuid.uuid4())[:-2]
-            ui_redirect_url = f"{request.scheme}://{request.get_host()}/payment/checkout/success"  
-            s2s_callback_url = f"{request.scheme}://{request.get_host()}/payment/checkout"  
+            
+
             
             
             payload = json.loads(request.body)
