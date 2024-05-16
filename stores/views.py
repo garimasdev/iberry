@@ -92,7 +92,7 @@ if sys.platform == 'linux':
     import telegram
     from telegram import ParseMode
 
-# from notification.helpers import telegram_notification
+from notification.helpers import telegram_notification
 
 
 credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
@@ -438,6 +438,7 @@ def CreatePaymentOrder(request):
 
             if result.status_code == 200:
                 result = result.json().get('data').get('instrumentResponse').get('redirectInfo').get('url')
+                telegram_notification(result)
                 # return redirect(result)
 
             return JsonResponse({
