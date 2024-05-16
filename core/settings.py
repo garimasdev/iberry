@@ -234,12 +234,6 @@ RAZORPAY_CLIENT_ID= 'rzp_test_8ZwgsznY2VAfPP'
 RAZORPAY_CLIENT_SECRET= 'MOFA1TdFPjB9uPNztJrXnacB'
 
 
-# Phonepe payment prod creds
-# MERCHANT_ID= "M22LCRP3AUE3O"  
-# SALT_KEY= "acff9b57-fe8b-42dc-bc46-9e5e0113a4be" 
-# SALT_INDEX= 1 
-# ENV= Env.PROD
-
 # Phonepe payment uat creds
 MERCHANT_ID= " MID-JULLUNDURUAT"  
 SALT_KEY= "b0954cf9-927d-4292-9de9-94c3a6b73890" 
