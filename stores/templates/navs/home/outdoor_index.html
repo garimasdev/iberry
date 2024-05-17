@@ -388,7 +388,7 @@
             user: "{{room_id}}"
         };
         // Fetch API POST request
-        fetch('{% url "stores:create_payment_order" %}?cid={{razorpay_clientid}}&secret={{razorpay_clientsecret}}', {
+        fetch('{% url "stores:create_payment_order" %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
