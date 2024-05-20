@@ -61,9 +61,17 @@ def savepaymentGatewayConfiguration(request):
             })
 
 
+# payment gateway dashboard
 def paymentGatewayConfiguration(request):
     if request.method == 'GET':
         return render(request, 'tabs/extension/payment_gateway_conf.html')
+
+
+# terms and policies dashboard
+def createTermsConfigurations(request):
+    if request.method == 'GET':
+        return render(request, 'tabs/custom_terms/custom_terms.html')
+
 
 
 def UserChangePassword(request):

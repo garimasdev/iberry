@@ -1,0 +1,67 @@
+{% extends "layouts/base.html" %} {% block title %} Add New Extension {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+
+<main id="main" class="main">
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Policies Configuration</h5>
+            <div class="mb-3">
+                <label for="phone_merchant_id" class="form-label">Heading</label>
+                <input type="text" class="form-control" id="phone_merchant_id">
+              </div>
+              <div class="mb-3">
+                <label for="phonepe_api_key" class="form-label">Description</label>
+                <input type="text" class="form-control" id="phonepe_api_key">
+              </div>
+              <button type="submit" class="btn btn-primary" onclick="createTermsConfigurations();">Save</button>
+        </div>
+    </div>
+</main>
+<!-- End #main -->
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+    function createTermsConfigurations() {
+        // Get values from input fields
+        var heading = document.getElementById('heading').value.trim();
+        var description = document.getElementById('description').value.trim();
+        // Create an object with the data
+        var data = {
+            heading: heading,
+            description: description
+        };
+
+        // Make a fetch request to your server
+        fetch('/dashboard/save/payment_gateway/configuration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === true) {
+                alert('Policies configuration saved successfully.');
+            }
+            else if (Object.keys(data).length === 0) {
+                alert('Policies are required. Please enter them.');
+            } else {
+                alert('Policies configuration not saved.');
+            }
+            window.location.reload();
+        })
+        .catch((error) => {
+            alert('Policies configuration not saved.');
+            window.location.reload();
+        });
+    }
+
+</script>
+
+{% endblock javascripts %}

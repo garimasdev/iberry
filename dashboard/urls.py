@@ -15,6 +15,10 @@ urlpatterns = [
     path('payment_gateway/configuration', views.paymentGatewayConfiguration, name='payment_GatewayConfiguration'),
     path('user/change_password/', views.UserChangePassword, name="user-change-password"),
     path('save/token',views.savetoken, name="fcm-token"),
+
+    # Dynamic Policies
+    path('terms/configuration', views.createTermsConfigurations, name='create_terms_configurations'),
+
     # room paths
     path('room/list/', views.RoomViewPage.as_view(), name="room-list"),
     path('room/add/', views.RoomCreateView.as_view(), name="room-add"),
@@ -33,6 +37,7 @@ urlpatterns = [
     path('foods/category/add/', views.FoodsCategoryCreateView.as_view(), name="foods-category-add"),
     path('foods/category/update/<int:pk>/', views.FoodsCategoryUpdateView.as_view(), name="foods-category-update"),
     path('foods/category/delete/<int:pk>/', views.FoodsCategoryDeleteView.as_view(), name="foods-category-delete"),
+    
     #Sub Category
     path('foods/categories/sub-categories/', views.FoodsSubCategoriesViewPage.as_view(), name="foods-sub-categories"),
     path('foods/category/sub-category/add/', views.FoodsSubCategoryCreateView.as_view(), name="foods-sub-category-add"),
