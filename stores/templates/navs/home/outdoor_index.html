@@ -249,6 +249,8 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 
 <script src="/static/js/foods/outdoor_foods.js"></script>
+<script src="https://mercury.phonepe.com/web/bundle/checkout.js"></script>
+
 
 <script>
 
@@ -405,7 +407,9 @@
         .then(data => {
             // Handle the response data as needed
             if (data.status === true) {
-                window.location.href = data.uri;
+                // window.location.href = data.uri;
+                window.PhonePeCheckout.transact(data.uri);
+
             } else {
                 alert(`Sorry payment cannot proceed ${data.traceback}`);
             }
