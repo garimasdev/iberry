@@ -1,6 +1,7 @@
 from datetime import datetime
 import random
 import string
+import traceback
 from django.db.models import Count, Q
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.http import JsonResponse
@@ -10,6 +11,7 @@ from django.views.generic import ListView, TemplateView, UpdateView, DeleteView,
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import Group
 from accounts.models import User
+from dashboard.models import *
 # from dashboard.serializers import AdmissionsSerializer
 from rest_framework.views import APIView
 from rest_framework.generics import UpdateAPIView, DestroyAPIView, CreateAPIView
@@ -70,8 +72,54 @@ def paymentGatewayConfiguration(request):
 # terms and policies dashboard
 def createTermsConfigurations(request):
     if request.method == 'GET':
-        return render(request, 'tabs/custom_terms/custom_terms.html')
+        choices = TermHeading.STATUS
+        return render(request, 'tabs/custom_terms/custom_terms.html', {'choices': choices})
+    
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body)
+            user = User.objects.get(pk=request.user.pk)
+            heading = payload['heading']
+            description = payload['description']
+            choices = int(payload['choices'])
 
+            TermHeading.objects.create(
+                user=user, 
+                heading=heading, 
+                content=description,
+                page=choices
+            )
+
+            # update the terms and policies
+
+            return JsonResponse({'status': True})
+    
+        except Exception as e:
+            traceback.print_exc()
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
+def createSubheadingConfiguration(request):
+
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body)
+            user = User.objects.get(pk=request.user.pk)
+            subheading = payload['section']
+            description = payload['content']
+            sub_choices = int(payload['sub_choices'])
+            term = TermHeading.objects.filter(user__pk=user.pk, page=sub_choices)[0]
+            SubHeading.objects.create(
+                head=term,
+                title=subheading, 
+                content=description
+            )
+            
+            return JsonResponse({'status': True})
+
+        except Exception as e:
+            traceback.print_exc()
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
 def UserChangePassword(request):

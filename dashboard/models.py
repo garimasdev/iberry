@@ -240,6 +240,7 @@ class TermHeading(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     heading = models.CharField(max_length=10, null=True, blank=True)
     content = models.TextField(null=True, blank=True)
+    page = models.PositiveSmallIntegerField(choices=STATUS, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Main Terms Policies'

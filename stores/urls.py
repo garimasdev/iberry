@@ -20,6 +20,7 @@ urlpatterns = [
     path('create/payment/order', views.CreatePaymentOrder, name='create_payment_order'),
     path('firebase-messaging-sw.js',views.showFirebaseJS,name="show_firebase_js"),
     path('outdoor-order/', views.OutdoorOrderModelView.as_view(), name='outdoor_order'),
+    path('outdoor_cart/user_id', views.OutdoorCartUserid, name="outdoor_cart_user_id"),
     path('store/<str:room_token>/', views.ModulesViewPage.as_view(), name="my_url"),
     path('store/<str:room_token>/foods/', views.FoodsPageView.as_view(), name="foods"),
     path('store/<str:room_token>/foods/outdoor_items/', views.OutdoorHomeViewPage.as_view(), name="foods-outdoor-items"),

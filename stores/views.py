@@ -705,6 +705,16 @@ class CartModelView(viewsets.ModelViewSet):
         }
         return Response(response_data, status=status.HTTP_200_OK)
 
+def OutdoorCartUserid(request):
+    if request.method == 'POST':
+        user_id =  ''.join(random.choices(string.ascii_uppercase + string.digits, k = 6))
+        return JsonResponse({
+            'user_id': user_id
+        })
+
+
+
+
 
 class OutdoorCartModelView(viewsets.ModelViewSet):
     authentication_classes = []
@@ -713,8 +723,9 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
 
     def get_queryset(self):
         room_id = self.request.query_params.get("room_id")
-        if room_id:
-            return OutdoorCart.objects.filter(user__outdoor_token=room_id)
+        user_id = self.request.query_params.get("user_id")
+        if room_id and user_id:
+            return OutdoorCart.objects.filter(user__outdoor_token=room_id, cart_user_id=user_id)
         else:
             return OutdoorCart.objects.all()
 
@@ -732,6 +743,7 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             serializer = self.get_serializer(data={
                 'user': User.objects.get(outdoor_token=request.data['user']).pk,
                 'anonymous_user_id': request.data['anonymous_user_id'],
+                'cart_user_id': request.data['cart_user_id'],
                 'item': request.data['item'],
                 'price': request.data['price'],
                 'quantity': request.data['quantity'],

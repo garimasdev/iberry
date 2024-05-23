@@ -5,18 +5,51 @@
 
 <main id="main" class="main">
 
+    <!-- main heading policies configurations -->
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Policies Configuration</h5>
+            <h5 class="card-title">Main Policies Configuration</h5>
             <div class="mb-3">
-                <label for="phone_merchant_id" class="form-label">Heading</label>
-                <input type="text" class="form-control" id="phone_merchant_id">
+                <label for="choices" class="form-label">Status</label>
+                <select id="choices" class="form-control">
+                    {% for value, label in choices %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="heading" class="form-label">Heading</label>
+                <input type="text" class="form-control" id="heading">
               </div>
               <div class="mb-3">
-                <label for="phonepe_api_key" class="form-label">Description</label>
-                <input type="text" class="form-control" id="phonepe_api_key">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description"></textarea>
               </div>
               <button type="submit" class="btn btn-primary" onclick="createTermsConfigurations();">Save</button>
+        </div>
+    </div>
+
+    <!-- sub heading policy config -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Subheading Policies Configuration</h5>
+            <div class="mb-3">
+                <label for="sub_choices" class="form-label">Status</label>
+                <select id="sub_choices" class="form-control">
+                    {% for value, label in choices %}
+                        <option value="{{ value }}">{{label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="section" class="form-label">Section</label>
+                <input type="text" class="form-control" id="section">
+            </div>
+            <div class="mb-3">
+                <label for="content" class="form-label">Content</label>
+                <textarea class="form-control" id="content"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="createSubHeadingConfigurations();">Save</button>
         </div>
     </div>
 </main>
@@ -29,14 +62,16 @@
         // Get values from input fields
         var heading = document.getElementById('heading').value.trim();
         var description = document.getElementById('description').value.trim();
+        var choices = document.getElementById('choices').value.trim();
         // Create an object with the data
         var data = {
             heading: heading,
-            description: description
+            description: description,
+            choices: choices
         };
 
         // Make a fetch request to your server
-        fetch('/dashboard/save/payment_gateway/configuration', {
+        fetch('/dashboard/terms/configuration', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -51,7 +86,8 @@
             }
             else if (Object.keys(data).length === 0) {
                 alert('Policies are required. Please enter them.');
-            } else {
+            } 
+            else {
                 alert('Policies configuration not saved.');
             }
             window.location.reload();
@@ -62,6 +98,43 @@
         });
     }
 
+</script>
+
+<script>
+    function createSubHeadingConfigurations() {
+        var section = document.getElementById('section').value.trim();
+        var content = document.getElementById('content').value.trim();
+        var sub_choices = document.getElementById('sub_choices').value.trim();
+        var data = {
+            section: section,
+            content: content,
+            sub_choices: sub_choices
+        }
+        fetch('/dashboard/subterms/configuration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status == true){
+                alert('Policies configuration saved successfully.');
+            }
+            else if (Object.keys(data).length === 0){
+                alert('Policies are required. Please enter them.');
+            }
+            else {
+                alert('Policies configuration not saved.');
+            }
+        })
+        .catch((error) => {
+            alert('Policies configuration not saved.');
+            window.location.reload()
+        });
+    }
 </script>
 
 {% endblock javascripts %}

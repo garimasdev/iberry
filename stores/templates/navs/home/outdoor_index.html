@@ -249,10 +249,47 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 
 <script src="/static/js/foods/outdoor_foods.js"></script>
+<script>
+    window.onload = function() {
+        fetch('/outdoor_cart/user_id', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // check if the user_id exists in the local storage
+            if (!localStorage.getItem('user_id')) {
+                // store the userid/unique id to the local storage generated the by api
+                localStorage.setItem('user_id', data.user_id);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('User id doesnt saved!')
+        });
+    }
+</script>
 <!-- <script src="https://mercury.phonepe.com/web/bundle/checkout.js"></script> -->
 
 
 <script>
+    window.
+</script>
+
+
+<script>
+
+    // Prevent page refresh if items are in the cart
+    window.addEventListener('beforeunload', function(event) {
+        if ($('.cart-list .cart').length > 0) {
+            event.preventDefault();
+            event.returnValue = 'Are you sure you want to leave? You have items in your cart.';
+        }
+    });
 
     document.getElementById('back_btn_basehtml').style.display = 'None';
     function incrementQuantity(item_id, max_quantity) {

@@ -95,6 +95,7 @@ class OutdoorCart(models.Model):
     price = models.IntegerField()
     quantity = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
+    cart_user_id = models.CharField(max_length=10, null=True, blank=True)
   
     def placeOrder(self):
         self.save()
