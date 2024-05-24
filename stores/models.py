@@ -105,7 +105,7 @@ class OutdoorCart(models.Model):
         return OutdoorCart.objects.filter(user=user).order_by('-created_at')
     
     class Meta:
-        unique_together = ('user', 'item')
+        # unique_together = ('user', 'item')
         ordering = ['-created_at']
 
 

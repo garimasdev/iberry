@@ -283,13 +283,13 @@
 
 <script>
 
-    // Prevent page refresh if items are in the cart
-    window.addEventListener('beforeunload', function(event) {
-        if ($('.cart-list .cart').length > 0) {
-            event.preventDefault();
-            event.returnValue = 'Are you sure you want to leave? You have items in your cart.';
-        }
-    });
+    // // Prevent page refresh if items are in the cart
+    // window.addEventListener('beforeunload', function(event) {
+    //     if ($('.cart-list .cart').length > 0) {
+    //         event.preventDefault();
+    //         event.returnValue = 'Are you sure you want to leave? You have items in your cart.';
+    //     }
+    // });
 
     document.getElementById('back_btn_basehtml').style.display = 'None';
     function incrementQuantity(item_id, max_quantity) {
