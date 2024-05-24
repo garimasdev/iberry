@@ -1,6 +1,7 @@
 $(document).ready(function () {
     const cart_badge = $('#cart-badge')
     const floaing_cart = $('#float-cart')
+    let cart_items = 0
   
     $('.cart-icon').on('click', function (e) {
       $('.cart-bar').toggleClass('active')
@@ -40,9 +41,8 @@ $(document).ready(function () {
         dataType: 'json',
   
         success: function (response) {
-          console.log(response);
-          console.log(response.results);
-          cart_badge.html(response.results.length)
+          cart_items += response.results.length
+          cart_badge.html(cart_items)
           var total = 0
           var selectedData = []
   
@@ -79,6 +79,7 @@ $(document).ready(function () {
               name +
               '</p>' +
               '<strong class="price">Price: ₹ ' +
+              obj.price +
               // (selectedData[0].sell_price != 'None'
               //   ? selectedData[0].sell_price
               //   : selectedData[0].price) +
@@ -180,8 +181,10 @@ $(document).ready(function () {
         dataType: 'json',
         success: function (response) {
           console.log(response);
+          // window.location.reload()
           $('#add-to-cart-' + food_id).modal('hide')
-          cart_badge.html(response.total_items)
+          cart_items += response.total_items
+          cart_badge.html(cart_items)
           const cart_id = response.id
           const image = $('.item-' + food_id)
             .find('.image img')

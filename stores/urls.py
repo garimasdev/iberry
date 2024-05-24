@@ -14,24 +14,35 @@ router.register(r'service-cart', views.ServiceCartModelView, basename='service-c
 router.register(r'service-order', views.ServiceOrderModelView, basename='service-order')
 
 urlpatterns = [
-    # Payment urls
-    path('payment/checkout/success', views.paymentCheckoutSuccess, name='paymentCheckoutSuccess'),
-    path('payment/checkout', views.paymentCheckout, name='payment_checkout'),
-    path('create/payment/order', views.CreatePaymentOrder, name='create_payment_order'),
-    path('firebase-messaging-sw.js',views.showFirebaseJS,name="show_firebase_js"),
+
+    # outdoor orders
+    path('store/<str:room_token>/foods/outdoor_items/', views.OutdoorHomeViewPage.as_view(), name="foods-outdoor-items"),
     path('outdoor-order/', views.OutdoorOrderModelView.as_view(), name='outdoor_order'),
+    # outdoor cart unique id
     path('outdoor_cart/user_id', views.OutdoorCartUserid, name="outdoor_cart_user_id"),
+    
+
+    # Food 
     path('store/<str:room_token>/', views.ModulesViewPage.as_view(), name="my_url"),
     path('store/<str:room_token>/foods/', views.FoodsPageView.as_view(), name="foods"),
-    path('store/<str:room_token>/foods/outdoor_items/', views.OutdoorHomeViewPage.as_view(), name="foods-outdoor-items"),
     path('store/<str:room_token>/foods/items/', views.HomeViewPage.as_view(), name="foods-items"),
     path('store/<str:room_token>/foods/bar/', views.BarPageView.as_view(), name="foods-bar"),
     path('store/<str:room_token>/foods/<str:item_id>/', views.ProductDetailView.as_view(), name='food-item-view'),
     
+    
+    # Payment urls
+    path('payment/checkout/success', views.paymentCheckoutSuccess, name='paymentCheckoutSuccess'),
+    path('payment/checkout', views.paymentCheckout, name='payment_checkout'),
+    path('create/payment/order', views.CreatePaymentOrder, name='create_payment_order'),
+    
+    # push notification
+    path('firebase-messaging-sw.js',views.showFirebaseJS,name="show_firebase_js"),
+
+    
+    # QR code
     path('store/<str:room_token>/hotel-intercom/', views.QRCodeViewPage.as_view(), name="qr-code"),
     
-    path('store/<str:room_token>/services/', views.ServicesPageView.as_view(), name="services"),
-    
+    # complaint 
     path('store/<str:room_token>/complain/', views.ComplainCreateView.as_view(), name="complain"),
     path('store/<str:room_token>/complain/<str:complain_id>/', views.ComplainDetailsView.as_view(), name='complaint_detail'),
     
@@ -45,6 +56,7 @@ urlpatterns = [
     # path('room/list/', views.RoomViewPage.as_view(), name="room-list"),
     
     #Service
+    path('store/<str:room_token>/services/', views.ServicesPageView.as_view(), name="services"),
     path('service-order/', views.ServiceOrderPlaceAPIView.as_view(), name="service-order-place"),
     path('service_order_status/<str:room_token>/<str:order_id>/', views.ServiceOrderStatusViewPage.as_view(), name="order_status"),
     path('configuration/global', views.GlobalUpdateAPIView, name='global-update'),
