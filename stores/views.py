@@ -792,31 +792,36 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             import traceback
             traceback.print_exc()
 
+
+
     def destroy(self, request, *args, **kwargs):
         try:
+            user_id = request.GET.get('user_id')
+            print('user_id', user_id)
             cart_id = self.kwargs["pk"]
             instance = self.get_object()
-            cart = OutdoorCart.objects.get(id=cart_id)
+            cart = OutdoorCart.objects.get(id=cart_id, cart_user_id=user_id)
 
             self.perform_destroy(instance)
 
             # Check if the cart is empty after deleting the item
-            get_cart_items = OutdoorCart.objects.filter(user=cart.user)
+            get_cart_items = OutdoorCart.objects.filter(user=cart.user, cart_user_id=user_id)
             if not get_cart_items.exists():
                 cart.delete()
 
             # Calculate total price and total items
             amounts = sum(item.price * item.quantity for item in get_cart_items)
-            print("amounts", amounts)
+            print('amounts', amounts)
             total_items = sum(item.quantity for item in get_cart_items)
 
             response_data = {
                 "total_price": amounts,
                 "total_items": total_items,
             }
-            print("response_data", response_data)
+
             return Response(response_data, status=status.HTTP_200_OK)
         except OutdoorCart.DoesNotExist():
+            traceback.print_exc()
             raise Http404("Cart not Found")
         except Exception as e:
             traceback.print_exc()

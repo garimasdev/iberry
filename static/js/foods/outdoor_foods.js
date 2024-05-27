@@ -288,11 +288,12 @@ $(document).ready(function () {
     $(document).on('click', '.delete-cart-item', function (e) {
       const cartId = $(this).attr('id')
       const token = $(this).attr('token')
+      const user_id  = localStorage.getItem('user_id')
       $.ajax({
         headers: {
           'X-CSRFToken': token,
         },
-        url: '/outdoor-cart/' + cartId + '/',
+        url: '/outdoor-cart/' + cartId + '/?user_id=' + user_id,
         type: 'DELETE',
         data: {
           id: cartId,
