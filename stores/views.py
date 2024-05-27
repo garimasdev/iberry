@@ -939,6 +939,7 @@ class OutdoorOrderModelView(APIView):
                     {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
                 )
         except:
+            traceback.print_exc()
             return Response({
                 'success': "Order not being placed."
             })
@@ -1039,6 +1040,7 @@ class OutdoorOrderStatusViewPage(TemplateView):
             raise Http404("Order does not exist.")
 
         context['order'] = FoodOutdoorOrdersSerializer(order).data
+        context['room_id'] = room_token
         return context
 
 

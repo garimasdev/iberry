@@ -85,9 +85,10 @@
 
   <body>
     
-    {% if request.path == '/store/'|add:room_id|add:'/foods/outdoor_items/' %}
+      {% if request.path == '/store/'|add:room_id|add:'/foods/outdoor_items/' %}
       {% include 'includes/outdoor_menu.html' %}
-    {% elif request.path == '/contact-us/' %}
+
+      {% elif request.path == '/contact-us/' %}
       {% include 'includes/outdoor_menu.html' %}
 
       {% elif request.path == '/terms-and-conditions/' %}
@@ -99,11 +100,15 @@
       {% elif request.path == '/privacy-policy/' %}
       {% include 'includes/outdoor_menu.html' %}
 
-    {% elif request.path == '/cancel-refund-policy/' %}
+      {% elif request.path == '/cancel-refund-policy/' %}
+      {% include 'includes/outdoor_menu.html' %}
+
+      {% elif '/outdoor_order_status/' in request.path %}
       {% include 'includes/outdoor_menu.html' %}
 
       {% else %}
-    {% include 'includes/menu.html' %}
+      {% include 'includes/menu.html' %}
+      
     {% endif %}
 
     <main class="content">
