@@ -797,7 +797,6 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
     def destroy(self, request, *args, **kwargs):
         try:
             user_id = request.GET.get('user_id')
-            print('user_id', user_id)
             cart_id = self.kwargs["pk"]
             instance = self.get_object()
             cart = OutdoorCart.objects.get(id=cart_id, cart_user_id=user_id)
@@ -811,7 +810,6 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
 
             # Calculate total price and total items
             amounts = sum(item.price * item.quantity for item in get_cart_items)
-            print('amounts', amounts)
             total_items = sum(item.quantity for item in get_cart_items)
 
             response_data = {
