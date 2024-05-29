@@ -1,4 +1,5 @@
 from datetime import datetime
+from operator import concat
 import random
 import string
 import traceback
@@ -51,13 +52,22 @@ def savepaymentGatewayConfiguration(request):
         try:
             payload = json.loads(request.body)
             user = User.objects.get(pk=request.user.pk)
-            user.razorpay_clientid = payload['razorpay_client_id']
-            user.razorpay_clientsecret = payload['razorpay_client_secret']
+            phonepe_merchant_id = payload['phonepe_merchant_id']
+            phonepe_api_key = payload['phonepe_api_key']
+            # User.objects.update(
+            #     razorpay_clientid=phonepe_merchant_id,
+            #     razorpay_clientsecret=phonepe_api_key
+            # )
+            user.razorpay_clientid = phonepe_merchant_id
+            user.razorpay_clientsecret = phonepe_api_key
             user.save()
+            
             return JsonResponse({
                 'status': True
             })
+            
         except:
+            traceback.print_exc()
             return JsonResponse({
                 'status': False
             })
@@ -83,20 +93,63 @@ def createTermsConfigurations(request):
             description = payload['description']
             choices = int(payload['choices'])
 
-            TermHeading.objects.create(
-                user=user, 
-                heading=heading, 
-                content=description,
-                page=choices
-            )
+            if not heading or not description:
+                return HttpResponse('Heading and Description are required.')
 
-            # update the terms and policies
+            # Check if a policy with the same status already exists for the user
+            existing_policy = TermHeading.objects.filter(user=user, page=choices).first()
+
+
+            if existing_policy:
+                # Update the existing policy
+                existing_policy.heading = heading
+                existing_policy.content = description
+                existing_policy.save()
+                return HttpResponse('Policies updated successfully.')
+
+            else:
+                # Create a new policy
+                TermHeading.objects.create(
+                    user=user, 
+                    heading=heading, 
+                    content=description,
+                    page=choices
+                )
 
             return JsonResponse({'status': True})
+
     
         except Exception as e:
             traceback.print_exc()
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+    
+    elif request.method == 'PUT':
+        try:
+            payload = json.loads(request.body)
+            user = request.user
+            heading = payload.get('heading')
+            description = payload.get('description')
+            choices = int(payload.get('choices'))
+
+            if not heading or not description:
+                return HttpResponse('Heading and Description are required.')
+
+            existing_policy = TermHeading.objects.filter(user=user, page=choices).first()
+
+            if existing_policy:
+                existing_policy.heading = heading
+                existing_policy.content = description
+                existing_policy.save()
+                return JsonResponse({'status': True})
+
+            else:
+                return HttpResponse('Policy not found.')
+    
+        except Exception as e:
+            traceback.print_exc()
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
 
 
 def createSubheadingConfiguration(request):
@@ -105,21 +158,44 @@ def createSubheadingConfiguration(request):
         try:
             payload = json.loads(request.body)
             user = User.objects.get(pk=request.user.pk)
-            subheading = payload['section']
-            description = payload['content']
+            section = payload['section']
+            content = payload['content']
             sub_choices = int(payload['sub_choices'])
-            term = TermHeading.objects.filter(user__pk=user.pk, page=sub_choices)[0]
-            SubHeading.objects.create(
-                head=term,
-                title=subheading, 
-                content=description
-            )
-            
+
+            if not section or not content:
+                return HttpResponse("Please provide Section and Description.")
+
+            term = TermHeading.objects.filter(user__pk=user.pk, page=sub_choices).first()
+
+            if not term:
+                return HttpResponse('Term heading not found.')
+
+            # existing_policy = SubHeading.objects.filter(user=user, page=sub_choices).first()
+            existing_policy = SubHeading.objects.filter(head=term).first()
+
+            if existing_policy:
+                # Update the existing policy
+                existing_policy.title = section
+                existing_policy.content = content
+                existing_policy.save()
+
+                return HttpResponse("Sub Policies are Updated Successfully.")
+                
+            else:
+                # Create a new policy
+                SubHeading.objects.create(
+                    head=term, 
+                    title=section, 
+                    content=content
+                )
+
             return JsonResponse({'status': True})
 
         except Exception as e:
             traceback.print_exc()
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+
+
 
 
 def UserChangePassword(request):

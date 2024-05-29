@@ -20,6 +20,7 @@ urlpatterns = [
     path('outdoor-order/', views.OutdoorOrderModelView.as_view(), name='outdoor_order'),
     # outdoor cart unique id
     path('outdoor_cart/user_id', views.OutdoorCartUserid, name="outdoor_cart_user_id"),
+    path('outdoor_order_status/<str:room_token>/<str:order_id>/', views.OutdoorOrderStatusViewPage.as_view(), name="outdoor_order_status"),
     
 
     # Food 
@@ -29,7 +30,7 @@ urlpatterns = [
     path('store/<str:room_token>/foods/bar/', views.BarPageView.as_view(), name="foods-bar"),
     path('store/<str:room_token>/foods/<str:item_id>/', views.ProductDetailView.as_view(), name='food-item-view'),
     
-    
+
     # Payment urls
     path('payment/checkout/success', views.paymentCheckoutSuccess, name='paymentCheckoutSuccess'),
     path('payment/checkout', views.paymentCheckout, name='payment_checkout'),
@@ -50,7 +51,7 @@ urlpatterns = [
     # path('order/', views.PlaceOrderAPIView.as_view(), name="place-order"),
     path('order/', views.PlaceOrderAPIView, name="place-order"),
     path('order_status/<str:room_token>/<str:order_id>/', views.OrderStatusViewPage.as_view(), name="order_status"),
-    path('outdoor_order_status/<str:room_token>/<str:order_id>/', views.OutdoorOrderStatusViewPage.as_view(), name="outdoor_order_status"),
+    
     
     # # room paths
     # path('room/list/', views.RoomViewPage.as_view(), name="room-list"),

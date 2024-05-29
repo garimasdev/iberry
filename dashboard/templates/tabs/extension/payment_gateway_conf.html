@@ -9,8 +9,8 @@
         <div class="card-body">
             <h5 class="card-title">PhonePe Configuration</h5>
             <div class="mb-3">
-                <label for="phone_merchant_id" class="form-label">PhonePe Merchant ID</label>
-                <input type="text" class="form-control" id="phone_merchant_id">
+                <label for="phonepe_merchant_id" class="form-label">PhonePe Merchant ID</label>
+                <input type="text" class="form-control" id="phonepe_merchant_id">
               </div>
               <div class="mb-3">
                 <label for="phonepe_api_key" class="form-label">PhonePe API Key</label>
@@ -27,11 +27,11 @@
 <script>
     function createPhonePeConfigurations() {
         // Get values from input fields
-        var phonpe_merchant_id = document.getElementById('phone_merchant_id').value.trim();
+        var phonepe_merchant_id = document.getElementById('phonepe_merchant_id').value.trim();
         var phonepe_api_key = document.getElementById('phonepe_api_key').value.trim();
         // Create an object with the data
         var data = {
-            phone_merchant_id: phone_merchant_id,
+            phonepe_merchant_id: phonepe_merchant_id,
             phonepe_api_key: phonepe_api_key
         };
 

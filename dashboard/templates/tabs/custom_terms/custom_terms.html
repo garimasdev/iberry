@@ -13,19 +13,19 @@
                 <label for="choices" class="form-label">Status</label>
                 <select id="choices" class="form-control">
                     {% for value, label in choices %}
-                        <option value="{{ value }}">{{ label }}</option>
+                    <option value="{{ value }}">{{ label }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="mb-3">
                 <label for="heading" class="form-label">Heading</label>
                 <input type="text" class="form-control" id="heading">
-              </div>
-              <div class="mb-3">
+            </div>
+            <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
                 <textarea class="form-control" id="description"></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary" onclick="createTermsConfigurations();">Save</button>
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="createTermsConfigurations();">Save</button>
         </div>
     </div>
 
@@ -37,7 +37,7 @@
                 <label for="sub_choices" class="form-label">Status</label>
                 <select id="sub_choices" class="form-control">
                     {% for value, label in choices %}
-                        <option value="{{ value }}">{{label}}</option>
+                    <option value="{{ value }}">{{label}}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -57,6 +57,8 @@
 {% endblock content %}
 
 {% block javascripts %}
+
+<!-- create and update main heading policies -->
 <script>
     function createTermsConfigurations() {
         // Get values from input fields
@@ -79,27 +81,56 @@
             },
             body: JSON.stringify(data),
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === true) {
-                alert('Policies configuration saved successfully.');
-            }
-            else if (Object.keys(data).length === 0) {
-                alert('Policies are required. Please enter them.');
-            } 
-            else {
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === true) {
+                    alert('Policies configuration saved successfully.');
+                }
+                else if (Object.keys(data).length === 0) {
+                    alert('Policies are required. Please enter them.');
+                }
+                else {
+                    alert('Policies configuration not saved.');
+                }
+                window.location.reload();
+            })
+            .catch((error) => {
                 alert('Policies configuration not saved.');
-            }
-            window.location.reload();
+                window.location.reload();
+            });
+
+        // Make a fetch request to your server
+        fetch('/dashboard/terms/configuration', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data),
         })
-        .catch((error) => {
-            alert('Policies configuration not saved.');
-            window.location.reload();
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === true) {
+                    alert('Policies configuration updated successfully.');
+                }
+                else if (Object.keys(data).length === 0) {
+                    alert('Policies are required. Please enter them.');
+                }
+                else {
+                    alert('Policies configuration not updated.');
+                }
+                window.location.reload();
+            })
+            .catch((error) => {
+                alert('Policies configuration not updated.');
+                window.location.reload();
+            });
     }
 
 </script>
 
+
+<!-- subheading create and update -->
 <script>
     function createSubHeadingConfigurations() {
         var section = document.getElementById('section').value.trim();
@@ -118,22 +149,22 @@
             },
             body: JSON.stringify(data),
         })
-        .then(response => response.json())
-        .then(data => {
-            if(data.status == true){
-                alert('Policies configuration saved successfully.');
-            }
-            else if (Object.keys(data).length === 0){
-                alert('Policies are required. Please enter them.');
-            }
-            else {
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == true) {
+                    alert('Policies configuration saved successfully.');
+                }
+                else if (Object.keys(data).length === 0) {
+                    alert('Policies are required. Please enter them.');
+                }
+                else {
+                    alert('Policies configuration not saved.');
+                }
+            })
+            .catch((error) => {
                 alert('Policies configuration not saved.');
-            }
-        })
-        .catch((error) => {
-            alert('Policies configuration not saved.');
-            window.location.reload()
-        });
+                window.location.reload()
+            });
     }
 </script>
 
