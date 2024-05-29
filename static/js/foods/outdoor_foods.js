@@ -61,7 +61,7 @@ $(document).ready(function () {
             .find('.image img')
             .attr('src')
           const name = $('.item-' + obj.item)
-            .find('.product_name')
+            .find('.product_name').first()
             .text()
           // const price = $(".item-" + food_id).find(".product_price strong").text();
           $('.cart-bar .cart-list').append(
@@ -190,7 +190,7 @@ $(document).ready(function () {
             .find('.image img')
             .attr('src')
           const name = $('.item-' + food_id)
-            .find('.product_name')
+            .find('.product_name').first()
             .text()
           // const price = $(".item-" + food_id).find(".product_price strong").text();
           $('.cart-bar .cart-list').append(
