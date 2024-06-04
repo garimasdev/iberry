@@ -89,11 +89,11 @@ def createTermsConfigurations(request):
         try:
             payload = json.loads(request.body)
             user = User.objects.get(pk=request.user.pk)
-            heading = payload['heading']
-            description = payload['description']
+            main_title = payload['heading']
+            main_content = payload['description']
             choices = int(payload['choices'])
 
-            if not heading or not description:
+            if not main_title or not main_content:
                 return HttpResponse('Heading and Description are required.')
 
             # Check if a policy with the same status already exists for the user
@@ -102,17 +102,16 @@ def createTermsConfigurations(request):
 
             if existing_policy:
                 # Update the existing policy
-                existing_policy.heading = heading
-                existing_policy.content = description
+                existing_policy.main_title =  main_title
+                existing_policy.main_content = main_content
                 existing_policy.save()
-                return HttpResponse('Policies updated successfully.')
 
             else:
                 # Create a new policy
                 TermHeading.objects.create(
                     user=user, 
-                    heading=heading, 
-                    content=description,
+                    main_title=main_title, 
+                    main_content=main_content,
                     page=choices
                 )
 
@@ -128,18 +127,18 @@ def createTermsConfigurations(request):
         try:
             payload = json.loads(request.body)
             user = request.user
-            heading = payload.get('heading')
-            description = payload.get('description')
+            main_title = payload.get('heading')
+            main_content = payload.get('description')
             choices = int(payload.get('choices'))
 
-            if not heading or not description:
+            if not main_title or not main_content:
                 return HttpResponse('Heading and Description are required.')
 
             existing_policy = TermHeading.objects.filter(user=user, page=choices).first()
 
             if existing_policy:
-                existing_policy.heading = heading
-                existing_policy.content = description
+                existing_policy.heading = main_title
+                existing_policy.content = main_content
                 existing_policy.save()
                 return JsonResponse({'status': True})
 
@@ -158,11 +157,11 @@ def createSubheadingConfiguration(request):
         try:
             payload = json.loads(request.body)
             user = User.objects.get(pk=request.user.pk)
-            section = payload['section']
-            content = payload['content']
+            sub_title = payload['section']
+            sub_content = payload['content']
             sub_choices = int(payload['sub_choices'])
 
-            if not section or not content:
+            if not sub_title or not sub_content:
                 return HttpResponse("Please provide Section and Description.")
 
             term = TermHeading.objects.filter(user__pk=user.pk, page=sub_choices).first()
@@ -171,23 +170,14 @@ def createSubheadingConfiguration(request):
                 return HttpResponse('Term heading not found.')
 
             # existing_policy = SubHeading.objects.filter(user=user, page=sub_choices).first()
-            existing_policy = SubHeading.objects.filter(head=term).first()
+            # existing_policy = SubHeading.objects.filter(head=term).first()
 
-            if existing_policy:
-                # Update the existing policy
-                existing_policy.title = section
-                existing_policy.content = content
-                existing_policy.save()
-
-                return HttpResponse("Sub Policies are Updated Successfully.")
-                
-            else:
-                # Create a new policy
-                SubHeading.objects.create(
-                    head=term, 
-                    title=section, 
-                    content=content
-                )
+            # Create a new policy
+            SubHeading.objects.create(
+                main=term, 
+                sub_title=sub_title, 
+                sub_content=sub_content
+            )
 
             return JsonResponse({'status': True})
 
@@ -196,6 +186,92 @@ def createSubheadingConfiguration(request):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
 
+def choiceSubtermsConfig(request):
+    try:
+        if request.method == 'POST':
+            payload = json.loads(request.body)
+            user = User.objects.get(pk=request.user.pk)
+            sub_choices = payload['sub_choices']
+
+            term = TermHeading.objects.filter(user__pk=user.pk, page=sub_choices).first()
+
+            if not term:
+                return HttpResponse('Term heading not found.')
+            
+            existing_policy = SubHeading.objects.filter(main=term)
+
+            return JsonResponse({
+                'results': list(existing_policy.values())
+            })
+    
+    except:
+        traceback.print_exc()
+
+
+
+def sectionSubtermsConfig(request):
+    try:
+        print('section')
+        if request.method == 'POST':
+            payload = json.loads(request.body)
+            user = User.objects.get(pk=request.user.pk)
+            sub_choices = payload['sub_choices']
+            section_id = payload['section_id']
+
+            term = TermHeading.objects.filter(user__pk=user.pk, page=sub_choices).first()
+
+            if not term:
+                return HttpResponse('Term heading not found.')
+            
+            existing_policy = SubHeading.objects.filter(id=section_id, main=term).first()
+
+            sub_title = existing_policy.sub_title
+            sub_content = existing_policy.sub_content
+
+            return JsonResponse({
+                'sub_title': sub_title,
+                'sub_content': sub_content
+            })
+
+    
+    except:
+        traceback.print_exc()
+
+
+# edit or update subheading config
+def UpdateSubtermsConfiguration(request):
+    try:
+        if request.method == 'PUT':
+            payload = json.loads(request.body)
+            print(payload)
+            user = User.objects.get(pk=request.user.pk)
+            sub_title = payload['sub_title']
+            sub_content = payload['sub_content']
+            sub_choices = int(payload['sub_choices'])
+            section_id = int(payload['id'])
+
+            if not sub_title or not sub_content:
+                return HttpResponse("Please provide Section and Description.")
+
+            term = TermHeading.objects.filter(user__pk=user.pk, page=sub_choices).first()
+
+            if not term:
+                return HttpResponse('Term heading not found.')
+            
+            existing_policy = SubHeading.objects.filter(main=term, id=section_id).first()
+
+            # Update the existing policy
+            existing_policy.sub_title = sub_title
+            existing_policy.sub_content = sub_content
+            existing_policy.save()
+
+            return JsonResponse({'status': True})
+    
+    except:
+        traceback.print_exc()
+        return JsonResponse("Some error occurred.")
+
+        
 
 
 def UserChangePassword(request):

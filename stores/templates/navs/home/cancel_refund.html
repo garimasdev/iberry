@@ -4,67 +4,33 @@
 
 {% block content %}
 <main style="padding: 50px; font-family: Arial, sans-serif;">
-    <!-- <div style="background-color: #4154f1; padding: 10px 20px; border-radius: 5px; text-align: center;">
-        <h1 style="font-size: 1.8rem; margin: 0; color: white;">CANCELLATION ON REFUND POLICY</h1>
-    </div> -->
+    
+    <!-- main title and content -->
     <section>
         <div style="background-color: #4154f1; padding: 10px 20px; border-radius: 5px; display: inline-block;">
-            <h1 style="font-size: 2rem; margin: 0; color: white; font-family: 'boxicons';">CANCELLATION AND EARLY CHECKOUT POLICY</h1>
+            <h1 style="font-size: 2rem; margin: 0; color: white; font-family: 'boxicons';">{{main_title}}</h1>
         </div>
         <ul style="font-size: 1rem; line-height: 1.6; margin-top: 20px;">
-            <li>We have a 7-day return policy, which means you have 7 days after receiving your item to request a return.</li>
-            <li>To be eligible for a return, your item must be in the same condition that you received it, unworn or unused, with tags, and in its original packaging. You will also need the receipt or proof of purchase.</li>
+            <p>{{main_content}}</p>
+
             <li>To start a return, you can contact us at <a href="mailto:{{email}}">{{email}}</a>.</li>
-            <li>If your return is accepted, we'll send you a return shipping label, as well as instructions on how and where to send your package.</li>
+            
         </ul>
     </section>
 
     
+    <!-- sub heading and content for sections -->
+    {% for sub in sub_terms %}
     <section style="margin-top: 40px;">
         <div style="background-color: #4154f1; padding: 10px 20px; border-radius: 5px; display: inline-block;">
-            <h2 style="font-size: 1.8rem; margin: 0; color: white; font-family: 'boxicons';">Refunds</h2>
+            <h2 style="font-size: 1.8rem; margin: 0; color: white; font-family: 'boxicons';">{{sub.sub_title}}</h2>
         </div>
         <ul style="font-size: 1rem; line-height: 1.6; margin-top: 20px;">
-            <p>We will inform you upon receiving and examining your return and notify you of the approval status for your refund. If approved, the refund will be automatically processed to your original payment method within 5-7 business days.</p>
-            <p>Please keep in mind that it may take some time for your bank or credit card company to complete the refund transaction. If it has been more than 15 business days since your return was approved, please reach out to us at support@iberrywifisecurity.com.</p>
+            <p>{{sub.sub_content}}</p>
         </ul>
     </section>
+    {% endfor %}
 
-
-    <section style="margin-top: 40px;">
-        <div style="background-color: #4154f1; padding: 10px 20px; border-radius: 5px; display: inline-block;">
-            <h2 style="font-size: 1.8rem; margin: 0; color: white; font-family: 'boxicons';">Damages and issues</h2>
-        </div>
-        <ul style="font-size: 1rem; line-height: 1.6; margin-top: 20px;">
-            <p>Please inspect your order upon reception and contact us immediately if the item is defective, damaged or if you receive the wrong item, so that we can evaluate the issue and make it right.
-            </p>
-        </ul>
-    </section>
-
-
-    <section style="margin-top: 40px;">
-        <div style="background-color: #4154f1; padding: 10px 20px; border-radius: 5px; display: inline-block;">
-            <h2 style="font-size: 1.8rem; margin: 0; color: white; font-family: 'boxicons';">Exceptions / non-returnable items</h2>
-        </div>
-        <ul style="font-size: 1rem; line-height: 1.6; margin-top: 20px;">
-            <p>Certain types of items cannot be returned, like perishable goods (such as food, flowers, or plants), custom products (such as special orders or personalized items), and personal care goods (such as beauty products). We also do not accept returns for hazardous materials, flammable liquids, or gases. Please get in touch if you have questions or concerns about your specific item.
-            </p>
-            <p>Unfortunately, we cannot accept returns on sale items or gift cards.</p>
-        </ul>
-    </section>
-
-
-    <section style="margin-top: 40px;">
-        <div style="background-color: #4154f1; padding: 10px 20px; border-radius: 5px; display: inline-block;">
-            <h2 style="font-size: 1.8rem; margin: 0; color: white; font-family: 'boxicons';">Exchanges</h2>
-        </div>
-        <ul style="font-size: 1rem; line-height: 1.6; margin-top: 20px;">
-            <p>The fastest way to ensure you get what you want is to return the item you have, and once the return is accepted, make a separate purchase for the new item.</p>
-        </ul>
-    </section>
-
-
-    <!-- Add more sections as needed -->
 </main>
 
 

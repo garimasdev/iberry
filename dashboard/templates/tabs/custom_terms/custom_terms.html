@@ -52,6 +52,48 @@
             <button type="submit" class="btn btn-primary" onclick="createSubHeadingConfigurations();">Save</button>
         </div>
     </div>
+
+
+    <!-- Edit Different sections of sub heading policy config -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Update Subheading Policies Configuration</h5>
+
+            <!-- choices for sub heading -->
+            <div class="mb-3">
+                <label for="sub_choices" class="form-label">Status</label>
+                <select id="sub_choices" class="form-control" onchange="choiceSubHeading();">
+                    <option value="select one option">Select one option</option>
+                    {% for value, label in choices %}
+                    <option value="{{ value }}">{{label}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- sections for subheading -->
+            <div class="mb-3">
+                <label for="section" class="form-label">Sections</label>
+                <select id="section_id" class="form-control" onchange="sectionSubHeading();">
+                    <option value="section one option">Select one option</option>
+                </select>
+            </div>
+
+            <!-- section heading  -->
+            <div class="mb-3">
+                <label for="section" class="form-label">Section Title</label>
+                <input type="text" class="form-control" id="sub_title">
+            </div>
+
+            <!-- section content -->
+            <div class="mb-3">
+                <label for="content" class="form-label">Content</label>
+                <textarea class="form-control" id="sub_content"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" onclick="updateSubHeadingConfigurations();">Update</button>
+        </div>
+    </div>
+
 </main>
 <!-- End #main -->
 {% endblock content %}
@@ -160,6 +202,144 @@
                 else {
                     alert('Policies configuration not saved.');
                 }
+            })
+            .catch((error) => {
+                alert('Policies configuration not saved.');
+                window.location.reload()
+            });
+    }
+</script>
+
+
+<script>
+    function choiceSubHeading() {
+        var sub_choices = document.getElementById('sub_choices').value.trim()
+        var data = {
+            sub_choices: sub_choices
+        }
+        fetch('/dashboard/choice/subterms/config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Function to populate options in the select element
+                function populateSections() {
+                    const sectionSelect = document.getElementById('section_id');
+                    
+                    // Clear existing options
+                    sectionSelect.innerHTML = '';
+                    
+                    // Add default option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Select one option';
+                    sectionSelect.appendChild(defaultOption);
+
+
+
+                    // Loop through the array of objects and create options
+                    let sections = data.results
+                    for (let i = 0; i < sections.length; i++) {
+                        const option = document.createElement('option');
+                        option.value = sections[i].id;
+                        option.textContent = sections[i].sub_title;
+                        sectionSelect.appendChild(option);
+                    }
+                }
+                populateSections()
+            })
+            .catch((error) => {
+                window.location.reload()
+            });
+
+    }
+</script>
+
+
+<script>
+    function sectionSubHeading() {
+        var sub_choices = document.getElementById('sub_choices').value.trim()
+        // different sections for choice selected
+        var section_id = document.getElementById('section_id').value.trim()
+        console.log('section js')
+        console.log(sub_choices)
+        console.log(section_id)
+        var data = {
+            sub_choices: sub_choices,
+            section_id: section_id
+        }
+        console.log(data)
+        fetch('/dashboard/section/subterms/config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Function to populate options in the select element
+                function populateSections() {
+                    const title = document.getElementById('sub_title');
+                    const content = document.getElementById('sub_content');
+                    
+                    // Clear existing options
+                    title.innerHTML = '';
+                    content.innerHTML= '';
+                    
+
+                    let sub_title = data.sub_title
+                    let sub_content = data.sub_content
+                    title.value = sub_title
+                    content.innerHTML = sub_content
+                }
+                populateSections()
+            })
+            .catch((error) => {
+                window.location.reload()
+            });
+    }
+</script>
+
+
+<script>
+    function updateSubHeadingConfigurations() {
+        var title = document.getElementById('sub_title').value.trim();
+        var content = document.getElementById('sub_content').value.trim();
+        var choices = document.getElementById('sub_choices').value.trim();
+        var section_id = document.getElementById('section_id').value.trim()
+        var data = {
+            sub_title: title,
+            sub_content: content,
+            sub_choices: choices,
+            id: section_id
+        }
+        fetch('/dashboard/update/subterms/configuration', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == true) {
+                    alert('Policies configuration updated successfully.');
+                }
+                else if (Object.keys(data).length === 0) {
+                    alert('Policies are required. Please enter them.');
+                }
+                else {
+                    alert('Policies configuration not updated.');
+                }
+                window.location.reload()
             })
             .catch((error) => {
                 alert('Policies configuration not saved.');

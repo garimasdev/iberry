@@ -22,6 +22,9 @@ urlpatterns = [
     # Dynamic Policies
     path('terms/configuration', views.createTermsConfigurations, name='create_terms_configurations'),
     path('subterms/configuration', views.createSubheadingConfiguration, name='sub_heading_config'),
+    path('choice/subterms/config', views.choiceSubtermsConfig, name='choice_subterms_config'),
+    path('section/subterms/config', views.sectionSubtermsConfig, name='section_subterms_config'),
+    path('update/subterms/configuration', views.UpdateSubtermsConfiguration, name='update_subterms_configuration'),
 
     # room paths
     path('room/list/', views.RoomViewPage.as_view(), name="room-list"),

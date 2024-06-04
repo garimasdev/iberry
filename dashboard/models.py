@@ -1,3 +1,4 @@
+from pydoc import describe
 from urllib import request
 import uuid
 from django.db import models
@@ -238,8 +239,8 @@ class TermHeading(models.Model):
         (3, "Refund Policy")
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    heading = models.CharField(max_length=10, null=True, blank=True)
-    content = models.TextField(null=True, blank=True)
+    main_title = models.CharField(max_length=10, null=True, blank=True)
+    main_content = models.TextField(null=True, blank=True)
     page = models.PositiveSmallIntegerField(choices=STATUS, null=True, blank=True)
 
     class Meta:
@@ -249,11 +250,22 @@ class TermHeading(models.Model):
 
 # section Terms and policies
 class SubHeading(models.Model):
-    head = models.ForeignKey(TermHeading, on_delete=models.CASCADE)
-    title = models.CharField(max_length=10, null=True, blank=True)
-    content = models.TextField(null=True, blank=True)
+    main = models.ForeignKey(TermHeading, on_delete=models.CASCADE)
+    sub_title = models.CharField(max_length=10, null=True, blank=True)
+    sub_content = models.TextField(null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Section Policies'
+
+    def __str__(self) -> str:
+        status = {
+            0: "Terms and Conditions",
+            1: "Privacy Policy",
+            2: "Shipping Policy",
+            3: "Refund Policy"
+        }
+        return str(status.get(self.main.page))
+
+        
 
 

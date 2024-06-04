@@ -5,7 +5,7 @@ import string
 import random
 import traceback
 from urllib import response
-from dashboard.models import Global
+from dashboard.models import *
 import uuid
 from django.http import HttpResponseBadRequest
 import base64
@@ -828,6 +828,7 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
     
     def decrement_quantity(self, request, *args, **kwargs):
         try:
+            print('decrement')
             cart_id = kwargs['pk']
             instance = self.get_object()
             cart = OutdoorCart.objects.get(id=cart_id)
@@ -1435,20 +1436,15 @@ def contact_send(request):
 def terms_and_conditions(request):
     room_id = request.GET.get('room_id')
     user = User.objects.filter(outdoor_token=room_id)[0]
+    terms = TermHeading.objects.get(user=user, page=0)
+    sub_terms = SubHeading.objects.filter(main=terms)
+
     return render(request, 'navs/home/terms_conditions.html', {
+        'main_title': terms.main_title,
+        'main_content': terms.main_content,
+        'sub_terms': sub_terms,
         'email': user.email,
-        'room_id': room_id,
-        'user': user,
-        'picture': user.picture.url
-    })
-
-
-# shipping policy static page 
-def shipping_policy(request):
-    room_id = request.GET.get('room_id')
-    user = User.objects.filter(outdoor_token=room_id)[0]
-    return render(request, 'navs/home/shipping_policy.html', {
-        'email': user.email,
+        'address': user.address,
         'room_id': room_id,
         'user': user,
         'picture': user.picture.url
@@ -1459,7 +1455,33 @@ def shipping_policy(request):
 def privacy_policy(request):
     room_id = request.GET.get('room_id')
     user = User.objects.filter(outdoor_token=room_id)[0]
+    terms = TermHeading.objects.get(user=user, page=1)
+    sub_terms = SubHeading.objects.filter(main=terms)
+
     return render(request, 'navs/home/privacy_policy.html', {
+        'main_title': terms.main_title,
+        'main_content': terms.main_content,
+        'sub_terms': sub_terms,
+        'email': user.email,
+        'address': user.address,
+        'room_id': room_id,
+        'user': user,
+        'picture': user.picture.url
+    })
+
+
+
+# shipping policy static page 
+def shipping_policy(request):
+    room_id = request.GET.get('room_id')
+    user = User.objects.filter(outdoor_token=room_id)[0]
+    terms = TermHeading.objects.get(user=user, page=2)
+    sub_terms = SubHeading.objects.filter(main=terms)
+
+    return render(request, 'navs/home/shipping_policy.html', {
+        'main_title': terms.main_title,
+        'main_content': terms.main_content,
+        'sub_terms': sub_terms,
         'email': user.email,
         'room_id': room_id,
         'user': user,
@@ -1467,11 +1489,18 @@ def privacy_policy(request):
     })
 
 
+
 # cancel refund static page
 def cancel_refund(request):
     room_id = request.GET.get('room_id')
     user = User.objects.filter(outdoor_token=room_id)[0]
+    terms = TermHeading.objects.get(user=user, page=3)
+    sub_terms = SubHeading.objects.filter(main=terms)
+
     return render(request, 'navs/home/cancel_refund.html', {
+        'main_title': terms.main_title,
+        'main_content': terms.main_content,
+        'sub_terms': sub_terms,
         'email': user.email,
         'room_id': room_id,
         'user': user,

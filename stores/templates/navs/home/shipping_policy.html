@@ -6,11 +6,11 @@
 <main style="padding: 50px; font-family: Arial, sans-serif;">
     <section>
         <div style="background-color: #4154f1; padding: 10px 20px; border-radius: 5px; display: inline-block;">
-            <h1 style="font-size: 2rem; margin: 0; color: white; font-family: 'boxicons';">SHIPPING & DELIVERY POLICY</h1>
+            <h1 style="font-size: 2rem; margin: 0; color: white; font-family: 'boxicons';">{{main_title}}</h1>
         </div>
         <ul style="font-size: 1rem; line-height: 1.6; margin-top: 20px;">
-            <p>Shipping for all orders made through online within our website and all prices are in Indian Rupees inclusive of GST. After your order and payment confirmation, we will ship ordered food items within 60 to 90 minutes. If you give us an incorrect delivery address/contact number and a parcel is returned to us or undelivered because of that incorrect address we reserve the right to charge additional postage to cover the re-sending of your parcel to the correct address</p>
-            <p>The following points outline our shipment & delivery policy. Read carefully to know how we work and keep a check on our deliverables using our policies</p>
+            <p>{{main_content}}</p>
+            
             <li>Our delivery staff will inspect the physical condition of the food package to make sure that it passes our safety and packaging standards.</li>
             <li>The food packages are sealed at the restaurant with tamper proof tapes.</li>
             <li>Our delivery staff, under no circumstance, opens the packages or inspects the contents of the sealed food product.</li>
@@ -19,6 +19,18 @@
             <li>For any issues in utilizing our services you may contact our helpdesk {{email}}.</li>
         </ul>
     </section>
+
+    <!-- sub heading and content for sections -->
+    {% for sub in sub_terms %}
+    <section style="margin-top: 40px;">
+        <div style="background-color: #4154f1; padding: 10px 20px; border-radius: 5px; display: inline-block;">
+            <h2 style="font-size: 1.8rem; margin: 0; color: white; font-family: 'boxicons';">{{sub.sub_title}}</h2>
+        </div>
+        <ul style="font-size: 1rem; line-height: 1.6; margin-top: 20px;">
+            <p>{{sub.sub_content}}</p>
+        </ul>
+    </section>
+    {% endfor %}
 
 
 </main>
