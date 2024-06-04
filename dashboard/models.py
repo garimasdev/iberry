@@ -239,7 +239,7 @@ class TermHeading(models.Model):
         (3, "Refund Policy")
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    main_title = models.CharField(max_length=10, null=True, blank=True)
+    main_title = models.CharField(max_length=255, null=True, blank=True)
     main_content = models.TextField(null=True, blank=True)
     page = models.PositiveSmallIntegerField(choices=STATUS, null=True, blank=True)
 
@@ -251,7 +251,7 @@ class TermHeading(models.Model):
 # section Terms and policies
 class SubHeading(models.Model):
     main = models.ForeignKey(TermHeading, on_delete=models.CASCADE)
-    sub_title = models.CharField(max_length=10, null=True, blank=True)
+    sub_title = models.CharField(max_length=255, null=True, blank=True)
     sub_content = models.TextField(null=True, blank=True)
 
     class Meta:
