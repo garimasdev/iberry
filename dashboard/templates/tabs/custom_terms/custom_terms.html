@@ -23,7 +23,7 @@
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description"></textarea>
+                <textarea class="form-control" id="description" rows="8" cols="50"></textarea>
             </div>
             <button type="submit" class="btn btn-primary" onclick="createTermsConfigurations();">Save</button>
         </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="mb-3">
                 <label for="content" class="form-label">Content</label>
-                <textarea class="form-control" id="content"></textarea>
+                <textarea class="form-control" id="content" rows="8" cols="50"></textarea>
             </div>
             <button type="submit" class="btn btn-primary" onclick="createSubHeadingConfigurations();">Save</button>
         </div>
@@ -87,7 +87,7 @@
             <!-- section content -->
             <div class="mb-3">
                 <label for="content" class="form-label">Content</label>
-                <textarea class="form-control" id="sub_content"></textarea>
+                <textarea class="form-control" id="sub_content" rows="8" cols="50"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary" onclick="updateSubHeadingConfigurations();">Update</button>
@@ -202,6 +202,7 @@
                 else {
                     alert('Policies configuration not saved.');
                 }
+                window.location.reload();
             })
             .catch((error) => {
                 alert('Policies configuration not saved.');

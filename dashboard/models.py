@@ -246,6 +246,15 @@ class TermHeading(models.Model):
     class Meta:
         verbose_name_plural = 'Main Terms Policies'
 
+    def  __str__(self) -> str:
+        status = {
+           0: "Terms and Conditions",
+            1: "Privacy Policy",
+            2: "Shipping Policy",
+            3: "Refund Policy" 
+        }
+        return str(status.get(self.page))
+
 
 
 # section Terms and policies
