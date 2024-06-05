@@ -1552,13 +1552,13 @@ def manifestview(request):
                     "src": "/static/images/iberry512.png",
                     "sizes": "512x512",
                     "type": "image/png"
+                },
+                {
+                    "src": "/static/images/iberry196.png",
+                    "sizes": "196x196",
+                    "type": "image/png",
+                    "purpose": "maskable"
                 }
-                # {
-                #     "src": "/static/images/iberry512.png",
-                #     "sizes": "196x196",
-                #     "type": "image/png",
-                #     "purpose": "maskable"
-                # }
             ]
         }
         return JsonResponse(manifest)
