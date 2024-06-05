@@ -1547,6 +1547,17 @@ def manifestview(request):
                     "src": "/static/images/iberry_logo.png",
                     "sizes": "320x320",
                     "type": "image/png"
+                },
+                {
+                    "src": "/static/images/iberry512.png",
+                    "sizes": "512x512",
+                    "type": "image/png"
+                },
+                {
+                    "src": "/static/images/iberry512.png",
+                    "sizes": "196x196",
+                    "type": "image/png",
+                    "purpose": "maskable"
                 }
             ]
         }
