@@ -62,7 +62,7 @@
             <!-- choices for sub heading -->
             <div class="mb-3">
                 <label for="sub_choices" class="form-label">Status</label>
-                <select id="sub_choices" class="form-control" onchange="choiceSubHeading();">
+                <select id="subheading_choices" class="form-control" onchange="choiceSubHeading();">
                     <option value="select one option">Select one option</option>
                     {% for value, label in choices %}
                     <option value="{{ value }}">{{label}}</option>
@@ -214,7 +214,7 @@
 
 <script>
     function choiceSubHeading() {
-        var sub_choices = document.getElementById('sub_choices').value.trim()
+        var sub_choices = document.getElementById('subheading_choices').value.trim()
         var data = {
             sub_choices: sub_choices
         }
@@ -257,19 +257,15 @@
             .catch((error) => {
                 window.location.reload()
             });
-
-    }
+}
 </script>
 
 
 <script>
     function sectionSubHeading() {
-        var sub_choices = document.getElementById('sub_choices').value.trim()
+        var sub_choices = document.getElementById('subheading_choices').value.trim()
         // different sections for choice selected
         var section_id = document.getElementById('section_id').value.trim()
-        console.log('section js')
-        console.log(sub_choices)
-        console.log(section_id)
         var data = {
             sub_choices: sub_choices,
             section_id: section_id
