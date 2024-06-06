@@ -116,25 +116,6 @@
   <script src="/static/js/main.js"></script>
 
   <!-- pwa manifest -->
-  <script>
-    function registerServiceWorker() {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/serviceWorker.js') //
-          .then(function (reg) {
-            console.log("service worker registered")
-          }).catch(function (err) {
-            console.log(err)
-          });
-      }
-      else {
-        console.log("Could not find serviceWorker in navigator")
-      }
-    }
-    registerServiceWorker()
-  </script>
-
-
-
   <!-- <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/static/js/service-worker.js')
@@ -204,6 +185,27 @@
         }, 2000);
       }
     </script> -->
+
+
+  <script>
+    function registerServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/serviceWorker.js')
+          .then(function (reg) {
+            console.log("service worker registered")
+          }).catch(function (err) {
+            console.log(err)
+          });
+      }
+      else {
+        console.log("Could not find serviceWorker in navigator")
+      }
+    }
+    registerServiceWorker()
+
+    
+    window.addEventListener('beforeinstallprompt', function(event) {event.preventDefault();});
+  </script>
 
 
   <!-- Specific Page JS goes HERE  -->
