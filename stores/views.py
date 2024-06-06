@@ -1542,6 +1542,7 @@ def manifestview(request):
             "display": "standalone",
             "background_color": "#ffffff",
             "theme_color": "#000000",
+            "prefer_related_applications": True,
             "icons": [
                 {
                     "src": "/static/images/iberry_logo.png",
@@ -1554,8 +1555,8 @@ def manifestview(request):
                     "type": "image/png"
                 },
                 {
-                    "src": "/static/images/iberry196.png",
-                    "sizes": "196x196",
+                    "src": "/static/images/iberry192.png",
+                    "sizes": "192x192",
                     "type": "image/png",
                     "purpose": "maskable"
                 }
