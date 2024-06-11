@@ -397,8 +397,10 @@ def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
             body = json.loads(request.body)
+            print(body)
             merchantTransactionId = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
             merchantUserId = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
+            user = User.objects.get(outdoor_token=body['user'])
 
             cart_items = OutdoorCart.objects.filter(anonymous_user_id=body['anonymous_user_id'])
             cart_total = sum([item.quantity * item.price for item in cart_items])
@@ -407,7 +409,7 @@ def CreatePaymentOrder(request):
 
             # "callbackUrl": f"{request.scheme}://{request.get_host()}/payment/checkout?token={body['user']}&user_id={body['anonymous_user_id']}",
             payload = {
-                "merchantId": settings.MERCHANT_ID,
+                "merchantId":  user.razorpay_clientid,
                 "merchantTransactionId": merchantTransactionId,
                 "merchantUserId": merchantUserId,
                 "amount": amount,
@@ -424,7 +426,7 @@ def CreatePaymentOrder(request):
             # Encode the bytes using base64
             base64_encoded = base64.b64encode(json_bytes)
             # Convert bytes to string (if needed)
-            base64_encoded_str = base64_encoded.decode('utf-8') + "/pg/v1/pay" + settings.SALT_KEY
+            base64_encoded_str = base64_encoded.decode('utf-8') + "/pg/v1/pay" + user.razorpay_clientsecret
             verify_header = sha256(base64_encoded_str.encode()).hexdigest() + '###' + '1'
             headers = {
                 'Content-Type': 'application/json',
