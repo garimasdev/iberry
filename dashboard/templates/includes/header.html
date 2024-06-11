@@ -5,7 +5,7 @@
     <div class="d-flex align-items-center justify-content-between">
         <a href="/dashboard/" class="logo d-flex align-items-center">
             <img src="/media/img/logo.png" alt="">
-            <span class="d-none d-lg-block">Iberry</span>
+            <span class="d-none d-lg-block">{{request.user.username}}</span>
         </a>
         <i class="bi bi-list toggle-sidebar-btn"></i>
     </div>
@@ -96,7 +96,7 @@
             const token = $(this).attr("token");
             const newPassword = $("#new_password").val();
             const confirmPassword = $("#confirm_password").val();
-            
+
             if (newPassword === "" || confirmPassword === "") {
                 alert('Both fields are required');
                 return;
@@ -149,5 +149,4 @@
             dlink.setAttribute('download', 'outdoor_qrcode.png');
         }, 500);
     }
-
 </script>
