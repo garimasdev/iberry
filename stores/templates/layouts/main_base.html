@@ -122,6 +122,7 @@
             deferredPrompt.userChoice.then((choiceResult) => {
                 if (choiceResult.outcome === 'accepted') {
                     console.log('User accepted the install prompt');
+                    installButton.style.display = 'none';
                 } else {
                     console.log('User dismissed the install prompt');
                 }
