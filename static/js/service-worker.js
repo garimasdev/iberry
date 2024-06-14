@@ -1,84 +1,52 @@
-// Install the service worker
-self.addEventListener('install', event => {
-    console.log('Service worker installed');
-  });
+// // Define a cache name
+// const CACHE_NAME = 'iberry-pwa-v1';
 
-  // Activate the service worker
-  self.addEventListener('activate', event => {
-    console.log('Service worker activated');
-  });
+// // List of files to cache
+// const FILES_TO_CACHE = [
+//     '/',
+//     '/offline.html',
+//     '/static/css/styles.css',
+//     '/static/js/script.js',
+//     '/static/images/iberry_logo.png',
+//     '/static/images/iberry512.png',
+//     '/static/images/iberry192.png'
+// ];
 
-  // Respond to fetch events
-  self.addEventListener('fetch', event => {
-    console.log('Fetch event:', event.request.url);
-  });
-
-
-
-// self.addEventListener('fetch', function(event) {});
-
-
-
-
-
-
-// var staticCacheName = 'djangopwa-v1';
-
-// self.addEventListener('install', function (event) {
-//   event.waitUntil(
-//     caches.open(staticCacheName).then(function (cache) {
-//       return cache.addAll([
-//         '/', // Cache the root URL
-//         '/offline.html', // Cache an offline page
-//         '/css/styles.css', // Cache CSS files
-//         '/js/script.js', // Cache JavaScript files
-//       ]);
-//     })
-//   );
-// });
-
-// self.addEventListener('fetch', function (event) {
-//   var requestUrl = new URL(event.request.url);
-//   if (requestUrl.origin === location.origin) {
-//     if ((requestUrl.pathname === '/')) {
-//       event.respondWith(caches.match('/offline.html')); // Respond with offline page if root URL is requested
-//       return;
-//     }
-//   }
-//   event.respondWith(
-//     caches.match(event.request).then(function (response) {
-//       return response || fetch(event.request); // Try to fetch from cache, fallback to network
-//     })
-//   );
-// });
-
-
-
-
-
-// var staticCacheName = 'djangopwa-v1';
-
-// self.addEventListener('install', function(event) {
+// // Install event - cache files
+// self.addEventListener('install', event => {
+//     console.log('Service worker installed');
 //     event.waitUntil(
-//         caches.open(staticCacheName).then(function(cache) {
-//             return cache.addAll([
-//                 '',
-//             ]);
+//         caches.open(CACHE_NAME).then(cache => {
+//             return cache.addAll(FILES_TO_CACHE);
 //         })
 //     );
 // });
 
-// self.addEventListener('fetch', function(event) {
-//     var requestUrl = new URL(event.request.url);
-//     if (requestUrl.origin === location.origin) {
-//         if ((requestUrl.pathname === '/')) {
-//             event.respondWith(caches.match(''));
-//             return;
-//         }
-//     }
-//     event.respondWith(
-//         caches.match(event.request).then(function(response) {
-//             return response || fetch(event.request);
+// // Activate event
+// self.addEventListener('activate', event => {
+//     console.log('Service worker activated');
+//     event.waitUntil(
+//         caches.keys().then(cacheNames => {
+//             return Promise.all(
+//                 cacheNames.map(cacheName => {
+//                     if (cacheName !== CACHE_NAME) {
+//                         console.log('Service worker removing old cache', cacheName);
+//                         return caches.delete(cacheName);
+//                     }
+//                 })
+//             );
 //         })
 //     );
 // });
+
+// Fetch event
+self.addEventListener('fetch', event => {
+    console.log('Fetch event:', event.request.url);
+    event.respondWith(
+        caches.match(event.request).then(response => {
+            return response || fetch(event.request).catch(() => {
+                return caches.match('/offline.html');
+            });
+        })
+    );
+});

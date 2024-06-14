@@ -36,7 +36,7 @@ urlpatterns = [
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
 
     # pwa
-    path('manifest.json', manifestview),
+    path('manifest.json', manifestview, name="manifestview"),
     # path("", include('pwa.urls')),
     
 ]

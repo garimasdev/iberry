@@ -2,203 +2,148 @@
 <html lang="en">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-  <title>Iberry - {% block title %}{% endblock %}</title>
+    <title>Iberry - {% block title %}{% endblock %}</title>
 
-  <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-=yes"/> -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="title" content="Daffodil Institute of IT, Chattogram" />
-  <meta name="author" content="Themesberg" />
-  <meta name="description"
-    content="Daffodil Institute of IT, Chattogram. A Pioneering Quality in Education. DIIT, Chattogram is wonderful institute for Diploma education & Professional IT training." />
-  <meta name="keywords" content="Daffodil Institute of IT Chattogram, Daffodil of IT, Daffodil, Daffodil Family" />
-  <link rel="canonical" href="https://diitctg.info/" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-=yes"/> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="title" content="Daffodil Institute of IT, Chattogram" />
+    <meta name="author" content="Themesberg" />
+    <meta name="description" content="Daffodil Institute of IT, Chattogram. A Pioneering Quality in Education. DIIT, Chattogram is wonderful institute for Diploma education & Professional IT training." />
+    <meta name="keywords" content="Daffodil Institute of IT Chattogram, Daffodil of IT, Daffodil, Daffodil Family" />
+    <link rel="canonical" href="https://diitctg.info/" />
+    <!-- pwa manifest -->
+    <link rel="manifest" href="{% url 'manifestview' %}">
 
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://diitctg.info/" />
-  <meta property="og:title" content="Daffodil Institute of IT, Chattogram" />
-  <meta property="og:description"
-    content="Daffodil Institute of IT, Chattogram. A Pioneering Quality in Education. DIIT, Chattogram is wonderful institute for Diploma education & Professional IT training." />
-  <meta property="og:image"
-    content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://diitctg.info/" />
+    <meta property="og:title" content="Daffodil Institute of IT, Chattogram" />
+    <meta property="og:description" content="Daffodil Institute of IT, Chattogram. A Pioneering Quality in Education. DIIT, Chattogram is wonderful institute for Diploma education & Professional IT training." />
+    <meta property="og:image" content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg" />
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image" />
-  <meta property="twitter:url" content="https://diitctg.info/" />
-  <meta property="twitter:title" content="Daffodil Institute of IT, Chattogram" />
-  <meta property="twitter:description"
-    content="Daffodil Institute of IT, Chattogram. A Pioneering Quality in Education. DIIT, Chattogram is wonderful institute for Diploma education & Professional IT training." />
-  <meta property="twitter:image"
-    content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg" />
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://diitctg.info/" />
+    <meta property="twitter:title" content="Daffodil Institute of IT, Chattogram" />
+    <meta property="twitter:description" content="Daffodil Institute of IT, Chattogram. A Pioneering Quality in Education. DIIT, Chattogram is wonderful institute for Diploma education & Professional IT training." />
+    <meta property="twitter:image" content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg" />
 
-  <!-- Favicons -->
-  <link href="/media/img/favicon.png" rel="icon" />
-  <link href="/media/img/apple-touch-icon.png" rel="apple-touch-icon" />
+    <!-- Favicons -->
+    <link href="/media/img/favicon.png" rel="icon" />
+    <link href="/media/img/apple-touch-icon.png" rel="apple-touch-icon" />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.gstatic.com" rel="preconnect" />
-  <link
-    href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
-    rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect" />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet" />
 
-  <!-- Vendor CSS Files -->
-  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-  <link href="/static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
-  <link href="/static/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
-  <link href="/static/vendor/quill/quill.snow.css" rel="stylesheet" />
-  <link href="/static/vendor/quill/quill.bubble.css" rel="stylesheet" />
-  <link href="/static/vendor/remixicon/remixicon.css" rel="stylesheet" />
-  <link href="/static/vendor/simple-datatables/style.css" rel="stylesheet" />
+    <!-- Vendor CSS Files -->
+    <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/static/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="/static/vendor/boxicons/css/boxicons.min.css" rel="stylesheet" />
+    <link href="/static/vendor/quill/quill.snow.css" rel="stylesheet" />
+    <link href="/static/vendor/quill/quill.bubble.css" rel="stylesheet" />
+    <link href="/static/vendor/remixicon/remixicon.css" rel="stylesheet" />
+    <link href="/static/vendor/simple-datatables/style.css" rel="stylesheet" />
 
-  <link href="/static/css/style.css" rel="stylesheet" />
+    <link href="/static/css/style.css" rel="stylesheet" />
 
 
-  <!-- Specific Page JS goes HERE  -->
-  {% block stylesheets %}{% endblock stylesheets %}
+    <!-- Specific Page JS goes HERE  -->
+    {% block stylesheets %}{% endblock stylesheets %}
 </head>
 
 <body>
 
-  {% if request.path == '/store/'|add:room_id|add:'/foods/outdoor_items/' %}
-  {% include 'includes/outdoor_menu.html' %}
+    {% if request.path == '/store/'|add:room_id|add:'/foods/outdoor_items/' %} {% include 'includes/outdoor_menu.html' %} {% elif request.path == '/contact-us/' %} {% include 'includes/outdoor_menu.html' %} {% elif request.path == '/terms-and-conditions/'
+    %} {% include 'includes/outdoor_menu.html' %} {% elif request.path == '/shipping-policy/' %} {% include 'includes/outdoor_menu.html' %} {% elif request.path == '/privacy-policy/' %} {% include 'includes/outdoor_menu.html' %} {% elif request.path ==
+    '/cancel-refund-policy/' %} {% include 'includes/outdoor_menu.html' %} {% elif '/outdoor_order_status/' in request.path %} {% include 'includes/outdoor_menu.html' %} {% else %} {% include 'includes/menu.html' %} {% endif %}
 
-  {% elif request.path == '/contact-us/' %}
-  {% include 'includes/outdoor_menu.html' %}
+    <main class="content">
+        {% include 'includes/sub_menu.html' %} {% block content %} {% endblock %}
+    </main>
 
-  {% elif request.path == '/terms-and-conditions/' %}
-  {% include 'includes/outdoor_menu.html' %}
+    {# {% include 'includes/scripts.html' %} #}
 
-  {% elif request.path == '/shipping-policy/' %}
-  {% include 'includes/outdoor_menu.html' %}
+    <!-- upward arrow -->
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
+        <i class="bi bi-arrow-up-short"></i>
+    </a>
 
-  {% elif request.path == '/privacy-policy/' %}
-  {% include 'includes/outdoor_menu.html' %}
+    <!-- Downward arrow -->
+    <a href="#myfooter" class="back-to-down d-flex align-items-center justify-content-center">
+        <i class="bi bi-arrow-down-short"></i>
+    </a>
 
-  {% elif request.path == '/cancel-refund-policy/' %}
-  {% include 'includes/outdoor_menu.html' %}
+    <input type="hidden" name="room_ID" id="room_ID" value="{{room_id}}" />
+    <input type="hidden" name="user" id="user" value="{{request.user.name}}" />
+    <script src="/static/vendor/apexcharts/apexcharts.min.js"></script>
+    <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/vendor/chart.js/chart.umd.js"></script>
+    <script src="/static/vendor/echarts/echarts.min.js"></script>
+    <script src="/static/vendor/quill/quill.min.js"></script>
+    <script src="/static/vendor/simple-datatables/simple-datatables.js"></script>
+    <script src="/static/vendor/tinymce/tinymce.min.js"></script>
+    <script src="/static/vendor/php-email-form/validate.js"></script>
+    <script src="/static/js/main.js"></script>
 
-  {% elif '/outdoor_order_status/' in request.path %}
-  {% include 'includes/outdoor_menu.html' %}
-
-  {% else %}
-  {% include 'includes/menu.html' %}
-
-  {% endif %}
-
-  <main class="content">
-    {% include 'includes/sub_menu.html' %} {% block content %} {% endblock %}
-  </main>
-
-  {# {% include 'includes/scripts.html' %} #}
-
-  <!-- upward arrow -->
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center">
-    <i class="bi bi-arrow-up-short"></i>
-  </a>
-
-  <!-- Downward arrow -->
-  <a href="#myfooter" class="back-to-down d-flex align-items-center justify-content-center">
-    <i class="bi bi-arrow-down-short"></i>
-  </a>
-
-  <input type="hidden" name="room_ID" id="room_ID" value="{{room_id}}" />
-  <input type="hidden" name="user" id="user" value="{{request.user.name}}" />
-  <script src="/static/vendor/apexcharts/apexcharts.min.js"></script>
-  <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="/static/vendor/chart.js/chart.umd.js"></script>
-  <script src="/static/vendor/echarts/echarts.min.js"></script>
-  <script src="/static/vendor/quill/quill.min.js"></script>
-  <script src="/static/vendor/simple-datatables/simple-datatables.js"></script>
-  <script src="/static/vendor/tinymce/tinymce.min.js"></script>
-  <script src="/static/vendor/php-email-form/validate.js"></script>
-  <script src="/static/js/main.js"></script>
-
-  <!-- pwa manifest -->
-  <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/static/js/service-worker.js')
-          .then((registration) => {
-            console.log('Service Worker registered:', registration);
-          })
-          .catch((error) => {
-            console.log('Service Worker registration failed:', error);
-          });
-      }
-  </script>
-  <!-- <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/static/js/service-worker.js')
-          .then((registration) => {
-            console.log('Service Worker registered:', registration);
-          })
-          .catch((error) => {
-            console.log('Service Worker registration failed:', error);
-          });
-      }
-    
-      let deferredPrompt;
-    
-      // Function to handle deferredPrompt
-      function handleDeferredPrompt() {
-        if (deferredPrompt) {
-          // Show the install prompt
-          deferredPrompt.prompt();
-    
-          // Wait for the user to respond
-          deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-              console.log('User accepted the install prompt');
-            } else {
-              console.log('User dismissed the install prompt');
-            }
-            
-            // Close the modal
-            const modal = document.getElementById('exampleModal');
-            const modalInstance = bootstrap.Modal.getInstance(modal);
-            modalInstance.hide();
-    
-            // Set the appInstalled key in localStorage to true
-            localStorage.setItem('appInstalled', 'true');
-            
-            deferredPrompt = null;  // Reset the deferredPrompt variable
-          });
+    <!-- pwa manifest -->
+    <!-- <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/js/service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registered:', registration);
+                })
+                .catch((error) => {
+                    console.log('Service Worker registration failed:', error);
+                });
         }
-      }
-    
-      // Check if the browser supports the beforeinstallprompt event
-      window.addEventListener('beforeinstallprompt', function(event) {
-        // Prevent the default behavior of the browser's install prompt
-        event.preventDefault();
-        
-        // Store the event for later use
-        deferredPrompt = event;
-      });
-    
-      // Check if the app is already installed
-      const isAppInstalled = localStorage.getItem('appInstalled') === true;
-    
-      // If the app is not already installed, show the installation prompt after 2 seconds
-      if (!isAppInstalled) {
-        setTimeout(() => {
-          const button = document.getElementById('pwa');
-          // Check if the button exists
-          if (button) {
-            // Trigger the button click
-            button.click();
-    
-            // Run the handleDeferredPrompt function
-            handleDeferredPrompt();
-          } else {
-            console.error('Button not found');
-          }
-        }, 2000);
-      }
     </script> -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/js/service-worker.js')
+                .then((registration) => {
+                    console.log('Service Worker registered:', registration);
+                })
+                .catch((error) => {
+                    console.log('Service Worker registration failed:', error);
+                });
+        }
 
-  <!-- Specific Page JS goes HERE  -->
-  {% block javascripts %} {% endblock javascripts %}
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            const installButton = document.getElementById('install-button');
+            if (installButton) {
+                installButton.style.display = 'block';
+                installButton.addEventListener('click', () => {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted the install prompt');
+                        } else {
+                            console.log('User dismissed the install prompt');
+                        }
+                        deferredPrompt = null;
+                    });
+                });
+            }
+        });
+
+        window.addEventListener('appinstalled', (event) => {
+            console.log('App was installed.');
+            const installButton = document.getElementById('install-button');
+            if (installButton) {
+                installButton.style.display = 'none';
+            }
+        });
+    </script>
+
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %} {% endblock javascripts %}
 </body>
 
 </html>

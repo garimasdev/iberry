@@ -125,6 +125,23 @@
         })
             .then(response => response.json())
             .then(data => {
+                // Function to populate options in the select element
+                function populateSections() {
+                    const title = document.getElementById('heading');
+                    const content = document.getElementById('description');
+                    
+                    // Clear existing options
+                    title.innerHTML = '';
+                    content.innerHTML= '';
+                    
+
+                    let heading = data.heading
+                    let description = data.description
+                    title.value = heading
+                    content.innerHTML = description
+                }
+                populateSections()
+                
                 if (data.status === true) {
                     alert('Policies configuration saved successfully.');
                 }
