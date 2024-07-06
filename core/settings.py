@@ -111,8 +111,8 @@ DATABASES = {
         'NAME': 'iberry',
         'USER': 'root',
         # 'PASSWORD': 'password123',
-        'PASSWORD': 'password',
-        # 'PASSWORD': '',
+        # 'PASSWORD': 'password',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306'
     }
