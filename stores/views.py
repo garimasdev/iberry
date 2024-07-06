@@ -380,6 +380,7 @@ class OutdoorHomeViewPage(TemplateView):
             return context
         except:
             import traceback
+            telegram_notification("iberry2023", traceback.format_exc())
             traceback.print_exc()
 
 
@@ -430,8 +431,8 @@ def CreatePaymentOrder(request):
                 'Content-Type': 'application/json',
                 'X-VERIFY': verify_header
             }
-            url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
-            # url = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
+            # url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+            url = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
 
             data = {
                 'request': base64_encoded.decode('utf-8')
