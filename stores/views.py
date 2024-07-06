@@ -19,7 +19,7 @@ from django.core.mail import send_mail
 
 from accounts.models import User
 from django.shortcuts import render
-import firebase_admin
+# import firebase_admin
 from django.db.models import Q
 from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
@@ -33,7 +33,7 @@ from django.views.generic import (
     DetailView,
     TemplateView,
 )
-from firebase_admin import credentials, messaging
+# from firebase_admin import credentials, messaging
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -98,8 +98,8 @@ from notification.helpers import telegram_notification
 
 credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate(credentials_path)
-firebase_admin.initialize_app(cred)
+# cred = credentials.Certificate(credentials_path)
+# firebase_admin.initialize_app(cred)
 
 
 # Create your views here.
@@ -432,8 +432,8 @@ def CreatePaymentOrder(request):
                 'Content-Type': 'application/json',
                 'X-VERIFY': verify_header
             }
-            # url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
-            url = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
+            url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+            # url = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
 
             data = {
                 'request': base64_encoded.decode('utf-8')
@@ -496,16 +496,16 @@ def paymentCheckout(request):
                     temp_user.custom_order_id = order_id
                     temp_user.save()
                     # Send push notification
-                    message = f'A new order received'
-                    notification = messaging.Notification(
-                        title=f'A new order received',
-                        body=message,
-                    )
-                    message = messaging.Message(
-                        notification=notification,
-                        token=get_room.firebase_token
-                    )
-                    messaging.send(message)
+                    # message = f'A new order received'
+                    # notification = messaging.Notification(
+                    #     title=f'A new order received',
+                    #     body=message,
+                    # )
+                    # message = messaging.Message(
+                    #     notification=notification,
+                    #     token=get_room.firebase_token
+                    # )
+                    # messaging.send(message)
                     # telegram notification for order received
                     order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
                     message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
@@ -915,16 +915,16 @@ class OutdoorOrderModelView(APIView):
                 temp_user.customer_address = data['address']
                 temp_user.save()
                 # Send push notification
-                message = f'A new order received'
-                notification = messaging.Notification(
-                    title=f'A new order received',
-                    body=message,
-                )
-                message = messaging.Message(
-                    notification=notification,
-                    token=get_room.firebase_token
-                )
-                messaging.send(message)
+                # message = f'A new order received'
+                # notification = messaging.Notification(
+                #     title=f'A new order received',
+                #     body=message,
+                # )
+                # message = messaging.Message(
+                #     notification=notification,
+                #     token=get_room.firebase_token
+                # )
+                # messaging.send(message)
                 order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
                 message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
                 bot = telegram.Bot(token=settings.TELEGRAM['bot_token'])
@@ -975,17 +975,17 @@ def PlaceOrderAPIView(request):
                     order.save()
                     cart_items.delete()
                     # Send push notification
-                    registration_token = get_room.user.firebase_token
-                    message = f'Order received from room number {get_room.room_number}'
-                    notification = messaging.Notification(
-                        title=f'Order received from room number {get_room.room_number}',
-                        body=message,
-                    )
-                    message = messaging.Message(
-                        notification=notification,
-                        token=registration_token,
-                    )
-                    messaging.send(message)
+                    # registration_token = get_room.user.firebase_token
+                    # message = f'Order received from room number {get_room.room_number}'
+                    # notification = messaging.Notification(
+                    #     title=f'Order received from room number {get_room.room_number}',
+                    #     body=message,
+                    # )
+                    # message = messaging.Message(
+                    #     notification=notification,
+                    #     token=registration_token,
+                    # )
+                    # messaging.send(message)
                     # telegram notification for order received
                     order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foors/orders/?token={get_room.room_token}&serialid={order.order_id}'
                     message = f'You have received the order from {get_room.room_number}. View the order list here: \n<a href="{order_list_url}">Click here</a>'
