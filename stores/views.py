@@ -386,8 +386,6 @@ class OutdoorHomeViewPage(TemplateView):
 
 # phonepe payment gateway integration 
 import uuid  
-from phonepe.sdk.pg.payments.v1.payment_client import PhonePePaymentClient
-from phonepe.sdk.pg.payments.v1.models.request.pg_pay_request import PgPayRequest
 from hashlib import sha256
 import base64
 
