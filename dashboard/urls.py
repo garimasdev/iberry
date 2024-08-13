@@ -14,6 +14,8 @@ urlpatterns = [
     # phonepe payment gateway
     path('save/payment_gateway/configuration', views.savepaymentGatewayConfiguration, name='save_payment_GatewayConfiguration'),
     path('payment_gateway/configuration', views.paymentGatewayConfiguration, name='payment_GatewayConfiguration'),
+    path('gst_details/configuration', views.GstDetailsConfig, name='gst_details_configuration'),
+    path('save/gst_details/configuration', views.SaveGstDetailsConfig, name='save_gst_details_Configuration'),
     
     # firebase notification
     path('user/change_password/', views.UserChangePassword, name="user-change-password"),

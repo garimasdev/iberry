@@ -47,6 +47,14 @@ class UserAccessMixin(PermissionRequiredMixin):
         return super(UserAccessMixin, self).dispatch(request, *args, **kwargs)
 
 
+
+# payment gateway dashboard
+def paymentGatewayConfiguration(request):
+    if request.method == 'GET':
+        return render(request, 'tabs/extension/payment_gateway_conf.html')
+
+
+# saving the payment details in user
 def savepaymentGatewayConfiguration(request):
     if request.method == 'POST':
         try:
@@ -73,10 +81,36 @@ def savepaymentGatewayConfiguration(request):
             })
 
 
-# payment gateway dashboard
-def paymentGatewayConfiguration(request):
+
+# GST details dashboard 
+def GstDetailsConfig(request):
     if request.method == 'GET':
         return render(request, 'tabs/extension/payment_gateway_conf.html')
+
+
+# saving the GST details in user
+def SaveGstDetailsConfig(request):
+    if request.method == 'POST':
+        try:
+            # Fetch the current user
+            user = User.objects.get(pk=request.user.pk)
+            payload = json.loads(request.body)
+            # Validate payload
+            gst_number = payload.get('gst_number', '').strip()
+            # saving the gst detail in user model
+            user.gst_number = gst_number
+            user.save()
+            
+            return JsonResponse({
+                'status': True
+            })
+            
+        except:
+            traceback.print_exc()
+            return JsonResponse({
+                'status': False
+            })
+
 
 
 # terms and policies dashboard

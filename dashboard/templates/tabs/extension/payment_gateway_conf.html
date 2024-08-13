@@ -16,15 +16,30 @@
                 <label for="phonepe_api_key" class="form-label">PhonePe API Key</label>
                 <input type="text" class="form-control" id="phonepe_api_key">
               </div>
-              <button type="submit" class="btn btn-primary" onclick="createPhonePeConfigurations();">Submit</button>
+              <button type="submit" class="btn btn-primary" onclick="createPhonePeConfigurations();">Save PhonePe Details</button>
+        </div>
+    </div>
+
+    <!-- GST Details Configuration Form -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">GST Details Configuration</h5>
+            <div class="mb-3">
+                <label for="gst_number" class="form-label">GST Number</label>
+                <input type="text" class="form-control" id="gst_number" maxlength="15" required style="text-transform: uppercase;"  oninput="this.value = this.value.toUpperCase();">
+                <div id="gst_error" class="text-danger"></div>
+            </div>
+            <button type="button" class="btn btn-primary" onclick="createGSTConfiguration();">Save GST Details</button>
         </div>
     </div>
 </main>
+
 <!-- End #main -->
 {% endblock content %}
 
 {% block javascripts %}
 <script>
+    // phonepe details
     function createPhonePeConfigurations() {
         // Get values from input fields
         var phonepe_merchant_id = document.getElementById('phonepe_merchant_id').value.trim();
@@ -58,6 +73,52 @@
         })
         .catch((error) => {
             alert('Payment gateway configuration not saved.');
+            window.location.reload();
+        });
+    }
+
+
+    //  GST details
+    function createGSTConfiguration() {
+        var gst_number = document.getElementById('gst_number').value.trim();
+        var gst_error = document.getElementById('gst_error');
+
+        // Convert GST Number to Uppercase
+        gst_number = gst_number.toUpperCase();
+
+        // Validate GST Number
+        const gstPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+        // var gstPattern = /^[0-9A-Z]{15}$/;
+        if (!gstPattern.test(gst_number)) {
+            gst_error.textContent = 'Invalid GST number. Please enter a valid GST number.';
+            return;
+        } else {
+            gst_error.textContent = '';
+        }
+
+        var data = {
+            gst_number: gst_number
+        };
+
+        fetch('/dashboard/save/gst_details/configuration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === true) {
+                alert('GST configuration saved successfully.');
+            } else {
+                alert('GST configuration not saved.');
+            }
+            window.location.reload();
+        })
+        .catch((error) => {
+            alert('Error: ' + error.message);
             window.location.reload();
         });
     }

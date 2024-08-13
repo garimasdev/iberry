@@ -73,8 +73,12 @@ class User(AbstractUser):
     firebase_token = models.TextField(null=True, blank=True)
     channel_name = models.CharField(max_length=70, null=True, blank=True)
     outdoor_token = models.CharField(max_length=20, null=True, blank=True)
+    # phonepe configuration
     razorpay_clientid = models.CharField(max_length=255, null=True, blank=True)
     razorpay_clientsecret = models.CharField(max_length=255, null=True, blank=True)
+    # GST details fields
+    gst_number = models.CharField(max_length=15, null=True, blank=True, unique=True)
+
 
     USERNAME_FIELD = 'username'
     objects = UserManager()

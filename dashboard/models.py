@@ -273,7 +273,7 @@ class SubHeading(models.Model):
             2: "Shipping Policy",
             3: "Refund Policy"
         }
-        return str(status.get(self.main.page))
+        return str(status.get(self.main.page) + ' ' + self.sub_title)
 
         
 
