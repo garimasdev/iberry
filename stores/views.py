@@ -12,14 +12,11 @@ import base64
 from hashlib import sha256
 import requests
 
-
-
-
 from django.core.mail import send_mail
 
 from accounts.models import User
 from django.shortcuts import render
-# import firebase_admin
+import firebase_admin
 from django.db.models import Q
 from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
@@ -33,7 +30,7 @@ from django.views.generic import (
     DetailView,
     TemplateView,
 )
-# from firebase_admin import credentials, messaging
+from firebase_admin import credentials, messaging
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -89,17 +86,17 @@ from stores.serializers import (
 
 
 import sys
-if sys.platform == 'linux':
-    import telegram
-    from telegram import ParseMode
+# if sys.platform == 'linux':
+#     import telegram
+#     from telegram import ParseMode
 
-from notification.helpers import telegram_notification
+# from notification.helpers import telegram_notification
 
 
 credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
 # Initialize Firebase Admin SDK
-# cred = credentials.Certificate(credentials_path)
-# firebase_admin.initialize_app(cred)
+cred = credentials.Certificate(credentials_path)
+firebase_admin.initialize_app(cred)
 
 
 # Create your views here.
@@ -396,7 +393,6 @@ def CreatePaymentOrder(request):
     if request.method == 'POST':
         try:
             body = json.loads(request.body)
-            print(body)
             merchantTransactionId = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
             merchantUserId = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
             user = User.objects.get(outdoor_token=body['user'])
@@ -431,7 +427,9 @@ def CreatePaymentOrder(request):
                 'Content-Type': 'application/json',
                 'X-VERIFY': verify_header
             }
+            # phonpe test api
             # url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+            # phonepe prod api
             url = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
 
             data = {
@@ -507,14 +505,15 @@ def paymentCheckout(request):
                     # messaging.send(message)
                     # telegram notification for order received
                     order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
-                    message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
-                    telegram_notification(get_room.channel_name, message)                    
+                    # message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                    # telegram_notification(get_room.channel_name, message)             
                     return redirect(reverse('stores:outdoor_order_status', kwargs={
                         'room_token': request.GET.get('token'),
                         'order_id': order_id
                     }))
             else:
                 get_room = User.objects.get(outdoor_token=request.GET.get('token'))
+                print("get_room",get_room)
                 cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
                 cart_items.delete()
                 return redirect(reverse('stores:foods-outdoor-items', kwargs={
@@ -887,10 +886,14 @@ class OutdoorOrderModelView(APIView):
         try:
             data = request.data
             get_room = User.objects.get(outdoor_token=data['user'])
+            print("get_room", get_room)
             cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=data['anonymous_user_id'])
+            print("cart_items", cart_items)
             if cart_items:
+                print("cheecking if cart item  exist")
                 order_id = str(uuid.uuid4().int & (10**8 - 1))
                 order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
+                print("order", order)
                 total_amount = 0
                 for cart in cart_items:
                     item = cart.item
@@ -924,10 +927,10 @@ class OutdoorOrderModelView(APIView):
                 #     token=get_room.firebase_token
                 # )
                 # messaging.send(message)
-                order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
-                message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
-                bot = telegram.Bot(token=settings.TELEGRAM['bot_token'])
-                bot.send_message(chat_id=f'@{get_room.channel_name}', text=message, parse_mode=ParseMode.HTML)
+                # order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
+                # message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                # bot = telegram.Bot(token=settings.TELEGRAM['bot_token'])
+                # bot.send_message(chat_id=f'@{get_room.channel_name}', text=message, parse_mode=ParseMode.HTML)
                 return Response(
                     {
                         "success": "Order has been Placed.",
@@ -987,8 +990,8 @@ def PlaceOrderAPIView(request):
                     # messaging.send(message)
                     # telegram notification for order received
                     order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foors/orders/?token={get_room.room_token}&serialid={order.order_id}'
-                    message = f'You have received the order from {get_room.room_number}. View the order list here: \n<a href="{order_list_url}">Click here</a>'
-                    telegram_notification(get_room.user.channel_name, message)
+                    # message = f'You have received the order from {get_room.room_number}. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                    # telegram_notification(get_room.user.channel_name, message)
                     return JsonResponse(
                         {
                             "success": "Order has been Placed.",
@@ -1033,6 +1036,8 @@ class OutdoorOrderStatusViewPage(TemplateView):
         context = super().get_context_data(**kwargs)
         room_token = self.kwargs.get("room_token")
         order_id = self.kwargs.get("order_id")
+        print("room_token", room_token)
+        print("order_id", order_id)
         if room_token and order_id:
             try:
                 order = OutdoorOrder.objects.get(order_id=order_id)
@@ -1268,10 +1273,10 @@ class ServiceOrderPlaceAPIView(APIView):
                 # )
                 # messaging.send(message)
 
-                # telegram notification for service received 
-                service_url = f'{request.scheme}://{request.get_host()}/dashboard/services/orders/'
-                message = f'You have received the service from {room.room_token}. View the service here: \n<a href="{service_url}">Click here</a>'
-                telegram_notification(room.user.channel_name, message)
+                # # telegram notification for service received 
+                # service_url = f'{request.scheme}://{request.get_host()}/dashboard/services/orders/'
+                # message = f'You have received the service from {room.room_token}. View the service here: \n<a href="{service_url}">Click here</a>'
+                # telegram_notification(room.user.channel_name, message)
                 return Response(
                     {
                         "success": "Order has been Placed.",
