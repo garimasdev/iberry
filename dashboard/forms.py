@@ -57,6 +57,7 @@ class FoodsItemForm(ModelForm):
             # "prices": forms.NumberInput(attrs={'class': 'form-select', 'required': True}),
             "quantity": forms.NumberInput(attrs={'class': 'form-select'}),
             "description": forms.Textarea(attrs={'class': 'form-select'}),
+            "tax_rate": forms.Select(attrs={'class': 'form-select'}),
         }
     
     def clean(self):

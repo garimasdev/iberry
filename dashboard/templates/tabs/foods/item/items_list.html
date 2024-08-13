@@ -48,6 +48,7 @@
                                     <th scope="col">Category</th>
                                     <th scope="col">Sub Category</th>
                                     <th scope="col">Prices</th>
+                                    <th scope="col">Tax Rate</th>
                                     <th scope="col">Created_at</th>
                                     <th scope="col">Action</th>
                                 </tr>
@@ -72,7 +73,12 @@
                                         {%for price in item.prices%}
                                         <span class="price-box">{{price.name}}: {{price.price}} </span> {%endfor%}
                                     </td>
-                                    <td>{{item.created_at}}</td>
+                                    <td>
+                                        {{ item.tax_rate }}%
+                                    </td>
+                                    <td>
+                                        {{item.created_at}}
+                                    </td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">

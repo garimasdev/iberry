@@ -102,6 +102,12 @@
                     </div>
                 </div>
                 <div class="col-md-6">
+                    <div class="form-floating">
+                        {{ form.tax_rate }}
+                        <label for="gstTaxRate">Select GST Tax Rate</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <img src="{{ form.instance.image.url }}" style="width: 150px;" alt="Image Preview"> {{form.image}}
                 </div>
                 <div class="text-center">

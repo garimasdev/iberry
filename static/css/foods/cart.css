@@ -1,3 +1,7 @@
+
+
+
+
 .cart-bar {
     position: fixed;
     display: flex;
@@ -14,7 +18,8 @@
     scrollbar-width: thin;
     scrollbar-color: #aab7cf transparent;
     box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
-    background-color: #fff;
+    background-color: #f8f9fa;
+    border-left: 1px solid #ddd;
 }
 
 .cart-bar.active {
@@ -40,6 +45,22 @@
 .cart-bar .place-order a {
     text-decoration: none;
     color: white;
+}
+
+
+.cart-nav {
+    flex: 1; /* Takes up available space */
+    overflow-y: auto; /* Adds scroll if content overflows */
+}
+
+.cart-summary {
+    margin-top: auto; /* Pushes the summary to the bottom */
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.cart-summary p {
+    margin: 5px 0;
 }
 
 .cart-list {
@@ -81,6 +102,7 @@
     padding: 1px 5px;
     cursor: pointer;
 }
+
 
 @media only screen and (max-width: 800px) {
     .cart-bar .place-order {

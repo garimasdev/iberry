@@ -1,4 +1,5 @@
-{% extends "layouts/main_base.html" %} {% block title %} Home {% endblock %}
+{% extends "layouts/main_base.html" %} 
+{% block title %} Home {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
@@ -12,7 +13,13 @@
 <link rel="stylesheet" href="/static/css/foods/categories.css">
 <link rel="stylesheet" href="/static/css/foods/item.css">
 <link rel="stylesheet" href="/static/css/foods/float_cart.css"/>
-<link rel="stylesheet" href="/static/css/foods/cart.css"> {% endblock stylesheets %} {% block content %}
+<link rel="stylesheet" href="/static/css/foods/cart.css"> 
+
+
+{% endblock stylesheets %} 
+
+
+{% block content %}
 
 
 <!-- <button id="pwa" style="display: none">submit</button> -->
@@ -232,7 +239,16 @@
             </li>
             {%endfor%}
         </ul>
-        <button class="place-order" room_id="{{room_id}}" data-bs-toggle="modal" data-bs-target="#asktheuser"><span class="checkout">Checkout</span> <span class="total_price">₹ {{total_price}}</span></button>
+        <!-- Add sections for tax and delivery charges -->
+        <div class="cart-summary">
+            <p>Overall Tax: <strong>₹ {{ total_tax }}</strong></p>
+            <!-- <p>Delivery Charge: <strong>₹ {{ delivery_charge }}</strong></p> -->
+        </div>
+        
+        <button class="place-order" room_id="{{room_id}}" data-bs-toggle="modal" data-bs-target="#asktheuser">
+            <span class="checkout">Checkout</span> 
+            <span class="total_price">₹ {{total_price}}</span>
+        </button>
     </aside>
 
     <!-- Floating Cart Bar-->

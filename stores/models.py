@@ -55,6 +55,13 @@ class Item(models.Model):
     # images = models.ManyToManyField('Image')
     image = models.ImageField(upload_to='foods/items/')
     prices = models.ManyToManyField(Price)
+    tax_rate = models.IntegerField(choices=[
+        (0, 'Nil%'),
+        (5, '5%'),
+        (12, '12%'),
+        (18, '18%'),
+        (28, '28%')],
+        default=0)
     quantity = models.IntegerField(default=0)
     description = models.TextField(null=True, blank=True)
     item_type = models.CharField(max_length=20, choices=TYPES, default=0)
