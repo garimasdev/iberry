@@ -238,9 +238,13 @@
                 <span class="close delete-cart-item" id="{{cart.id}}" token="{{csrf_token}}"><i class="bi bi-x-lg"></i></span>
             </li>
             {%endfor%}
+            <!-- cart loop -->
         </ul>
         <!-- Add sections for tax and delivery charges -->
         <div class="cart-summary" style="margin-top: auto; padding: 10px; border-top: 1px solid #ddd;">
+            <!-- <p style="margin: 5px 0;">Total Price: </p>
+            <p style=" margin: 5px 0;">Overall Tax: </p> -->
+            <p style="margin: 5px 0;">Item Total: <strong>₹ {{ total_price }}</strong></p>
             <p style=" margin: 5px 0;">Overall Tax: <strong>₹ {{ total_tax }}</strong></p>
             <!-- <p>Delivery Charge: <strong>₹ {{ delivery_charge }}</strong></p> -->
         </div>
@@ -291,11 +295,6 @@
     }
 </script>
 <!-- <script src="https://mercury.phonepe.com/web/bundle/checkout.js"></script> -->
-
-
-<script>
-    window.
-</script>
 
 
 <script>

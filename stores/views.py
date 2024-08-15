@@ -1,8 +1,10 @@
 from importlib.resources import path
 import json
 import os
+from pprint import pprint
 import string
 import random
+from tempfile import _TemporaryFileWrapper
 import traceback
 from urllib import response
 from dashboard.models import *
@@ -296,10 +298,16 @@ class OutdoorHomeViewPage(TemplateView):
             if pk:
                 try:
                     room = User.objects.get(outdoor_token=pk)
-                    self.request.session['anonymous_user_id'] = ''.join(random.choices(string.ascii_uppercase+string.digits, k=12))
-                    temp_user_id = Temporary_Users.objects.create(
-                        anonymous_user_id=self.request.session['anonymous_user_id']
-                    )
+                    # check if anonymous id already exist
+                    if 'anonymous_user_id' not in self.request.session:
+                        self.request.session['anonymous_user_id'] = ''.join(random.choices(string.ascii_uppercase+string.digits, k=12))
+                        temp_user_id = Temporary_Users.objects.create(
+                            anonymous_user_id=self.request.session['anonymous_user_id']
+                        )
+                    else:
+                        temp_user_id = Temporary_Users.objects.get(
+                            anonymous_user_id=self.request.session['anonymous_user_id']
+                        )
                 except User.DoesNotExist:
                     raise Http404("Store does not exist.")
             else:
@@ -351,8 +359,31 @@ class OutdoorHomeViewPage(TemplateView):
             else:
                 items = filterItemByCategories(room, get_categories)
 
+            
             get_cart_items = OutdoorCart.objects.filter(user=room, anonymous_user_id=temp_user_id.anonymous_user_id)
+            # calculating amount for price basis on their qty
             amounts = sum(item.price * item.quantity for item in get_cart_items)
+            total_tax = sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items)
+            
+            total_price_including_tax = amounts + total_tax
+
+            # calculating tax basis on tax_rate for each item
+            # total_tax = 0
+            # for item in get_cart_items:
+            #     item_tax_rate = item.item.tax_rate
+            #     # print("item_tax_rate", item_tax_rate)
+            #     item_total_price = item.price * item.quantity
+            #     item_tax = (item_tax_rate / 100) * item_total_price
+            #     # print("item_tax", item_tax)
+            #     total_tax += item_tax
+
+            # print("total_tax", total_tax)
+
+            # Total price including tax
+            # total_price_including_tax = amounts + total_tax
+            # print("total_price_including_tax", total_price_including_tax)s
+
+
             context["categories"] = FoodCategoriesSerializer(
                 get_categories.exclude(name__in=["Bar", "Veg", "Non Veg"]), many=True
             ).data
@@ -365,7 +396,8 @@ class OutdoorHomeViewPage(TemplateView):
             context["items"] = items
             context["room_id"] = pk
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
-            context["total_price"] = amounts
+            context["total_tax"] = amounts
+            context["total_price"] = total_price_including_tax
             if room.picture is not None:
                 context['picture'] = room.picture.url
             else:
@@ -374,10 +406,11 @@ class OutdoorHomeViewPage(TemplateView):
             context["anonymous_user_id"] = temp_user_id.anonymous_user_id
             context["razorpay_clientid"] = room.razorpay_clientid
             context["razorpay_clientsecret"] = room.razorpay_clientsecret
+            # print("context", context)
             return context
         except:
             import traceback
-            telegram_notification("iberry2023", traceback.format_exc())
+            # telegram_notification("iberry2023", traceback.format_exc())
             traceback.print_exc()
 
 
@@ -886,14 +919,10 @@ class OutdoorOrderModelView(APIView):
         try:
             data = request.data
             get_room = User.objects.get(outdoor_token=data['user'])
-            print("get_room", get_room)
             cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=data['anonymous_user_id'])
-            print("cart_items", cart_items)
             if cart_items:
-                print("cheecking if cart item  exist")
                 order_id = str(uuid.uuid4().int & (10**8 - 1))
                 order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
-                print("order", order)
                 total_amount = 0
                 for cart in cart_items:
                     item = cart.item
