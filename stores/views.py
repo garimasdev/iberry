@@ -396,7 +396,11 @@ class OutdoorHomeViewPage(TemplateView):
             context["items"] = items
             context["room_id"] = pk
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
-            context["total_tax"] = amounts
+            # total item amount
+            context["total_amount"] = amounts
+            # overall gst charged 
+            context["total_tax"] = total_tax
+            # checkout amount
             context["total_price"] = total_price_including_tax
             if room.picture is not None:
                 context['picture'] = room.picture.url
