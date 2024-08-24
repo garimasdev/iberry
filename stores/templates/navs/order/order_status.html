@@ -18,7 +18,13 @@
             <div class="progress-bar {%if order.status == 'Ordered'%}w-25{%elif order.status == 'Processing'%}w-50{%else%} w-100{%endif%}"></div>
         </div>
         {%endif%}
-        <p>{{order.status}} <br><br>Your order has been received.<br><br>Your order has been received and will be with you shortly.</p>
+        <!-- <p>{{order.status}} <br><br>Your order has been received.<br><br>Your order has been received and will be with you shortly.</p> -->
+        <p>{% if order.status == 'Ordered' %} <br> Your order has been received.<br><br>Your order has been received and will be with you shortly.
+            {% elif order.status == 'Processing' %} Your order is in processing.<br><br>Your order is getting prepared and will be with you shortly.
+            {% elif order.status == 'Completed' %} Your order is now complete.<br><br>We've successfully finished your order.
+            {% elif order.status == 'Canceled' %} {{order.status}}<br><br> Your order is Canceled.<br><br>Sorry, for the inconvenience.
+        </p>
+        {% endif %}
     </div>
     <!-- {{perms}}-->
 

@@ -181,87 +181,93 @@ $(document).ready(function () {
         dataType: 'json',
         success: function (response) {
           console.log(response);
-          window.location.reload()
-          // $('#add-to-cart-' + food_id).modal('hide')
-          // cart_items += response.total_items
-          // cart_badge.html(cart_items)
-          // const cart_id = response.id
-          // const image = $('.item-' + food_id)
-          //   .find('.image img')
-          //   .attr('src')
-          // const name = $('.item-' + food_id)
-          //   .find('.product_name').first()
-          //   .text()
-          // // const price = $(".item-" + food_id).find(".product_price strong").text();
-          // $('.cart-bar .cart-list').append(
-          //   '<li id="cart-item-' +
-          //     cart_id +
-          //     '" cart_id="' +
-          //     cart_id +
-          //     '" class="cart">' +
-          //     '<div class="product-box">' +
-          //     '<img src="' +
-          //     image +
-          //     '"/>' +
-          //     '<div class="content">' +
-          //     '<p class="name">' +
-          //     name +
-          //     '</p>' +
-          //     '<strong class="price">Price: ₹ ' +
-          //     (selectedData[0].sell_price != 'None'
-          //       ? selectedData[0].sell_price
-          //       : selectedData[0].price) +
-          //     '  </strong>' +
-          //     '<span class="quantity"> Qty: ' +
-          //     qunatity +
-          //     '</span>' +
-          //     '</div>' +
-          //     '</div>' +
-          //     '<span class="close delete-cart-item" id="' +
-          //     cart_id +
-          //     '" token="' +
-          //     token +
-          //     '"><i class="bi bi-x-lg"></i></span>' +
-          //     '</li>'
-          // )
-          // $('.total_price').text('₹ ' + response.total_price)
-          // $('.cart-icon span').text(response.total_items)
+          // window.location.reload()
+
+          $('#add-to-cart-' + food_id).modal('hide')
+          cart_items += response.total_items
+          cart_badge.html(cart_items)
+          const cart_id = response.id
+          const image = $('.item-' + food_id)
+            .find('.image img')
+            .attr('src')
+          const name = $('.item-' + food_id)
+            .find('.product_name').first()
+            .text()
+          // const price = $(".item-" + food_id).find(".product_price strong").text();
+          $('.cart-bar .cart-list').append(
+            '<li id="cart-item-' +
+              cart_id +
+              '" cart_id="' +
+              cart_id +
+              '" class="cart">' +
+              '<div class="product-box">' +
+              '<img src="' +
+              image +
+              '"/>' +
+              '<div class="content">' +
+              '<p class="name">' +
+              name +
+              '</p>' +
+              '<strong class="price">Price: ₹ ' +
+              (selectedData[0].sell_price != 'None'
+                ? selectedData[0].sell_price
+                : selectedData[0].price) +
+              '  </strong>' +
+              '<span class="quantity"> Qty: ' +
+              qunatity +
+              '</span>' +
+              '</div>' +
+              '</div>' +
+              '<span class="close delete-cart-item" id="' +
+              cart_id +
+              '" token="' +
+              token +
+              '"><i class="bi bi-x-lg"></i></span>' +
+              '</li>'
+          )
+          
+          // overall tax and total items
+          $('.items_amount').html('Item Total: <b>₹ ' + response.items_amount + '</b>')
+          $('.total_tax').html('Overall Tax: <b>₹ ' + response.total_tax + '</b>')
+          // price including tax
+          $('.total_price').text('₹ ' + response.total_price)
+          $('.cart-icon span').text(response.total_items)
   
-          // // render  floating cart
-          // $('#float-cart-empty').remove()
+          // render  floating cart
+          $('#float-cart-empty').remove()
   
-          // if (floaing_cart.children().attr('id') === 'float-cart-filled') {
-          //   $('.float-total-price').text('₹ ' + response.total_price)
-          //   $('.float-total-items').text(
-          //     response.total_items + ' items in your cart'
-          //   )
-          // } else {
-          //   $('#float-cart').append(
-          //     `
-          //     <div
-          //     class="d-flex justify-content-between w-100 align-items-center"
-          //     id="float-cart-filled"
-          //   >
-          //     <img
-          //       src="https://b.zmtcdn.com/data/dish_photos/6b2/53c20eaec8cb89832ed50a3d545a56b2.jpg?fit=around|130:130&crop=130:130;*,*"
-          //       alt=""
-          //     />
-          //     <div>
-          //       <h2 class="fw-bold title" id="cart">${user}</h2>
-          //       <span class="float subtitle float-total-items"> ${response.total_items} items in your cart</span>
-          //     </div>
-          //     <button class="d-flex btn btn-primary flex-column align-items-center float-cart-btn">
-          //       <span class="float-total-price">₹${response.total_price}</span> <span>View Cart</span>
-          //     </button>
-          //     <button class="btn-close btn btn-light" aria-label="close"></button>
-          //   </div>
-          //     `
-          //   )
+          if (floaing_cart.children().attr('id') === 'float-cart-filled') {
+            $('.float-total-price').text('₹ ' + response.total_price)
+            $('.float-total-items').text(
+              response.total_items + ' items in your cart'
+            )
+          } else {
+            $('#float-cart').append(
+              `
+              <div
+              class="d-flex justify-content-between w-100 align-items-center"
+              id="float-cart-filled"
+            >
+              <img
+                src="https://b.zmtcdn.com/data/dish_photos/6b2/53c20eaec8cb89832ed50a3d545a56b2.jpg?fit=around|130:130&crop=130:130;*,*"
+                alt=""
+              />
+              <div>
+                <h2 class="fw-bold title" id="cart">${user}</h2>
+                <span class="float subtitle float-total-items"> ${response.total_items} items in your cart</span>
+              </div>
+              <button class="d-flex btn btn-primary flex-column align-items-center float-cart-btn">
+                <span class="float-total-price">₹${response.total_price}</span> <span>View Cart</span>
+              </button>
+              <button class="btn-close btn btn-light" aria-label="close"></button>
+            </div>
+              `
+            )
   
-          //   $('.float-cart-btn').on('click', function (e) {
-          //     $('.cart-bar').toggleClass('active')
-          //   })
-          // }
+            $('.float-cart-btn').on('click', function (e) {
+              $('.cart-bar').toggleClass('active')
+            })
+          }
         },
         error: function (error) {
           console.log('The error', error.responseJSON)
@@ -300,17 +306,24 @@ $(document).ready(function () {
         },
         success: function (response) {
           $('#cart-item-' + cartId).remove()
+          // window.location.reload()
+          // overall tax and total items
+          $('.items_amount').html('Item Total: <b>₹ ' + response.items_amount + '</b>')
+          $('.total_tax').html('Overall Tax: <b>₹ ' + response.total_tax + '</b>')
+          // price including tax
           $('.total_price').text('₹ ' + response.total_price)
           $('.cart-icon span').text(response.total_items)
-  
+          
           if (response.total_items > 0) {
+            //   floating total price
             $('.float-total-price').text('₹ ' + response.total_price)
             $('.float-total-items').text(
               response.total_items + ' items in your cart'
-            )
-          } else {
-            $('#float-cart-filled').remove()
-            $('#float-cart').append(renderEmptyCart)
+              )
+            } else {
+              $('#float-cart-filled').remove()
+              // window.location.reload()
+              $('#float-cart').append(renderEmptyCart)
           }
         },
         error: function (xhr, status, error) {

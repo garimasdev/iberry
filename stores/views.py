@@ -1,7 +1,6 @@
 from importlib.resources import path
 import json
 import os
-from pprint import pprint
 import string
 import random
 from tempfile import _TemporaryFileWrapper
@@ -362,10 +361,11 @@ class OutdoorHomeViewPage(TemplateView):
             
             get_cart_items = OutdoorCart.objects.filter(user=room, anonymous_user_id=temp_user_id.anonymous_user_id)
             # calculating amount for price basis on their qty
-            amounts = sum(item.price * item.quantity for item in get_cart_items)
-            total_tax = sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items)
+            amount = sum(item.price * item.quantity for item in get_cart_items)
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
+
             
-            total_price_including_tax = amounts + total_tax
+            total_price_including_tax = amount + total_tax
 
             # calculating tax basis on tax_rate for each item
             # total_tax = 0
@@ -397,7 +397,7 @@ class OutdoorHomeViewPage(TemplateView):
             context["room_id"] = pk
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
             # total item amount
-            context["total_amount"] = amounts
+            context["items_amount"] = amount
             # overall gst charged 
             context["total_tax"] = total_tax
             # checkout amount
@@ -494,6 +494,7 @@ def CreatePaymentOrder(request):
 
         except:
             import traceback
+            traceback.print_exc()
             return JsonResponse({
                 'status': False,
                 'traceback': json.dumps(traceback.format_exc())
@@ -550,7 +551,6 @@ def paymentCheckout(request):
                     }))
             else:
                 get_room = User.objects.get(outdoor_token=request.GET.get('token'))
-                print("get_room",get_room)
                 cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=request.GET.get('user_id'))
                 cart_items.delete()
                 return redirect(reverse('stores:foods-outdoor-items', kwargs={
@@ -814,13 +814,24 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
 
             object_id = self.perform_create(serializer)
             user = User.objects.get(outdoor_token=room_id)
-            cart_items = OutdoorCart.objects.filter(user=user, cart_user_id=request.data.get('cart_user_id'))
-            total_items = sum(item.quantity for item in cart_items)
-            amounts = sum(item.price * item.quantity for item in cart_items)
+            get_cart_items = OutdoorCart.objects.filter(user=user, cart_user_id=request.data.get('cart_user_id'))
+            # total_items = sum(item.quantity for item in cart_items)
+            # amounts = sum(item.price * item.quantity for item in cart_items)
+            # Calculate total price and total items excluding tax(before checkout)
+            amount = sum(item.price * item.quantity for item in get_cart_items)
+            # calculate total gst tax for each item
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
+            # calculate total amount including tax (checkout)
+            total_price_including_tax = amount + total_tax
+            # calculate total no of items(quantity items)
+            total_items = sum(item.quantity for item in get_cart_items)
+
             extra_data = {
                 "id": object_id,
-                "total_price": amounts,
                 "total_items": total_items,
+                "items_amount": amount,
+                "total_tax": total_tax,
+                "total_price": total_price_including_tax,
             }
 
 
@@ -846,12 +857,19 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
                 cart.delete()
 
             # Calculate total price and total items
-            amounts = sum(item.price * item.quantity for item in get_cart_items)
+            amount = sum(item.price * item.quantity for item in get_cart_items)
+            # calculate total tax for each item
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items),2)
+            # calculate total amount including tax
+            total_price_including_tax = amount + total_tax
+            # calculate total no of items
             total_items = sum(item.quantity for item in get_cart_items)
 
             response_data = {
-                "total_price": amounts,
                 "total_items": total_items,
+                "items_amount": amount,
+                "total_tax": total_tax,
+                "total_price": total_price_including_tax,
             }
 
             return Response(response_data, status=status.HTTP_200_OK)
@@ -865,7 +883,6 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
     
     def decrement_quantity(self, request, *args, **kwargs):
         try:
-            print('decrement')
             cart_id = kwargs['pk']
             instance = self.get_object()
             cart = OutdoorCart.objects.get(id=cart_id)
@@ -876,12 +893,17 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             
              # Calculate total price and total items
             get_cart_items = OutdoorCart.objects.filter(user=cart.user)
-            amounts = sum(item.price * item.quantity for item in get_cart_items)
+            amount = sum(item.price * item.quantity for item in get_cart_items)
             total_items = sum(item.quantity for item in get_cart_items)
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
+            total_price_including_tax = amount + total_tax
+
 
             response_data = {
-                'total_price': amounts,
-                'total_items': total_items
+                "total_items": total_items,
+                "amount": amount,
+                "total_tax": total_tax,
+                "total_price": total_price_including_tax,
             }
             return Response(response_data, status=status.HTTP_200_OK)
 
@@ -1069,8 +1091,6 @@ class OutdoorOrderStatusViewPage(TemplateView):
         context = super().get_context_data(**kwargs)
         room_token = self.kwargs.get("room_token")
         order_id = self.kwargs.get("order_id")
-        print("room_token", room_token)
-        print("order_id", order_id)
         if room_token and order_id:
             try:
                 order = OutdoorOrder.objects.get(order_id=order_id)
@@ -1178,30 +1198,19 @@ class ComplainDetailsView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         room_token = self.kwargs.get("room_token")
-        print(room_token)
         complain_id = self.kwargs.get("complain_id")
-        print(complain_id)
         room = Room.objects.get(room_token=room_token)
         if room_token and complain_id:
-            print("if case")
             try:
-                print("try")
-
                 complain = Complain.objects.filter(complain_id=complain_id, status=0).order_by('-created_at')[0]
-                print("try case complain")
             except Complain.DoesNotExist:
-                print("exception")
                 raise Http404("Complaint does not exist.")
         else:
-            print("else case")
             raise Http404("Complaint does not exist.")
         
-        print("complaint generated")
         complaint_url = f'{self.request.scheme}://{self.request.get_host()}/dashboard/complaints/'
-        print(complaint_url)
         message = f'You have received the complaint from {room_token}. View the complaint here: \n<a href="{complaint_url}">Click here</a>'
-        print(message)
-        telegram_notification(room.user.channel_name, message)
+        # telegram_notification(room.user.channel_name, message)
 
 
         context["complain"] = ComplainSerializer(complain).data
@@ -1233,7 +1242,6 @@ class ServiceCartModelView(viewsets.ModelViewSet):
         get_qunatity = self.request.POST.get("qunatity")
         get_price = self.request.POST.get("price")
         room_id = self.request.POST.get("room")
-        print(get_qunatity)
         new_price = int(get_qunatity) * int(get_price)
         serializer.validated_data["price"] = new_price
         object_id = self.perform_create(serializer)
@@ -1436,7 +1444,6 @@ def contact_send(request):
             # payloads = request.POST
             # payloads =  json.loads(request.body.decode('utf-8'))
             payloads = request.POST
-            print(payloads)
             fullname = payloads.get('fullname', '')
             email = payloads.get('email', '')
             phone = payloads.get('phone', '')
