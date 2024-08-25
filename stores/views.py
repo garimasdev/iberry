@@ -436,8 +436,10 @@ def CreatePaymentOrder(request):
 
             cart_items = OutdoorCart.objects.filter(anonymous_user_id=body['anonymous_user_id'])
             cart_total = sum([item.quantity * item.price for item in cart_items])
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in cart_items), 2)
             receipt = ''.join(random.choices(string.ascii_letters+string.digits, k=16))
-            amount = cart_total * 100
+            amount = cart_total + total_tax
+            amount = int(amount * 100)
 
             # "callbackUrl": f"{request.scheme}://{request.get_host()}/payment/checkout?token={body['user']}&user_id={body['anonymous_user_id']}",
             payload = {
@@ -464,16 +466,23 @@ def CreatePaymentOrder(request):
                 'Content-Type': 'application/json',
                 'X-VERIFY': verify_header
             }
-            # phonpe test api
             # url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
-            # phonepe prod api
             url = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
+
+            # if os.environ.get('ENV') == 'dev':
+            #     # phonpe test api
+            #     url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+            # else:
+            #     # phonepe prod api
+            #     url = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
 
             data = {
                 'request': base64_encoded.decode('utf-8')
             }
             
             result = requests.post(url, json=data, headers=headers)
+            print(result.status_code)
+            print(result.text)
 
             if result.status_code == 200:
                 response_data = result.json()  # Extracting JSON data from the response
@@ -514,16 +523,19 @@ def paymentCheckout(request):
                     order_id = str(uuid.uuid4().int & (10**8 - 1))
                     order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
                     total_amount = 0
+                    overall_tax = 0
                     for cart in cart_items:
                         item = cart.item
                         quantity = cart.quantity
                         total_amount += cart.price * quantity
+                        overall_tax += (item.tax_rate / 100) * (cart.price * quantity)
                         order_item = OutdoorOrderItem.objects.create(
                             order=order, item=item, quantity=quantity, price=cart.price
                         )
                         order.items.add(order_item)
 
                     order.total_price = total_amount
+                    order.overall_tax = overall_tax
                     order.save()
                     cart_items.delete()
                     # here i can associate the order_id in temp_users
@@ -950,16 +962,19 @@ class OutdoorOrderModelView(APIView):
                 order_id = str(uuid.uuid4().int & (10**8 - 1))
                 order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
                 total_amount = 0
+                overall_tax = 0
                 for cart in cart_items:
                     item = cart.item
                     quantity = cart.quantity
                     total_amount += cart.price * quantity
+                    overall_tax += (item.tax_rate / 100) * (cart.price * quantity)
                     order_item = OutdoorOrderItem.objects.create(
                         order=order, item=item, quantity=quantity, price=cart.price
                     )
                     order.items.add(order_item)
 
                 order.total_price = total_amount
+                order.overall_tax = round(overall_tax, 2)
                 order.save()
                 cart_items.delete()
                 # here i can associate the order_id in temp_users

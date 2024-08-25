@@ -132,7 +132,9 @@ $(document).ready(function() {
                     '    <tbody>' + tableRows +
                     '    </tbody>' +
                     '</table>' +
-                    '<p class="text-right"><strong>Total Price:</strong> ₹ ' + response.outdoor_orders.total_price + '</p>' +
+                    '<p class="text-right"><strong>Item Total:</strong> ₹ ' + response.outdoor_orders.total_price + '</p>' +
+                    '<p class="text-right"><strong>Overall Tax:</strong> ₹ ' + response.outdoor_orders.overall_tax + '</p>' +
+                    '<p class="text-right"><strong>Total Amount:</strong> ₹ ' + response.total_amount + '</p>' +
                     '<p class="text-right"><strong>Mobile:</strong> ' + response.phone + '</p>' +
                     '<p class="text-right"><strong>Email:</strong> ' + response.email + '</p>' +
                     '<hr>' +

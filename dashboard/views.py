@@ -682,15 +682,18 @@ class FoodsOutdoorOrdersViewPage(UserAccessMixin, ListView):
     queryset = OutdoorOrder.objects.all()
 
     def get_queryset(self):
-        q = self.request.GET.get('q')
-        if q:
-            object_list = self.model.objects.filter(
-                Q(name__icontains=q) | Q(email__icontains=q) | Q(user_type__icontains=q) | Q(user_id__icontains=q)
-            )
-        else:
-            # get_rooms = User.objects.filter(pk=self.request.user.pk)
-            object_list = self.model.objects.filter(user=self.request.user)
-        return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+        try:
+            q = self.request.GET.get('q')
+            if q:
+                object_list = self.model.objects.filter(
+                    Q(name__icontains=q) | Q(email__icontains=q) | Q(user_type__icontains=q) | Q(user_id__icontains=q)
+                )
+            else:
+                # get_rooms = User.objects.filter(pk=self.request.user.pk)
+                object_list = self.model.objects.filter(user=self.request.user)
+            return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+        except:
+            traceback.print_exc()
 
 
 class OrderExportPageView(UserAccessMixin, APIView):
@@ -718,8 +721,11 @@ class OutdoorOrderExportPageView(UserAccessMixin, APIView):
             query = OutdoorOrder.objects.get(id=pk)
             data = FoodOutdoorOrdersSerializer(query)
             user_detail = Temporary_Users.objects.get(custom_order_id=query.order_id)
+            # Calculate total amount including tax
+            total_amount = float(data.data['total_price']) + float(data.data['overall_tax'])
             return Response({
                 'outdoor_orders': data.data,
+                'total_amount': total_amount,
                 'name': user_detail.customer_name.capitalize(),
                 'email': user_detail.customer_email,
                 'phone': user_detail.customer_phone,
