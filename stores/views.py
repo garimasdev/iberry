@@ -265,7 +265,15 @@ class HomeViewPage(TemplateView):
             items = filterItemByCategories(room.user, get_categories)
 
         get_cart_items = Cart.objects.filter(room=room)
-        amounts = sum(item.price * item.quantity for item in get_cart_items)
+
+        # calculating amount before tax
+        amount = sum(item.price * item.quantity for item in get_cart_items)
+        # calculating tax on each item
+        total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
+        # calculating amount after tax
+        total_price_including_tax = amount + total_tax
+
+        # amounts = sum(item.price * item.quantity for item in get_cart_items)
         context["categories"] = FoodCategoriesSerializer(
             get_categories.exclude(name__in=["Bar", "Veg", "Non Veg"]), many=True
         ).data
@@ -275,7 +283,12 @@ class HomeViewPage(TemplateView):
         context["items"] = items
         context["room_id"] = room.id
         context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
-        context["total_price"] = amounts
+        # total item amount
+        context["items_amount"] = amount
+        # overall gst charged 
+        context["total_tax"] = total_tax
+        # checkout amount
+        context["total_price"] = total_price_including_tax
         context["logo"] = room.user.picture.url
         context["hotel_name"] = room.user.username
 
@@ -729,14 +742,25 @@ class CartModelView(viewsets.ModelViewSet):
 
         object_id = self.perform_create(serializer)
         room = Room.objects.get(id=room_id)
-        cart_items = Cart.objects.filter(room=room)
+        get_cart_items = Cart.objects.filter(room=room)
 
-        total_items = sum(item.quantity for item in cart_items)
-        amounts = sum(item.price * item.quantity for item in cart_items)
+        # Calculate total price and total items excluding tax(before checkout)
+        amount = sum(item.price * item.quantity for item in get_cart_items)
+        # calculate total no of items(quantity items)
+        total_items = sum(item.quantity for item in get_cart_items)
+        # calculate total gst tax for each item
+        total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
+        # calculate total amount including tax (checkout)
+        total_price_including_tax = amount + total_tax
+        
+        # total_items = sum(item.quantity for item in cart_items)
+        # amounts = sum(item.price * item.quantity for item in cart_items)
         extra_data = {
             "id": object_id,
-            "total_price": amounts,
+            "items_amount": amount,
             "total_items": total_items,
+            "total_tax": total_tax,
+            "total_price": total_price_including_tax,
         }
 
         return Response(extra_data, status=status.HTTP_201_CREATED)
@@ -747,11 +771,24 @@ class CartModelView(viewsets.ModelViewSet):
         cart = Cart.objects.get(id=cart_id)
         self.perform_destroy(instance)
         get_cart_items = Cart.objects.filter(room=cart.room)
-        amounts = sum(item.price * item.quantity for item in get_cart_items)
+        
+        # Calculate total price and total items
+        amount = sum(item.price * item.quantity for item in get_cart_items)
+        # calculate total tax for each item
+        total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items),2)
+        # calculate total amount including tax
+        total_price_including_tax = amount + total_tax
+        # calculate total no of items
         total_items = sum(item.quantity for item in get_cart_items)
+
+        
+        # amounts = sum(item.price * item.quantity for item in get_cart_items)
+        # total_items = sum(item.quantity for item in get_cart_items)
         response_data = {
-            "total_price": amounts,
+            "items_amount": amount,
             "total_items": total_items,
+            "total_tax": total_tax,
+            "total_price": total_price_including_tax,
         }
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -1034,16 +1071,19 @@ def PlaceOrderAPIView(request):
                     order = Order.objects.create(order_id=order_id, room=get_room)
                     order.save()
                     total_amount = 0
+                    overall_tax = 0
                     for cart in cart_items:
                         item = cart.item
                         quantity = cart.quantity
                         total_amount += cart.price * quantity
+                        overall_tax += (item.tax_rate / 100) * (cart.price * quantity)
                         order_item = OrderItem.objects.create(
                             order=order, item=item, quantity=quantity, price=cart.price
                         )
                         order.items.add(order_item)
 
                     order.total_price = total_amount
+                    order.overall_tax = round(overall_tax, 2)
                     order.save()
                     cart_items.delete()
                     # Send push notification

@@ -161,6 +161,7 @@ class Order(models.Model):
     order_id = models.CharField(max_length=8, unique=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     items = models.ManyToManyField(OrderItem, related_name='stores_order_items')
+    overall_tax = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     status = models.SmallIntegerField(choices=STATUS, default=0)
     note = models.CharField(max_length=250, null=True, blank=True)

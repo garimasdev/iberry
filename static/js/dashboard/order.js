@@ -96,11 +96,12 @@ $(document).ready(function() {
                     '</div>');
             },
             success: function(response) {
-                console.log("This data", response)
+                console.log("Response data:", response);
+                console.log("Total amount:", response.total_amount);
                 $("#print-modal .modal-body .spinner-border").hide();
                 // Construct the HTML for table rows using a loop
                 var tableRows = '';
-                response.items.forEach(function(element) {
+                response.orders.items.forEach(function(element) {
                     tableRows += '<tr>' +
                         '<td>' + element.item.title + '</td>' +
                         '<td>' + element.quantity + '</td>' +
@@ -114,10 +115,10 @@ $(document).ready(function() {
                     '<hr>' +
                     '<div class="row">' +
                     '<div class="col-md-6">' +
-                    '<p><strong>Room Number:</strong> ' + response.room.room_number + '</p>' +
+                    '<p><strong>Room Number:</strong> ' + response.orders.room.room_number + '</p>' +
                     '</div>' +
                     '<div class="col-md-6">' +
-                    '<p><strong>Order ID:</strong> ' + response.order_id + '</p>' +
+                    '<p><strong>Order ID:</strong> ' + response.orders.id + '</p>' +
                     '</div>' +
                     '</div>' +
                     '<table class="table">' +
@@ -131,8 +132,10 @@ $(document).ready(function() {
                     '    <tbody>' + tableRows +
                     '    </tbody>' +
                     '</table>' +
-                    '<p class="text-right"><strong>Total Price:</strong> ₹ ' + response.total_price + '</p>' +
-                    '<p class="text-right"><strong>Date:</strong> ' + response.created_at + '<strong></p>' +
+                    '<p class="text-right"><strong>Item Total:</strong> ₹ ' + response.orders.total_price + '</p>' +
+                    '<p class="text-right"><strong>Overall Tax:</strong> ₹ ' + response.orders.overall_tax + '</p>' +
+                    '<p class="text-right"><strong>Total Amount:</strong> ₹ ' + response.total_amount + '</p>' +
+                    '<p class="text-right"><strong>Date:</strong> ' + response.orders.created_at + '<strong></p>' +
                     '<hr>' +
                     '<p><em>Note: Thank you for your order!</em></p>' +
                     '</div>');

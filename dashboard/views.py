@@ -706,8 +706,14 @@ class OrderExportPageView(UserAccessMixin, APIView):
     def post(self, request, pk):
         try:
             query = Order.objects.get(id=pk)
-            data = FoodOrdersSerializer(query);
-            return Response(data=data.data)
+            data = FoodOrdersSerializer(query)
+
+            print(data.data)
+            # Calculate total amount including tax
+            total_amount = float(data.data['total_price']) + float(data.data['overall_tax'])
+            return Response({
+                'orders': data.data,
+                'total_amount': total_amount})
         except Order.DoesNotExist:
             return Response(data={"error": "Invalid Format of data"}, status=status.HTTP_400_BAD_REQUEST)
 

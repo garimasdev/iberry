@@ -131,6 +131,11 @@ $(document).ready(function () {
             '"><i class="bi bi-x-lg"></i></span>' +
             '</li>'
         )
+        
+        // overall tax and total items
+        $('.items_amount').html('Item Total: <b>₹ ' + response.items_amount + '</b>')
+        $('.total_tax').html('Overall Tax: <b>₹ ' + response.total_tax + '</b>')
+        // price including tax
         $('.total_price').text('₹ ' + response.total_price)
         $('.cart-icon span').text(response.total_items)
 
@@ -191,7 +196,7 @@ $(document).ready(function () {
       },
     })
   })
-  //delete item from to cart
+  //delete item from cart
   $(document).on('click', '.delete-cart-item', function (e) {
     const cartId = $(this).attr('id')
     const token = $(this).attr('token')
@@ -206,6 +211,11 @@ $(document).ready(function () {
       },
       success: function (response) {
         $('#cart-item-' + cartId).remove()
+
+        // overall tax and total items
+        $('.items_amount').html('Item Total: <b>₹ ' + response.items_amount + '</b>')
+        $('.total_tax').html('Overall Tax: <b>₹ ' + response.total_tax + '</b>')
+        // price including tax
         $('.total_price').text('₹ ' + response.total_price)
         $('.cart-icon span').text(response.total_items)
 
