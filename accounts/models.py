@@ -71,8 +71,10 @@ class User(AbstractUser):
     updated_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
     firebase_token = models.TextField(null=True, blank=True)
-    channel_name = models.CharField(max_length=70, null=True, blank=True)
     outdoor_token = models.CharField(max_length=20, null=True, blank=True)
+    # telegram channel name and bot token
+    channel_name = models.CharField(max_length=70, null=True, blank=True)
+    bot_token = models.CharField(max_length=255, null=True, blank=True)
     # phonepe configuration
     razorpay_clientid = models.CharField(max_length=255, null=True, blank=True)
     razorpay_clientsecret = models.CharField(max_length=255, null=True, blank=True)

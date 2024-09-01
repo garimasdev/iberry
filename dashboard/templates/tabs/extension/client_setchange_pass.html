@@ -21,6 +21,10 @@
                 <input type="text" class="form-control" id="tele_channel">
               </div>
               <div class="mb-3">
+                <label for="bot_token" class="form-label">Telegram Bot Token</label>
+                <input type="text" class="form-control" id="bot_token">
+              </div>
+              <div class="mb-3">
                 <label for="new_client_pass" class="form-label">Password</label>
                 <input type="password" class="form-control" id="new_client_pass">
               </div>
@@ -91,6 +95,7 @@
         var email = document.getElementById('new_client_email').value.trim();
         var username = document.getElementById('new_client_username').value.trim();
         var teleChannel = document.getElementById('tele_channel').value.trim();
+        var botToken = document.getElementById('bot_token').value.trim();
         var password = document.getElementById('new_client_pass').value.trim();
 
         // Create an object with the data
@@ -98,6 +103,7 @@
             email: email,
             username: username,
             teleChannel: teleChannel,
+            botToken:botToken,
             password: password
         };
 

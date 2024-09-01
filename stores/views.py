@@ -1,9 +1,7 @@
-from importlib.resources import path
 import json
 import os
 import string
 import random
-from tempfile import _TemporaryFileWrapper
 import traceback
 from urllib import response
 from dashboard.models import *
@@ -17,7 +15,6 @@ from django.core.mail import send_mail
 
 from accounts.models import User
 from django.shortcuts import render
-import firebase_admin
 from django.db.models import Q
 from django.conf import settings
 from django.http import Http404, HttpResponse, JsonResponse
@@ -31,7 +28,6 @@ from django.views.generic import (
     DetailView,
     TemplateView,
 )
-from firebase_admin import credentials, messaging
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -86,13 +82,17 @@ from stores.serializers import (
 )
 
 
-import sys
+# import sys
 # if sys.platform == 'linux':
 #     import telegram
 #     from telegram import ParseMode
 
-# from notification.helpers import telegram_notification
+from notification.helpers import telegram_notification
 
+
+
+from firebase_admin import credentials, messaging
+import firebase_admin
 
 credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
 # Initialize Firebase Admin SDK
@@ -123,9 +123,7 @@ class ModulesViewPage(TemplateView):
         return context
 
 
-def filterItemByCategories(
-    user, categories=None, sub_category=None, item_type=None, search=None
-):
+def filterItemByCategories(user, categories=None, sub_category=None, item_type=None, search=None):
     items = []
     if sub_category:
         new_item = {}
@@ -427,7 +425,7 @@ class OutdoorHomeViewPage(TemplateView):
             return context
         except:
             import traceback
-            # telegram_notification("iberry2023", traceback.format_exc())
+            telegram_notification("iberry2023", traceback.format_exc())
             traceback.print_exc()
 
 
@@ -494,8 +492,6 @@ def CreatePaymentOrder(request):
             }
             
             result = requests.post(url, json=data, headers=headers)
-            print(result.status_code)
-            print(result.text)
 
             if result.status_code == 200:
                 response_data = result.json()  # Extracting JSON data from the response
@@ -555,6 +551,7 @@ def paymentCheckout(request):
                     temp_user = Temporary_Users.objects.get(anonymous_user_id=request.GET.get('user_id'))
                     temp_user.custom_order_id = order_id
                     temp_user.save()
+
                     # Send push notification
                     # message = f'A new order received'
                     # notification = messaging.Notification(
@@ -566,10 +563,14 @@ def paymentCheckout(request):
                     #     token=get_room.firebase_token
                     # )
                     # messaging.send(message)
+
                     # telegram notification for order received
                     order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
-                    # message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                    message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                    # channel_name = 'Iberry2023'
                     # telegram_notification(get_room.channel_name, message)             
+                    telegram_notification(get_room.channel_name, get_room.bot_token, message)       
+
                     return redirect(reverse('stores:outdoor_order_status', kwargs={
                         'room_token': request.GET.get('token'),
                         'order_id': order_id
@@ -1023,21 +1024,29 @@ class OutdoorOrderModelView(APIView):
                 temp_user.customer_phone = data['phone']
                 temp_user.customer_address = data['address']
                 temp_user.save()
-                # Send push notification
-                # message = f'A new order received'
-                # notification = messaging.Notification(
-                #     title=f'A new order received',
-                #     body=message,
-                # )
-                # message = messaging.Message(
-                #     notification=notification,
-                #     token=get_room.firebase_token
-                # )
-                # messaging.send(message)
-                # order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
-                # message = f'You have received an order. View the order list here: \n<a href="{order_list_url}">Click here</a>'
-                # bot = telegram.Bot(token=settings.TELEGRAM['bot_token'])
-                # bot.send_message(chat_id=f'@{get_room.channel_name}', text=message, parse_mode=ParseMode.HTML)
+
+                try:
+                    # Send push notification
+                    message = f'A new order received'
+                    print(message)
+                    notification = messaging.Notification(
+                        title=f'A new order received',
+                        body=message,
+                    )
+                    message = messaging.Message(
+                        notification=notification,
+                        token=get_room.firebase_token
+                    )
+                    messaging.send(message)
+                except:
+                    traceback.print_exc()
+
+                # telegram notification
+                order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
+                message = f'You have received an order. View the order here:\n <a href="{order_list_url}">Click here</a>'
+                # channel_name = 'Iberry2023'
+                telegram_notification(get_room.channel_name, get_room.bot_token, message)
+
                 return Response(
                     {
                         "success": "Order has been Placed.",
@@ -1086,6 +1095,7 @@ def PlaceOrderAPIView(request):
                     order.overall_tax = round(overall_tax, 2)
                     order.save()
                     cart_items.delete()
+
                     # Send push notification
                     # registration_token = get_room.user.firebase_token
                     # message = f'Order received from room number {get_room.room_number}'
@@ -1098,10 +1108,12 @@ def PlaceOrderAPIView(request):
                     #     token=registration_token,
                     # )
                     # messaging.send(message)
+
                     # telegram notification for order received
                     order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foors/orders/?token={get_room.room_token}&serialid={order.order_id}'
-                    # message = f'You have received the order from {get_room.room_number}. View the order list here: \n<a href="{order_list_url}">Click here</a>'
-                    # telegram_notification(get_room.user.channel_name, message)
+                    message = f'You have received the order from {get_room.room_number}. View the order list here: \n<a href="{order_list_url}">Click here</a>'
+                    # channel_name = 'Iberry2023'
+                    telegram_notification(get_room.channel_name, get_room.bot_token, message)
                     return JsonResponse(
                         {
                             "success": "Order has been Placed.",
@@ -1265,7 +1277,7 @@ class ComplainDetailsView(TemplateView):
         
         complaint_url = f'{self.request.scheme}://{self.request.get_host()}/dashboard/complaints/'
         message = f'You have received the complaint from {room_token}. View the complaint here: \n<a href="{complaint_url}">Click here</a>'
-        # telegram_notification(room.user.channel_name, message)
+        telegram_notification(room.user.channel_name, room.user.bot_token, message)
 
 
         context["complain"] = ComplainSerializer(complain).data
@@ -1356,6 +1368,7 @@ class ServiceOrderPlaceAPIView(APIView):
                 order.total_price = total_amount
                 order.save()
                 cart_items.delete()
+                
                 # Send push notification
                 # registration_token = room.user.firebase_token
                 # message = f'Order received from room number {room.room_number}'
@@ -1370,9 +1383,10 @@ class ServiceOrderPlaceAPIView(APIView):
                 # messaging.send(message)
 
                 # # telegram notification for service received 
-                # service_url = f'{request.scheme}://{request.get_host()}/dashboard/services/orders/'
-                # message = f'You have received the service from {room.room_token}. View the service here: \n<a href="{service_url}">Click here</a>'
-                # telegram_notification(room.user.channel_name, message)
+                service_url = f'{request.scheme}://{request.get_host()}/dashboard/services/orders/'
+                message = f'You have received the service from {room.room_token}. View the service here: \n<a href="{service_url}">Click here</a>'
+                telegram_notification(room.user.channel_name, room.user.bot_token, message)
+
                 return Response(
                     {
                         "success": "Order has been Placed.",

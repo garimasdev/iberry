@@ -70,6 +70,7 @@ nav .menu-list li.cart-icon i {
     font-size: 28px;
 }
 
+
 nav .menu-list li.cart-icon span {
     background: #4154f1;
     color: white;
@@ -77,9 +78,22 @@ nav .menu-list li.cart-icon span {
     padding: 0px 5px;
     border-radius: 100%;
     position: absolute;
-    bottom: 0px;
-    left: 10px;
+    bottom: 18px;
+    left: 11px;
 }
+
+
+/* Display only icons on larger screens */
+@media only screen and (min-width: 801px) {
+    nav .menu-list li a svg {
+        display: block; /* Show SVG icons */
+        font-size: 25px; /* Adjust icon size as needed */
+    }
+    nav .menu-list li a .food-text {
+        display: none; /* Hide food text on larger screens */
+    }
+}
+
 
 @media only screen and (max-width: 800px) {
     .menu-first-part {
@@ -123,6 +137,8 @@ nav .menu-list li.cart-icon span {
     } */
 }
 
+
+/* Responsive Styling for Smaller Screens */
 @media only screen and (max-width: 550px) {
     .search-box {
         width: 300px;

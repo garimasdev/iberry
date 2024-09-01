@@ -707,13 +707,13 @@ class OrderExportPageView(UserAccessMixin, APIView):
         try:
             query = Order.objects.get(id=pk)
             data = FoodOrdersSerializer(query)
-
-            print(data.data)
             # Calculate total amount including tax
             total_amount = float(data.data['total_price']) + float(data.data['overall_tax'])
+
             return Response({
                 'orders': data.data,
                 'total_amount': total_amount})
+                
         except Order.DoesNotExist:
             return Response(data={"error": "Invalid Format of data"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -928,11 +928,19 @@ class ExtensionCreateView(UserAccessMixin, CreateView):
         return kwargs
 
 
+# registering a new client
 def RegisterNewClient(request):
     if request.method == 'POST':
         try:
             payload = json.loads(request.body)
-            user = User.objects.create_user(username=payload['username'], email=payload['email'], password=payload['password'], channel_name=payload['teleChannel'])
+            user = User.objects.create_user(
+                username=payload['username'], 
+                email=payload['email'], 
+                password=payload['password'], 
+                # telegram channel name and bot token
+                channel_name=payload['teleChannel'], 
+                bot_token=payload['botToken']
+            )
             group = Group.objects.get(name='All Permission')
             user.groups.add(group)
             user.save()
