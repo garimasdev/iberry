@@ -47,6 +47,7 @@ nav .menu-list li a {
 nav .menu-list li a:active,
 nav .menu-list li a:hover {
     color: #4154f1;
+    fill: #4154f1;
 }
 
 nav .menu-list li a.active,
@@ -60,6 +61,10 @@ nav .menu-list li a svg {
     display: none;
 }
 
+
+
+/* cart icon css */
+
 nav .menu-list li.cart-icon {
     position: relative;
     cursor: pointer;
@@ -70,6 +75,10 @@ nav .menu-list li.cart-icon i {
     font-size: 28px;
 }
 
+nav .menu-list li.cart-icon i:hover{
+    color: #4154f1;
+    fill: #4154f1;
+}
 
 nav .menu-list li.cart-icon span {
     background: #4154f1;
@@ -82,6 +91,7 @@ nav .menu-list li.cart-icon span {
     left: 11px;
 }
 
+/* cart icon css end */
 
 /* Display only icons on larger screens */
 @media only screen and (min-width: 801px) {
