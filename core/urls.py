@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib.auth import views as auth_views #new
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
 from django.conf.urls.static import static
-from stores.views import NotFoundPageView, manifestview
+from stores.views import NotFoundPageView, manifestview, firebaseview
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -32,8 +32,6 @@ from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.urls import *
-
 from core import settings
 from dashboard.forms import ComplainForm
 from dashboard.models import Complain, Dialer, Room, Service
