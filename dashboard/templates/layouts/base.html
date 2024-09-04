@@ -140,6 +140,20 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-messaging.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-analytics.js"></script>
     <!-- <script src="/firebase-messaging-sw.js"></script> -->
+    
+    <script>
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/js/firebase-messaging-sw.js')
+                .then((registration) => {
+                    console.log('Firebase Service Worker registered:', registration);
+                })
+                .catch((error) => {
+                    console.log('Firebase Service Worker registration failed:', error);
+                });
+        }
+    </script>
+
 
     <script>
         const synth = window.speechSynthesis;
