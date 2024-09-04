@@ -996,6 +996,7 @@ class OutdoorOrderModelView(APIView):
             data = request.data
             get_room = User.objects.get(outdoor_token=data['user'])
             cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=data['anonymous_user_id'])
+            
             if cart_items:
                 order_id = str(uuid.uuid4().int & (10**8 - 1))
                 order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
@@ -1015,6 +1016,7 @@ class OutdoorOrderModelView(APIView):
                 order.overall_tax = round(overall_tax, 2)
                 order.save()
                 cart_items.delete()
+
                 # here i can associate the order_id in temp_users
                 temp_user = Temporary_Users.objects.get(anonymous_user_id=data['anonymous_user_id'])
                 temp_user.custom_order_id = order_id
@@ -1025,25 +1027,27 @@ class OutdoorOrderModelView(APIView):
                 temp_user.customer_address = data['address']
                 temp_user.save()
 
+
+                # Send push notification
                 try:
-                    # Send push notification
                     message = f'A new order received'
-                    print(message)
                     notification = messaging.Notification(
-                        title=f'A new order received',
-                        body=message,
-                    )
+                        title=f'A new order received',  
+                        body=message,)
+
                     message = messaging.Message(
-                        notification=notification,
+                        notification=notification, 
                         token=get_room.firebase_token
                     )
+                    
                     messaging.send(message)
                 except:
                     traceback.print_exc()
 
+                
                 # telegram notification
                 order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
-                message = f'You have received an order. View the order here:\n <a href="{order_list_url}">Click here</a>'
+                message = f'You have received an outdoor order. View the order here:\n <a href="{order_list_url}">Click here</a>'
                 # channel_name = 'Iberry2023'
                 telegram_notification(get_room.channel_name, get_room.bot_token, message)
 
@@ -1071,6 +1075,7 @@ def PlaceOrderAPIView(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
+            print(data)
             serializer = CustomOrderSerializer(data=data)
             if serializer.is_valid():
                 get_room = Room.objects.get(id=serializer.data["room"])
@@ -1096,36 +1101,52 @@ def PlaceOrderAPIView(request):
                     order.save()
                     cart_items.delete()
 
-                    # Send push notification
-                    # registration_token = get_room.user.firebase_token
-                    # message = f'Order received from room number {get_room.room_number}'
-                    # notification = messaging.Notification(
-                    #     title=f'Order received from room number {get_room.room_number}',
-                    #     body=message,
-                    # )
-                    # message = messaging.Message(
-                    #     notification=notification,
-                    #     token=registration_token,
-                    # )
-                    # messaging.send(message)
+                
+                # here i can associate the order_id in temp_users
+                # temp_user = Temporary_Users.objects.get(anonymous_user_id=data['anonymous_user_id'])
+                # temp_user.custom_order_id = order_id
+                # temp_user.order_total = total_amount
+                # temp_user.customer_name = data['name']
+                # temp_user.customer_email = data['email']
+                # temp_user.customer_phone = data['phone']
+                # temp_user.customer_address = data['address']
+                # temp_user.save()
+                
+                # Send push notification
+                try:
+                    message = f'A new order received'
+                    notification = messaging.Notification(
+                        title=f'A new order received',  
+                        body=message,)
 
-                    # telegram notification for order received
-                    order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foors/orders/?token={get_room.room_token}&serialid={order.order_id}'
-                    message = f'You have received the order from {get_room.room_number}. View the order list here: \n<a href="{order_list_url}">Click here</a>'
-                    # channel_name = 'Iberry2023'
-                    telegram_notification(get_room.channel_name, get_room.bot_token, message)
-                    return JsonResponse(
-                        {
-                            "success": "Order has been Placed.",
-                            "room_id": get_room.room_token,
-                            "order_id": order_id,
-                        }
+                    message = messaging.Message(
+                        notification=notification, 
+                        token=get_room.user.firebase_token
                     )
-                else:
-                    return JsonResponse(
-                        {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
-                    )
+                    
+                    messaging.send(message)
+                except:
+                    traceback.print_exc()
+
+                # telegram notification for order received
+                order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foors/orders/?token={get_room.room_token}&serialid={order.order_id}'
+                message = f'You have received the order from room number {get_room.room_number}. View the indoor order list here: \n<a href="{order_list_url}">Click here</a>'
+                # channel_name = 'Iberry2023'
+                telegram_notification(get_room.user.channel_name, get_room.user.bot_token, message)
+                
+                return JsonResponse(
+                    {
+                        "success": "Order has been Placed.",
+                        "room_id": get_room.room_token,
+                        "order_id": order_id,
+                    }
+                )
+            else:
+                return JsonResponse(
+                    {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
+                )
         except:
+            traceback.print_exc()
             return JsonResponse(
                 {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
             )
