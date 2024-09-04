@@ -10,7 +10,7 @@ from django.http import HttpResponseBadRequest
 import base64
 from hashlib import sha256
 import requests
-
+ 
 from django.core.mail import send_mail
 
 from accounts.models import User
@@ -31,6 +31,8 @@ from django.views.generic import (
 from rest_framework import status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from core.urls import *
 
 from core import settings
 from dashboard.forms import ComplainForm
@@ -767,10 +769,22 @@ class CartModelView(viewsets.ModelViewSet):
         return Response(extra_data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
+        print("cart destroy")
         cart_id = self.kwargs["pk"]
         instance = self.get_object()
         cart = Cart.objects.get(id=cart_id)
-        self.perform_destroy(instance)
+        
+        # Check if quantity is greater than 1
+        if instance.quantity > 1:
+            # Decrease quantity by 1
+            instance.quantity -= 1
+            instance.save()
+        else:
+            # Delete the cart item if quantity is 1
+            self.perform_destroy(instance)
+        # self.perform_destroy(instance)
+        
+        # Get cart items related to the same room
         get_cart_items = Cart.objects.filter(room=cart.room)
         
         # Calculate total price and total items
@@ -1033,12 +1047,13 @@ class OutdoorOrderModelView(APIView):
                     message = f'A new order received'
                     notification = messaging.Notification(
                         title=f'A new order received',  
-                        body=message,)
+                        body=message)
 
                     message = messaging.Message(
                         notification=notification, 
                         token=get_room.firebase_token
                     )
+                    
                     
                     messaging.send(message)
                 except:
@@ -1666,6 +1681,76 @@ def render_logo(request):
     # return render(request, 'navs/includes/menu.html', {
     #     'picture': user.picture
     # })
+
+
+
+def firebaseview(request):
+    if request.method == 'GET':
+        a = """
+        // Scripts for  and  messaging
+        importScripts("https://www.gstatic.com/firebasejs/8.6.3/firebase-app.js"); 
+        importScripts("https://www.gstatic.com/firebasejs/8.6.3/firebase-messaging.js");  
+
+        // Initialize the  app in the service worker by passing the generated config
+        const firebaseConfig = {
+        apiKey: "AIzaSyB3YnNXnBSDkuJp3QZKYYgnM52Jwawipoc",
+        authDomain: "iberry-81920.firebaseapp.com",
+        projectId: "iberry-81920",
+        storageBucket: "iberry-81920.appspot.com",
+        messagingSenderId: "661156171796",
+        appId: "1:661156171796:web:eabde955604c4b64bd9701",
+        measurementId: "G-9M4YJQ5DLL"
+        };
+
+        // function speak(text) {
+        //   const utterThis = self.SpeechSynthesisUtterance(text);
+
+        //   utterThis.onend = function (event) {
+        //     console.log("SpeechSynthesisUtterance.onend");
+        //   };
+
+        //   utterThis.onerror = function (event) {
+        //     console.log("SpeechSynthesisUtterance.onerror");
+        //   };
+
+        //   // const selectedOption = voiceSelect.selectedOptions[0].getAttribute("data-name");
+
+        //   // for (let i = 0; i < voices.length; i++) {
+        //   //   if (voices[i].name === selectedOption) {
+        //   //     utterThis.voice = voices[i];
+        //   //     break;
+        //   //   }
+        //   // }
+        //   // console.log("The voice name", pitch.value)
+        //   // console.log("The voice name", rate.value)
+        //   utterThis.pitch = 1;
+        //   utterThis.rate = 1;
+        //   // speechSynthesis.speak(utterThis);
+        //   // synth.speak(utterThis);
+        // }
+
+        firebase.initializeApp(firebaseConfig); 
+        const messaging=firebase.messaging(); 
+        messaging.onBackgroundMessage(function(payload) {
+        console.log('Received background message ', payload);
+
+        // Check if the browser supports the SpeechSynthesis API
+        const notificationTitle = payload.notification.title;
+        console.log("Notification title", notificationTitle)
+        // const audio=new Audio("/static/iphone_sound.mp3"); 
+        // audio.play(); 
+        const notificationOptions = {
+            body: payload.notification.body,
+        };
+
+        self.registration.showNotification(notificationTitle, notificationOptions);
+        // speak(notificationTitle);
+        });
+
+        """
+
+    return HttpResponse(a, content_type="application/javascript")
+
 
 # pwa manifest
 def manifestview(request):

@@ -37,6 +37,7 @@ urlpatterns = [
 
     # pwa
     path('manifest.json', manifestview, name="manifestview"),
+    path('firebase-messaging-sw.js', firebaseview),
     # path("", include('pwa.urls')),
     
 ]
