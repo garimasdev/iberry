@@ -139,12 +139,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-messaging.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-analytics.js"></script>
-    <!-- <script src="/firebase-messaging-sw.js"></script> -->
     
     <script>
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/static/js/firebase-messaging-sw.js')
+            navigator.serviceWorker.register('/static/js/firebase-sw.js')
                 .then((registration) => {
                     console.log('Firebase Service Worker registered:', registration);
                 })
