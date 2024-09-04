@@ -1,5 +1,5 @@
 {% extends "layouts/main_base.html" %} 
-{% block title %} Home {% endblock %}
+{% block title %}Outdoor Home {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
@@ -22,34 +22,15 @@
 {% block content %}
 
 
-<!-- <button id="pwa" style="display: none">submit</button> -->
 <!-- PWA Button trigger modal -->
 <button id="pwa" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="display: none;">submit</button>
-  
-  <!-- Modal
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="max-width: 550px;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Jullundur App Install</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <p>Do you want to install this app to your home screen?</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" onclick="handleDeferredPrompt()">Install</button>
-        </div>
-      </div>
-    </div>
-  </div> -->
 
 
-
+<!-- payment gateway checkout system and cart bar aside -->
 <section class="main-section">
     <div class="response"></div>
-    <!-- user confirmation -->
+
+    <!-- modal for user confirmation for cod or online payment -->
     <div class="modal fade" id="asktheuser" tabindex="-1" aria-labelledby="asktheuserLabel" aria-hidden="true">
         <div class="modal-dialog" style="max-width: 500px;">
         <div class="modal-content">
@@ -83,6 +64,7 @@
         </div>
     </div>
 
+    <!-- modal for user details  -->
     <div class="modal fade" id="asktheuserdetails" tabindex="-1" aria-labelledby="asktheuserdetailsLabel" aria-hidden="true">
         <div class="modal-dialog" style="max-width: 500px;">
         <div class="modal-content">
@@ -120,6 +102,7 @@
         </div>
     </div>
 
+    
     <ul class="categories">
         {%if sub_categories|length > 0 %}
         <!--Main Category-->
@@ -137,6 +120,7 @@
     </ul>
     {%for categoriesItems in items%}
     <h4 class="category">{{categoriesItems.category}}</h4>
+    
     <div class="products">
         {%for item in categoriesItems.items%}
         <div class="product item-{{item.id}}" name="item">
@@ -156,6 +140,8 @@
                 {% endwith %}
             </div>
             <button class="cart-view" data-bs-toggle="modal" data-bs-target="#add-to-cart-{{item.id}}"><i class="bi bi-plus-circle"></i></button>
+            
+            
             <!-- Modal -->
             <div class="modal fade" id="add-to-cart-{{item.id}}" tabindex="-1" aria-labelledby="add-to-cart" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -222,7 +208,6 @@
     <!-- {{perms}}-->
 
     <aside id="cart-bar" class="cart-bar">
-
         <ul class="cart-nav cart-list" id="cart-nav">
             <h5>Cart</h5>
             {%for cart in cart_items%}
@@ -262,13 +247,12 @@
     <!-- FOOTER -->
     {% include "includes/main_footer.html" %}
 
-
+</section>
 
 
 
 {%endblock content%} {% block javascripts %}
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-
 <script src="/static/js/foods/outdoor_foods.js"></script>
 <script>
     window.onload = function() {
@@ -297,15 +281,9 @@
 <!-- <script src="https://mercury.phonepe.com/web/bundle/checkout.js"></script> -->
 
 
-<script>
+<!-- quantity increment or decrement -->
 
-    // // Prevent page refresh if items are in the cart
-    // window.addEventListener('beforeunload', function(event) {
-    //     if ($('.cart-list .cart').length > 0) {
-    //         event.preventDefault();
-    //         event.returnValue = 'Are you sure you want to leave? You have items in your cart.';
-    //     }
-    // });
+<script>
 
     document.getElementById('back_btn_basehtml').style.display = 'None';
     function incrementQuantity(item_id, max_quantity) {
@@ -324,6 +302,8 @@
 </script>
 
 
+
+<!-- payment gateway details -->
 <script>
     var selectedPaymentMode;
     $(document).ready(function() {
@@ -473,4 +453,6 @@
     }
 
 </script>
+
+
 {% endblock javascripts %}
