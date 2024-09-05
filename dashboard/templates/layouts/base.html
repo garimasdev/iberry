@@ -142,30 +142,36 @@
     <!-- <script src="/firebase-messaging-sw.js"></script> -->
 
     <script>
-        const synth = window.speechSynthesis;
-        checkNotificationPromise();
-
-        function checkNotificationPromise() {
-            Notification.requestPermission().then(prem => {
-                console.log("Notification", prem)
-            });
-        }
-
-        const firebaseConfig = {
+        var firebaseConfig = {
             apiKey: "AIzaSyB3YnNXnBSDkuJp3QZKYYgnM52Jwawipoc",
             authDomain: "iberry-81920.firebaseapp.com",
+            databaseURL: "https://iberry-81920.firebaseio.com",
             projectId: "iberry-81920",
             storageBucket: "iberry-81920.appspot.com",
             messagingSenderId: "661156171796",
             appId: "1:661156171796:web:eabde955604c4b64bd9701",
             measurementId: "G-9M4YJQ5DLL"
         };
-
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         firebase.analytics();
-
+      
         const messaging = firebase.messaging();
+      
+      
+    //     messaging.getToken({ vapidKey: 'BCWXhdKlgb5ZJKwCXGlst4atPSMbEOA1lLe2oCR3DkBe886llg2LK5EPCLJWGV3eIcJ3wmJZbRwTdihbgbYQpT4' }).then((currentToken) => {
+    //     if (currentToken) {
+          
+    //       console.log(currentToken)
+    //     } else {
+    //       console.log('No registration token available. Request permission to generate one.');
+       
+    //     }
+    //   }).catch((err) => {
+    //     console.log('An error occurred while retrieving token. ', err);
+    //   });
+      
+      
         messaging
         .requestPermission()
         .then(function () {
@@ -194,107 +200,81 @@
         .catch(function (err) {
             console.log("Unable to get permission to notify.", err);
         });
-
-        function speak(text) {
-            if (synth.speaking) {
-                console.error("speechSynthesis.speaking");
-                return;
-            }
-            const utterThis = new SpeechSynthesisUtterance(text);
-
-            utterThis.onend = function(event) {
-                console.log("SpeechSynthesisUtterance.onend");
-            };
-
-            utterThis.onerror = function(event) {
-                console.log("SpeechSynthesisUtterance.onerror");
-            };
-            utterThis.pitch = 1;
-            utterThis.rate = 1;
-            synth.speak(utterThis);
+      
+      
+    function speak(text) {
+        if (synth.speaking) {
+            console.error("speechSynthesis.speaking");
+            return;
         }
+        const utterThis = new SpeechSynthesisUtterance(text);
+
+        utterThis.onend = function(event) {
+            console.log("SpeechSynthesisUtterance.onend");
+        };
+
+        utterThis.onerror = function(event) {
+            console.log("SpeechSynthesisUtterance.onerror");
+        };
+        utterThis.pitch = 1;
+        utterThis.rate = 1;
+        synth.speak(utterThis);
+    }
 
         messaging.onMessage(function(payload) {
-            console.log("notifi worked")
-            console.log("Foreground notification received:", payload);
-            showLocalNotification(payload.notification.title);
-            // Handle the notification payload and show it to the user
-            // if (Notification.permission === "granted") {
-            //     const img = "/media/img/logo.png";
-            //     const notification = new Notification(payload.notification.title, {
-            //         body: payload.notification.body,
-            //         icon: img
-            //     });
-            //     if ('speechSynthesis' in window) {
-            //         try {
-            //             speak(payload.notification.title);
-            //         } catch {
-            //             const audio=new Audio("/static/iphone_sound.mp3"); 
-            //             audio.play();
-            //         }
-            //     } else {
-            //         const audio=new Audio("/static/iphone_sound.mp3"); 
-            //         audio.play();
-            //     }
-
-            //     notification.addEventListener("error", e => {
-            //         console.log("The notification error", e)
-            //     })
-            //     document.addEventListener("visibilitychange", () => {
-            //         if (document.visibilityState === "visible") {
-            //             notification.close();
-            //         }
-            //     });
-            // }
-        });
-
-        function 
-        showLocalNotification(title) {
-            $(".toast-container").append('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">' +
-                '<div class="toast-header">' +
-                '<img src="/media/img/logo.png" width="20px" class="rounded me-2" alt="logo.png">' +
-                '<strong class="me-auto">Iberry</strong>' +
-                '<small class="text-body-secondary">just now</small>' +
-                '<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>' +
-                '</div>' +
-                '<div class="toast-body">' + title + '</div>' +
-                '</div>');
-
-            $('.toast').toast('show');
-        }
-
-        async function updateFCMToken(currentToken) {
-            try {
-                $.ajax({
-                    headers: {
-                        "X-CSRFToken": "{{csrf_token}}"
-                    },
-                    url: '/notification/gcm/',
-                    type: 'POST',
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        name: "",
-                        registration_id: currentToken,
-                        device_id: 0,
-                        active: true,
-                        cloud_message_type: "FCM"
-                    }),
-                    success: function(response) {
-                        // Handle the response from the API
-                        console.log("Success", response);
-                    },
-                    error: function(xhr, status, error) {
-                        // Handle any errors that occur during the API request
-                        console.log(error);
-                    }
-                });
-
-            } catch (error) {
-                console.log("Error updating FCM token:", error);
+        console.log("notifi worked")
+        console.log("Foreground notification received:", payload);
+        showLocalNotification(payload.notification.title);
+        // Handle the notification payload and show it to the user
+        if (Notification.permission === "granted") {
+            const img = "/media/img/logo.png";
+            const notification = new Notification(payload.notification.title, {
+                body: payload.notification.body,
+                icon: img
+            });
+            if ('speechSynthesis' in window) {
+                try {
+                    speak(payload.notification.title);
+                } catch {
+                    const audio=new Audio("/static/iphone_sound.mp3"); 
+                    audio.play();
+                }
+            } else {
+                const audio=new Audio("/static/iphone_sound.mp3"); 
+                audio.play();
             }
+
+            notification.addEventListener("error", e => {
+                console.log("The notification error", e)
+            })
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === "visible") {
+                    notification.close();
+                }
+            });
         }
-    </script>
+    });
+
+    function 
+    showLocalNotification(title) {
+        $(".toast-container").append('<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">' +
+            '<div class="toast-header">' +
+            '<img src="/media/img/logo.png" width="20px" class="rounded me-2" alt="logo.png">' +
+            '<strong class="me-auto">Iberry</strong>' +
+            '<small class="text-body-secondary">just now</small>' +
+            '<button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>' +
+            '</div>' +
+            '<div class="toast-body">' + title + '</div>' +
+            '</div>');
+
+        $('.toast').toast('show');
+    }
+      
+      
+      
+      </script>
+
+    
     <script>
         $(document).ready(function() {
             $('.toast').toast('show');

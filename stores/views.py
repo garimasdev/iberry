@@ -87,7 +87,7 @@ from stores.serializers import (
 #     import telegram
 #     from telegram import ParseMode
 
-from notification.helpers import telegram_notification
+from notification.helpers import push_notification, telegram_notification
 
 
 
@@ -781,6 +781,7 @@ class CartModelView(viewsets.ModelViewSet):
         total_price_including_tax = amount + total_tax
         # calculate total no of items
         total_items = sum(item.quantity for item in get_cart_items)
+        
 
         
         # amounts = sum(item.price * item.quantity for item in get_cart_items)
@@ -1028,22 +1029,14 @@ class OutdoorOrderModelView(APIView):
                 temp_user.save()
 
 
-                # Send push notification
                 try:
                     message = f'A new order received'
-                    notification = messaging.Notification(
-                        title=f'A new order received',  
-                        body=message,)
-
-                    message = messaging.Message(
-                        notification=notification, 
-                        token=get_room.firebase_token
-                    )
-                    
-                    messaging.send(message)
+                    title = 'Outdoor Order'
+                    token = get_room.firebase_token
+                    firebase_status = push_notification(message, title, token)
                 except:
                     traceback.print_exc()
-
+                
                 
                 # telegram notification
                 order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
@@ -1666,6 +1659,37 @@ def render_logo(request):
     # return render(request, 'navs/includes/menu.html', {
     #     'picture': user.picture
     # })
+
+
+def showFirebaseJS(request):
+    data='importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js");' \
+         'importScripts("https://www.gstatic.com/firebasejs/8.2.0/firebase-messaging.js"); ' \
+         'var firebaseConfig = {' \
+         '        apiKey: "AIzaSyB3YnNXnBSDkuJp3QZKYYgnM52Jwawipoc",' \
+         '        authDomain: "iberry-81920.firebaseapp.com",' \
+         '        databaseURL: "https://iberry-81920.firebaseio.com",' \
+         '        projectId: "iberry-81920",' \
+         '        storageBucket: "iberry-81920.appspot.com",' \
+         '        messagingSenderId: "661156171796",' \
+         '        appId: "1:661156171796:web:eabde955604c4b64bd9701",' \
+         '        measurementId: "G-9M4YJQ5DLL"' \
+         ' };' \
+         'firebase.initializeApp(firebaseConfig);' \
+         'const messaging=firebase.messaging();' \
+         'messaging.setBackgroundMessageHandler(function (payload) {' \
+         '    console.log(payload);' \
+         '    const notification=JSON.parse(payload);' \
+         '    const notificationOption={' \
+         '        body:notification.body,' \
+         '        icon:notification.icon' \
+         '    };' \
+         '    return self.registration.showNotification(payload.notification.title,notificationOption);' \
+         '});'
+
+    return HttpResponse(data,content_type="text/javascript")
+
+
+
 
 # pwa manifest
 def manifestview(request):
