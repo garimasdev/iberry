@@ -9,7 +9,7 @@ import requests
 
 
 # generating a new access token in firebase
-def firebase_noti():
+def firebase_access_token():
     SERVICE_ACCOUNT_FILE = '/Users/garimasachdeva/Desktop/iberry/iberry/stores/credentials.json'
     SCOPES = ['https://www.googleapis.com/auth/firebase.messaging']
     credentials = service_account.Credentials.from_service_account_file( SERVICE_ACCOUNT_FILE, scopes=SCOPES)
@@ -24,7 +24,7 @@ def firebase_noti():
 # sending a push notification through firebases
 def push_notification(body, title, token):
     url = 'https://fcm.googleapis.com/v1/projects/iberry-81920/messages:send'
-    access_token = 'ya29.c.c0ASRK0GZKlDXcFfP6KwHmuJkUHqa5dQhuRXWXAKLvd0n8btUWJtueOQBQE09f2zK8mnXBwMBahkNr3zeKMMYWtRxKdZI7SxDC0mu1NaQtbxhN7lPIWfui2P-hu1T-plnvSqD9VxH2sGDXUvuPzK243StamyhODVYC5MPvg4ujUFCNLIFrt8N1-VUYogLR6mIV6n3bMYZ5rgc91T_uRQBKKT9SCMOTsRVxL2ev5_zNjQ06U9LmFcmAW3WVRB33cyjZzN_QN-0dKxpqDma4OQIwpWHlk_JUK8ClSxay7n77IHuDWKlKbMUcETgZhjlppo_tN6un8oYDonbFThbrn_QGjt44v4Iot_goWYKH3sU2J_PqCL4DApM9ig2tN385K9JYc2p-mU_MgxaBlxBaVrcx7bzF-RI6at3t-j7Vqf9o6eSomshM4yW8FutUrX2hn3lY7IcJlvu2FsFpF3_cq4VewQwQRb_bbYur6ZZsIXFZw1meloWpaYwFhmel5SRUrdiy8WjnvF6Qvx_ik4xzkdh2ZVR0Z3bhl10rwpIuileJp3O_f97Snewim8x9B84B-se-nJrXvlrBhMcMucf4ghMwXwRaXWuq7xr2wY3abrkzsiOvohf698JufW05cXSs01Sn_7wjfmI3MF5lq1k0z6dh9Z8mlMWIrpgYnupJqlJBpx9x4sFhozR4BrVhOkXufUZZwfs2MmqMc-sa5wexgQ8qSRb-wrylxi7UMhqYqjQZIdVumivmxud5mnQmFa-y34bSIm-Xo9dM2J_qvM03VsJggjg95FRSBupke-_yeq79udjoyBR-iM5IXF168rt6oJ9b165dVcd8_dzjZM9xVJV4QiIdOZytfg3u8pzXy8x0UgOxS8Fu25_5v-405dVtyt_wubv026rQW7ZeY0j6bsxo-SeW1226b77j0_Bg4q_8_0-JYWtc6-rzbFIOI1jOBdqijW5xWnWw2cfvIyjn7lXkzytF77IoRBb22jV4mYtItsxqheJmJgrJ_1k'
+    access_token = 'ya29.c.c0ASRK0GbFRLGdNt-9W6YJjvXJQKjzysxcrMBvasK8o5cOZJEEbHtt2jU8fx7OdjfzdRolftWUJKaQ88-EVvVjvkjlz6N1iQg9-gi4_lgWSFOyTWCp0e2ApoR0MO3cbvB9aQrzr_7KpeVWwwc0RqYjNBWFKgKFSO7ApxbvsNAC7opvpZCMtnn7Wbw-Mo_mPBrWKXkTHBRrHTZC-wenkemxBbkOQibIOE2rN4wmH_WrRra9NDQ3Fw1yQPneocj-tR-Mu_5KsFc2AAR8F7815RCwm5HBS2GCAep4FPWbi5r2NBxF8acAJVvNrYSNwbWjeSFsfBUy5zhOZQ_mvAA3NOIrKyEpKrKVJzlzXga7nGkxUIAJejK-G_nzhAYE384KZQ2c5zoFxds_VMZ34absV7wlOFnwgMq_fiOr19jo8fherhn8IvfkeMqz296zuVYS7qq8QVytheibzMY8wUQFvwQa6zwg5me9nnyJF5XYIFpt1Wzu9ZhRetfYum9Yx6nMBuuZkMtr9rWm1zb45jlhMZ6w62gBs-BR_Bq7lFgMfqnIM90o-u7StSIJFk13zdhIyxzgZ6Rgxdv4VFQaWjQFaleov0Oap1g1oqcb3uSs6htJMbs_36ySc7M5hmnQa-zz7lZRW5-ysh5JkWrjfg98Q73Zx7cZoXwk2B44q6iutnlvRcu__Y8nWzz69e0XMpys_sn_iUF6p41tke6b_B5FkfhI03Z-Fej9Wq92pj8bvVFoimmBs2fhekBZmSZ6z-r9X0dvZ57w43gR32n96Rs2ld55fhR9Yc1S4V47O9FuyJugkrkV_bpefMp6wf5pd6QJMWZ4J6fyMXRRpyZv19l8vUm-tbI9d-ISozpvUmro0wlIjhSF6zWd5tXb3_5hjlSqfOy3s8Ixdbk-vBQzRlsXRMxtq1sdbifBMUnzfdBWubiXkyfFnWza7n2bi_6d1StyF1R6_ttf2z7MRVxRkmaccoB-5bSfomSUtSkolxhnvUXu5xl20atvZht08Rj'
     headers  =  {
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ def push_notification(body, title, token):
     if notification_result.status_code == 200:
         return True
     else:
-        access_token = firebase_noti()
+        access_token = firebase_access_token()
         headers  =  {
             'Authorization': f'Bearer {access_token}',
             'Content-Type': 'application/json'
