@@ -19,6 +19,13 @@
 
   <ul class="menu-list d-flex align-items-center">
     
+    <!-- cart icon -->
+    <li class="cart-icon" style="color: black;">
+      <i class="fas fa-shopping-cart"></i>
+      <span id="cart-badge">{{cart_count}}</span>
+    </li>
+    
+    
     <!-- home icon -->
     <li>
       <a href="/store/{{room_number}}/" class="{%if request.path == '/store/'|add:room_number|add:'/'%}active{%endif%}">
@@ -63,11 +70,6 @@
       </a>
     </li> -->
 
-    <!-- cart icon -->
-    <li class="cart-icon" style="color: black;">
-      <i class="fas fa-shopping-cart"></i>
-      <span id="cart-badge">{{cart_count}}</span>
-    </li>
     
   </ul>
   

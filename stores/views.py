@@ -1030,7 +1030,7 @@ class OutdoorOrderModelView(APIView):
 
 
                 try:
-                    message = f'A new order received'
+                    message = f'A new outdoor order received'
                     title = 'Outdoor Order'
                     token = get_room.firebase_token
                     firebase_status = push_notification(message, title, token)
@@ -1107,17 +1107,10 @@ def PlaceOrderAPIView(request):
                 
                 # Send push notification
                 try:
-                    message = f'A new order received'
-                    notification = messaging.Notification(
-                        title=f'A new order received',  
-                        body=message,)
-
-                    message = messaging.Message(
-                        notification=notification, 
-                        token=get_room.user.firebase_token
-                    )
-                    
-                    messaging.send(message)
+                    message = f'A new room order received'
+                    title = 'Room Order'
+                    token = get_room.firebase_token
+                    firebase_status = push_notification(message, title, token)
                 except:
                     traceback.print_exc()
 
