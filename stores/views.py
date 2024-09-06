@@ -1050,7 +1050,10 @@ class OutdoorOrderModelView(APIView):
                         token=get_room.firebase_token
                     )
                     messaging.send(message)
+                    message  =  'hi'
+                    telegram_notification(get_room.channel_name, get_room.bot_token, message)
                 except:
+                    telegram_notification(get_room.channel_name, get_room.bot_token, json.dumps(traceback.format_exc()))
                     traceback.print_exc()
                 
                 # try:
