@@ -93,10 +93,25 @@ from notification.helpers import push_notification, telegram_notification
 
 from firebase_admin import credentials, messaging
 import firebase_admin
+from decouple import config
 
-credentials_path = os.path.join(settings.BASE_DIR, "stores", "credentials.json")
+
+creds = {
+    "type": config("type", cast=str),
+    "project_id": config("project_id",  cast=str),
+    "private_key_id": config("private_key_id",  cast=str),
+    "private_key": config("private_key",  cast=str),
+    "client_email": config("client_email",  cast=str),
+    "client_id": config("client_id",  cast=str),
+    "auth_uri": config("auth_uri",  cast=str),
+    "token_uri": config("token_uri",  cast=str),
+    "auth_provider_x509_cert_url": config("auth_provider_x509_cert_url",  cast=str),
+    "client_x509_cert_url": config("client_x509_cert_url",  cast=str),
+    "universe_domain": config("universe_domain",  cast=str),
+}
+
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate(credentials_path)
+cred = credentials.Certificate(creds)
 firebase_admin.initialize_app(cred)
 
 
