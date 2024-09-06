@@ -770,7 +770,17 @@ class CartModelView(viewsets.ModelViewSet):
         cart_id = self.kwargs["pk"]
         instance = self.get_object()
         cart = Cart.objects.get(id=cart_id)
-        self.perform_destroy(instance)
+        
+        # Check if quantity is greater than 1
+        if instance.quantity > 1:
+            # Decrease quantity by 1
+            instance.quantity -= 1
+            instance.save()
+        else:
+            # Delete the cart item if quantity is 1
+            self.perform_destroy(instance)
+        # self.perform_destroy(instance)
+
         get_cart_items = Cart.objects.filter(room=cart.room)
         
         # Calculate total price and total items
@@ -1030,12 +1040,26 @@ class OutdoorOrderModelView(APIView):
 
 
                 try:
-                    message = f'A new outdoor order received'
-                    title = 'Outdoor Order'
-                    token = get_room.firebase_token
-                    firebase_status = push_notification(message, title, token)
+                    message = f'A new order received'
+                    notification = messaging.Notification(
+                        title=f'A new order received',
+                        body=message,
+                    )
+                    message = messaging.Message(
+                        notification=notification,
+                        token=get_room.firebase_token
+                    )
+                    messaging.send(message)
                 except:
                     traceback.print_exc()
+                
+                # try:
+                #     message = f'A new outdoor order received'
+                #     title = 'Outdoor Order'
+                #     token = get_room.firebase_token
+                #     firebase_status = push_notification(message, title, token)
+                # except:
+                #     traceback.print_exc()
                 
                 
                 # telegram notification
