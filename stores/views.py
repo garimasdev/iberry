@@ -101,14 +101,14 @@ firebase_admin.initialize_app(cred)
 
 
 # Create your views here.
-def showFirebaseJS(request):
-    file_path = os.path.join(
-        settings.BASE_DIR, "static", "js", "firebase-messaging-sw.js"
-    )
-    with open(file_path, "r") as file:
-        js_content = file.read()
+# def showFirebaseJS(request):
+#     file_path = os.path.join(
+#         settings.BASE_DIR, "static", "js", "firebase-messaging-sw.js"
+#     )
+#     with open(file_path, "r") as file:
+#         js_content = file.read()
 
-    return HttpResponse(js_content, content_type="application/javascript")
+#     return HttpResponse(js_content, content_type="application/javascript")
 
 
 class NotFoundPageView(TemplateView):
