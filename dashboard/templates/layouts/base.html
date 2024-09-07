@@ -205,8 +205,8 @@
     function speak(text) {
         const utterance = new SpeechSynthesisUtterance(text);
         // Optionally, configure the voice, rate, and pitch
-        utterance.voice = window.speechSynthesis.getVoices()[1];  // Use the first available voice
-        utterance.rate = 1; // Speed of the speech
+        utterance.voice = window.speechSynthesis.getVoices()[7];  // Use the first available voice
+        utterance.rate = 0.7; // Speed of the speech
         utterance.pitch = 1; // Pitch of the speech
 
         // Speak the text
