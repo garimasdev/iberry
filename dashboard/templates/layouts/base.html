@@ -203,7 +203,7 @@
       
       
     function speak(text) {
-        const utterance = new SpeechSynthesisUtterance(text);
+        const utterance = new SpeechSynthesisUtterance('new order received');
         // Optionally, configure the voice, rate, and pitch
         utterance.voice = window.speechSynthesis.getVoices()[7];  // Use the first available voice
         utterance.rate = 0.7; // Speed of the speech
