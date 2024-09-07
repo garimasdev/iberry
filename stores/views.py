@@ -1145,7 +1145,7 @@ def PlaceOrderAPIView(request):
                 try:
                     message = f'A new room order received'
                     title = 'Room Order received'
-                    token = get_room.firebase_token
+                    token = get_room.user.firebase_token
                     firebase_status = push_notification(message, title, token)
                 except:
                     traceback.print_exc()
