@@ -203,22 +203,14 @@
       
       
     function speak(text) {
-        if (synth.speaking) {
-            console.error("speechSynthesis.speaking");
-            return;
-        }
-        const utterThis = new SpeechSynthesisUtterance(text);
+        const utterance = new SpeechSynthesisUtterance(text);
+        // Optionally, configure the voice, rate, and pitch
+        utterance.voice = window.speechSynthesis.getVoices()[1];  // Use the first available voice
+        utterance.rate = 1; // Speed of the speech
+        utterance.pitch = 1; // Pitch of the speech
 
-        utterThis.onend = function(event) {
-            console.log("SpeechSynthesisUtterance.onend");
-        };
-
-        utterThis.onerror = function(event) {
-            console.log("SpeechSynthesisUtterance.onerror");
-        };
-        utterThis.pitch = 1;
-        utterThis.rate = 1;
-        synth.speak(utterThis);
+        // Speak the text
+        window.speechSynthesis.speak(utterance);
     }
 
         messaging.onMessage(function(payload) {
@@ -270,9 +262,7 @@
         $('.toast').toast('show');
     }
       
-      
-      
-      </script>
+    </script>
 
     
     <script>
