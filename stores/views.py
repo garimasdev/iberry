@@ -910,7 +910,16 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             instance = self.get_object()
             cart = OutdoorCart.objects.get(id=cart_id, cart_user_id=user_id)
 
-            self.perform_destroy(instance)
+            # Check if quantity is greater than 1
+            if instance.quantity > 1:
+                # Decrease quantity by 1
+                instance.quantity -= 1
+                instance.save()
+            else:
+                # Delete the cart item if quantity is 1
+                self.perform_destroy(instance)
+        # self.perform_destroy(instance)
+
 
             # Check if the cart is empty after deleting the item
             get_cart_items = OutdoorCart.objects.filter(user=cart.user, cart_user_id=user_id)

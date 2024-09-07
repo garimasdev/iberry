@@ -290,8 +290,11 @@ $(document).ready(function () {
         },
       })
     })
+    
+    
     //delete item from to cart
     $(document).on('click', '.delete-cart-item', function (e) {
+      e.preventDefault(); // Prevent default action
       const cartId = $(this).attr('id')
       const token = $(this).attr('token')
       const user_id  = localStorage.getItem('user_id')
@@ -305,8 +308,20 @@ $(document).ready(function () {
           id: cartId,
         },
         success: function (response) {
-          $('#cart-item-' + cartId).remove()
-          // window.location.reload()
+          const cartItem = $('#cart-item-' + cartId);
+          const quantityElement = cartItem.find('.quantity');
+          const currentQuantity = parseInt(quantityElement.text().replace('Qty: ', ''));
+  
+          if (currentQuantity > 1) {
+            // Decrease quantity
+            quantityElement.text('Qty: ' + (currentQuantity - 1));
+            // cartItem.find('.price').text('Price: ₹ ' + response.items_amount); // Update price if needed
+          } else {
+            // Remove item
+            cartItem.remove();
+          }
+          
+          // update the cart summary
           // overall tax and total items
           $('.items_amount').html('Item Total: <b>₹ ' + response.items_amount + '</b>')
           $('.total_tax').html('Overall Tax: <b>₹ ' + response.total_tax + '</b>')
