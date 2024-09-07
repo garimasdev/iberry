@@ -1058,7 +1058,7 @@ class OutdoorOrderModelView(APIView):
                 
                 try:
                     message = f'A new outdoor order received'
-                    title = 'Outdoor Order'
+                    title = 'Outdoor Order received'
                     token = get_room.firebase_token
                     firebase_status = push_notification(message, title, token)
                 except:
@@ -1135,7 +1135,7 @@ def PlaceOrderAPIView(request):
                 # Send push notification
                 try:
                     message = f'A new room order received'
-                    title = 'Room Order'
+                    title = 'Room Order received'
                     token = get_room.firebase_token
                     firebase_status = push_notification(message, title, token)
                 except:
