@@ -417,10 +417,10 @@ class OutdoorHomeViewPage(TemplateView):
             context["total_tax"] = total_tax
             # checkout amount
             context["total_price"] = total_price_including_tax
-            if room.picture is not None:
-                context['picture'] = room.picture.url
-            else:
-                context['picture'] = None
+            # if room.picture is not None:
+            #     context['picture'] = room.picture.url
+            # else:
+            #     context['picture'] = None
             context['hotel_name'] = room.username
             context["anonymous_user_id"] = temp_user_id.anonymous_user_id
             context["razorpay_clientid"] = room.razorpay_clientid
