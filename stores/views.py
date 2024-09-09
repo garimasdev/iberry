@@ -203,94 +203,98 @@ class HomeViewPage(TemplateView):
     template_name = "navs/home/index.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        category_filter = self.request.GET.get("category")
-        sub_category_filter = self.request.GET.get("sub_category")
-        item_type = self.request.GET.get("item_type")
-        get_sub_category = None
-        search = self.request.GET.get("q")
-        pk = self.kwargs.get("room_token")
-        if pk:
-            try:
-                room = Room.objects.get(room_token=pk)
-            except Room.DoesNotExist:
+        try:
+            context = super().get_context_data(**kwargs)
+            category_filter = self.request.GET.get("category")
+            sub_category_filter = self.request.GET.get("sub_category")
+            item_type = self.request.GET.get("item_type")
+            get_sub_category = None
+            search = self.request.GET.get("q")
+            pk = self.kwargs.get("room_token")
+            if pk:
+                try:
+                    room = Room.objects.get(room_token=pk)
+                except Room.DoesNotExist:
+                    raise Http404("Store does not exist.")
+            else:
                 raise Http404("Store does not exist.")
-        else:
-            raise Http404("Store does not exist.")
 
-        get_categories = Category.objects.filter(user=room.user).exclude(
-            name__in=["Bar"]
-        )
-        # Filter Item by Sub Category
-        if sub_category_filter:
-            try:
-                get_sub_category = SubCategory.objects.filter(name=sub_category_filter)
-                if item_type:
-                    items = filterItemByCategories(
-                        room.user, sub_category=get_sub_category[0], item_type=item_type
-                    )
-                else:
-                    items = filterItemByCategories(
-                        room.user, sub_category=get_sub_category[0]
-                    )
-            except SubCategory.DoesNotExist:
-                items = filterItemByCategories(room.user, get_categories)
-        # Filter Item by Category
-        elif category_filter:
-            try:
-                category = Category.objects.filter(
-                    user=room.user, name=category_filter
-                ).exclude(name__in=["Bar"])
-                get_sub_category = SubCategory.objects.filter(category=category[0])
-
-                if item_type:
-                    items = filterItemByCategories(
-                        room.user, category, item_type=item_type
-                    )
-                else:
-                    items = filterItemByCategories(room.user, category)
-            except Category.DoesNotExist:
-                items = filterItemByCategories(room.user, get_categories)
-        # Filter by Item Type
-        elif item_type:
-            items = filterItemByCategories(
-                room.user, categories=get_categories, item_type=item_type
+            get_categories = Category.objects.filter(user=room.user).exclude(
+                name__in=["Bar"]
             )
-        # Filter Item By Search
-        elif search:
-            items = filterItemByCategories(room.user, get_categories, search=search)
-        else:
-            items = filterItemByCategories(room.user, get_categories)
+            # Filter Item by Sub Category
+            if sub_category_filter:
+                try:
+                    get_sub_category = SubCategory.objects.filter(name=sub_category_filter)
+                    if item_type:
+                        items = filterItemByCategories(
+                            room.user, sub_category=get_sub_category[0], item_type=item_type
+                        )
+                    else:
+                        items = filterItemByCategories(
+                            room.user, sub_category=get_sub_category[0]
+                        )
+                except SubCategory.DoesNotExist:
+                    items = filterItemByCategories(room.user, get_categories)
+            # Filter Item by Category
+            elif category_filter:
+                try:
+                    category = Category.objects.filter(
+                        user=room.user, name=category_filter
+                    ).exclude(name__in=["Bar"])
+                    get_sub_category = SubCategory.objects.filter(category=category[0])
 
-        get_cart_items = Cart.objects.filter(room=room)
+                    if item_type:
+                        items = filterItemByCategories(
+                            room.user, category, item_type=item_type
+                        )
+                    else:
+                        items = filterItemByCategories(room.user, category)
+                except Category.DoesNotExist:
+                    items = filterItemByCategories(room.user, get_categories)
+            # Filter by Item Type
+            elif item_type:
+                items = filterItemByCategories(
+                    room.user, categories=get_categories, item_type=item_type
+                )
+            # Filter Item By Search
+            elif search:
+                items = filterItemByCategories(room.user, get_categories, search=search)
+            else:
+                items = filterItemByCategories(room.user, get_categories)
 
-        # calculating amount before tax
-        amount = sum(item.price * item.quantity for item in get_cart_items)
-        # calculating tax on each item
-        total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
-        # calculating amount after tax
-        total_price_including_tax = amount + total_tax
+            get_cart_items = Cart.objects.filter(room=room)
 
-        # amounts = sum(item.price * item.quantity for item in get_cart_items)
-        context["categories"] = FoodCategoriesSerializer(
-            get_categories.exclude(name__in=["Bar", "Veg", "Non Veg"]), many=True
-        ).data
-        context["sub_categories"] = FoodSubCategoriesSerializer(
-            get_sub_category, many=True
-        ).data
-        context["items"] = items
-        context["room_id"] = room.id
-        context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
-        # total item amount
-        context["items_amount"] = amount
-        # overall gst charged 
-        context["total_tax"] = total_tax
-        # checkout amount
-        context["total_price"] = total_price_including_tax
-        context["logo"] = room.user.picture.url
-        context["hotel_name"] = room.user.username
+            # calculating amount before tax
+            amount = sum(item.price * item.quantity for item in get_cart_items)
+            # calculating tax on each item
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
+            # calculating amount after tax
+            total_price_including_tax = amount + total_tax
 
-        return context
+            # amounts = sum(item.price * item.quantity for item in get_cart_items)
+            context["categories"] = FoodCategoriesSerializer(
+                get_categories.exclude(name__in=["Bar", "Veg", "Non Veg"]), many=True
+            ).data
+            context["sub_categories"] = FoodSubCategoriesSerializer(
+                get_sub_category, many=True
+            ).data
+            context["items"] = items
+            context["room_id"] = room.id
+            context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
+            # total item amount
+            context["items_amount"] = amount
+            # overall gst charged 
+            context["total_tax"] = total_tax
+            # checkout amount
+            context["total_price"] = total_price_including_tax
+            context["logo"] = room.user.picture.url
+            context["hotel_name"] = room.user.username
+
+            return context
+        except:
+            telegram_notification(room.channel_name, room.bot_token, traceback.format_exc())
+            traceback.print_exc()
 
 
 class OutdoorHomeViewPage(TemplateView):
@@ -1095,6 +1099,7 @@ class OutdoorOrderModelView(APIView):
                 )
         except:
             traceback.print_exc()
+            telegram_notification(get_room.channel_name, get_room.bot_token, traceback.format_exc())
             return Response({
                 'success': "Order not being placed."
             })
@@ -1170,6 +1175,7 @@ def PlaceOrderAPIView(request):
                 )
         except:
             traceback.print_exc()
+            telegram_notification(get_room.user.channel_name, get_room.user.bot_token, traceback.format_exc())
             return JsonResponse(
                 {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
             )
