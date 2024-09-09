@@ -425,7 +425,8 @@ class OutdoorHomeViewPage(TemplateView):
             return context
         except:
             import traceback
-            telegram_notification("iberry2023", traceback.format_exc())
+            telegram_notification(room.channel_name, room.bot_token, traceback.format_exc())
+            # telegram_notification("iberry2023", traceback.format_exc())
             traceback.print_exc()
 
 
