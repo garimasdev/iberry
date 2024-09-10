@@ -753,6 +753,8 @@ class CartModelView(viewsets.ModelViewSet):
 
         return Response(extra_data, status=status.HTTP_201_CREATED)
 
+    
+    # decrease items in cart
     def destroy(self, request, *args, **kwargs):
         cart_id = self.kwargs["pk"]
         instance = self.get_object()
@@ -786,6 +788,48 @@ class CartModelView(viewsets.ModelViewSet):
             "total_price": total_price_including_tax,
         }
         return Response(response_data, status=status.HTTP_200_OK)
+
+    
+    # increase items in cart
+    def update(self, request, *args, **kwargs):
+        try:
+            cart_id = kwargs['pk']
+            instance = self.get_object()
+            cart = Cart.objects.get(id=cart_id)
+
+            if instance.quantity:
+                instance.quantity += 1
+                instance.save()
+            
+             # Calculate total price and total items
+            get_cart_items = Cart.objects.filter(room=cart.room)
+            
+            # Calculate total price and total items
+            amount = sum(item.price * item.quantity for item in get_cart_items)
+            # calculate total tax for each item
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items),2)
+            # calculate total amount including tax
+            total_price_including_tax = amount + total_tax
+            # calculate total no of items
+            total_items = sum(item.quantity for item in get_cart_items)
+        
+
+            response_data = {
+                "total_items": total_items,
+                "items_amount": amount,
+                "total_tax": total_tax,
+                "total_price": total_price_including_tax,
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
+
+        except:
+            traceback.print_exc()
+            return response({"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+        
+
+    
 
 def OutdoorCartUserid(request):
     if request.method == 'POST':
@@ -932,6 +976,7 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     
+    # increase item in cart
     def update(self, request, *args, **kwargs):
         try:
             cart_id = kwargs['pk']
