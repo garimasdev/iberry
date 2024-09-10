@@ -222,7 +222,12 @@ $(document).ready(function () {
               cart_id +
               '" token="' +
               token +
-              '"><i class="bi bi-x-lg"></i></span>' +
+              '" style="margin-left: 70px;"><i class="bi bi-dash-lg"></i></span>' +
+              '<span class="close add-cart-item" id="' +
+              cart_id +
+              '" token="' +
+              token +
+              '"><i class="bi bi-plus-lg"></i></span>' +
               '</li>'
           )
           
@@ -292,7 +297,7 @@ $(document).ready(function () {
     })
     
     
-    //delete item from to cart
+    // decrease item from cart
     $(document).on('click', '.delete-cart-item', function (e) {
       e.preventDefault(); // Prevent default action
       const cartId = $(this).attr('id')
@@ -347,5 +352,57 @@ $(document).ready(function () {
         },
       })
     });
+    
+    
+    
+    // increase item in cart
+    $(document).on('click', '.add-cart-item', function (e) {
+      e.preventDefault(); // Prevent default action
+      const cartId = $(this).attr('id')
+      const token = $(this).attr('token')
+      const user_id  = localStorage.getItem('user_id')
+      
+      
+      $.ajax({
+        headers: {
+          'X-CSRFToken': token,
+        },
+        url: '/outdoor-cart/' + cartId + '/?user_id=' + user_id,
+        type: 'PUT',
+        data: {
+          id: cartId,
+        },
+        success: function (response) {
+          const cartItem = $('#cart-item-' + cartId);
+          const quantityElement = cartItem.find('.quantity');
+          const currentQuantity = parseInt(quantityElement.text().replace('Qty: ', ''));
+  
+          // Increase quantity
+          quantityElement.text('Qty: ' + (currentQuantity + 1));
+          
+          // update the cart summary
+          // overall tax and total items
+          $('.items_amount').html('Item Total: <b>₹ ' + response.items_amount + '</b>');
+          $('.total_tax').html('Overall Tax: <b>₹ ' + response.total_tax + '</b>')
+          // price including tax
+          $('.total_price').text('₹ ' + response.total_price);
+          $('.cart-icon span').text(response.total_items);
+          
+          if (response.total_items > 0) {
+            //   floating total price
+            $('.float-total-price').text('₹ ' + response.total_price);
+            $('.float-total-items').text(response.total_items + ' items in your cart');
+            }
+        },
+        error: function (xhr, status, error) {
+          // Handle the error case
+          console.log(error)
+        },
+      })
+    });
+  
+  
+  
+  
   });
   

@@ -895,11 +895,9 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
 
             # Check if quantity is greater than 1
             if instance.quantity > 1:
-                # Decrease quantity by 1
                 instance.quantity -= 1
                 instance.save()
             else:
-                # Delete the cart item if quantity is 1
                 self.perform_destroy(instance)
         # self.perform_destroy(instance)
 
@@ -934,15 +932,15 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     
-    def decrement_quantity(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         try:
             cart_id = kwargs['pk']
             instance = self.get_object()
             cart = OutdoorCart.objects.get(id=cart_id)
 
-            if cart.quantity >= 1:
-                cart.quantity -= 1
-                cart.save()
+            if instance.quantity:
+                instance.quantity += 1
+                instance.save()
             
              # Calculate total price and total items
             get_cart_items = OutdoorCart.objects.filter(user=cart.user)
@@ -954,7 +952,7 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
 
             response_data = {
                 "total_items": total_items,
-                "amount": amount,
+                "items_amount": amount,
                 "total_tax": total_tax,
                 "total_price": total_price_including_tax,
             }
