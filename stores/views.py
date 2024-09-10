@@ -377,26 +377,8 @@ class OutdoorHomeViewPage(TemplateView):
             get_cart_items = OutdoorCart.objects.filter(user=room, anonymous_user_id=temp_user_id.anonymous_user_id)
             # calculating amount for price basis on their qty
             amount = sum(item.price * item.quantity for item in get_cart_items)
-            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
-
-            
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)            
             total_price_including_tax = amount + total_tax
-
-            # calculating tax basis on tax_rate for each item
-            # total_tax = 0
-            # for item in get_cart_items:
-            #     item_tax_rate = item.item.tax_rate
-            #     # print("item_tax_rate", item_tax_rate)
-            #     item_total_price = item.price * item.quantity
-            #     item_tax = (item_tax_rate / 100) * item_total_price
-            #     # print("item_tax", item_tax)
-            #     total_tax += item_tax
-
-            # print("total_tax", total_tax)
-
-            # Total price including tax
-            # total_price_including_tax = amounts + total_tax
-            # print("total_price_including_tax", total_price_including_tax)s
 
 
             context["categories"] = FoodCategoriesSerializer(
@@ -797,10 +779,6 @@ class CartModelView(viewsets.ModelViewSet):
         # calculate total no of items
         total_items = sum(item.quantity for item in get_cart_items)
         
-
-        
-        # amounts = sum(item.price * item.quantity for item in get_cart_items)
-        # total_items = sum(item.quantity for item in get_cart_items)
         response_data = {
             "items_amount": amount,
             "total_items": total_items,

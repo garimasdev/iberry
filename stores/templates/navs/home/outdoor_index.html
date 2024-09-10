@@ -216,19 +216,23 @@
                     <img src="{{cart.item.image}}" />
                     <div class="content">
                         <p class="name">{{cart.item.title}}</p>
-                        <strong class="price">Price: ₹ {{cart.price}}  </strong>
-                        <span class="quantity"> Qty: {{cart.quantity}}</span>
+                        <span class="price"> <strong>Price: </strong>₹ {{cart.price}}</span>
+                        <span class="quantity"><strong>Qty: </strong>{{cart.quantity}}</span>
                     </div>
                 </div>
-                <span class="close delete-cart-item" id="{{cart.id}}" token="{{csrf_token}}"><i class="bi bi-x-lg"></i></span>
+
+                <span class="close delete-cart-item" id="{{cart.id}}" token="{{csrf_token}}" style="margin-left: 70px;">
+                    <i class="bi bi-dash-lg"></i>
+                </span>
+                <span class="close add-cart-item" id="{{cart.id}}" token="{{csrf_token}}">
+                    <i class="bi bi-plus-lg"></i>
+                </span>
             </li>
             {%endfor%}
             <!-- cart loop -->
         </ul>
         <!-- Add sections for tax and delivery charges -->
         <div class="cart-summary" data-bs-toggle="modal" data-bs-target="#asktheuser" style="margin-top: auto; padding: 10px; border-top: 1px solid #ddd;">
-            <!-- <p style="margin: 5px 0;">Total Price: </p>
-            <p style=" margin: 5px 0;">Overall Tax: </p> -->
             <p class="items_amount" style="margin: 5px 0;">Item Total: <strong>₹ {{ items_amount }}</strong></p>
             <p class="total_tax" style=" margin: 5px 0;">Overall Tax: <strong>₹ {{ total_tax }}</strong></p>
             <!-- <p>Delivery Charge: <strong>₹ {{ delivery_charge }}</strong></p> -->
@@ -281,7 +285,7 @@
 <!-- <script src="https://mercury.phonepe.com/web/bundle/checkout.js"></script> -->
 
 
-<!-- quantity increment or decrement -->
+<!-- quantity increment or decrement while adding item to cart -->
 
 <script>
 

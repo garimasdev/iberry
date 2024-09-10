@@ -2,15 +2,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <nav id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between menu-first-part">
-        <a href="#" class="logo d-flex align-items-center">
-            <img src="{{user.picture.url}}" alt="" />
-            <span class="d-none d-lg-block menu-title">{{hotel_name|title}}</span>
-        </a>
-        <form action="" method="get" class="search-box">
-            {% csrf_token %}
-            <i class="bi bi-search"></i>
-            <input type="text" class="search-text" name="q" placeholder="Search" />
-        </form>
+      <!-- logo display  -->
+      <a href="#" class="logo d-flex align-items-center">
+        <img src="{{user.picture.url}}" alt="" />
+        <span class="d-none d-lg-block menu-title">{{hotel_name|title}}</span>
+      </a>
+      
+      <form action="" method="get" class="search-box">
+        {% csrf_token %}
+        <i class="bi bi-search"></i>
+        <input type="text" class="search-text" name="q" placeholder="Search" />
+      </form>
     </div>
     <!-- End Logo -->
 
