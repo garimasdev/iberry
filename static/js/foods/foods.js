@@ -90,10 +90,10 @@ $(document).ready(function () {
                 </div>
               </div>
               <span class="close delete-cart-item" id="${cart_id}" token="${token}" style="margin-left: 70px;">
-                <i class="bi bi-x-lg"></i>
+                <i class="bi bi-dash-lg"></i>
               </span>
               <span class="close add-cart-item" id="${cart_id}" token="${token}">
-                <i class="bi bi-x-lg"></i>
+                <i class="bi bi-plus-lg"></i>
               </span>
             </li>`
           );
