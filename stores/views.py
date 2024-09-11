@@ -540,16 +540,13 @@ def paymentCheckout(request):
                     temp_user.save()
 
                     # Send push notification
-                    # message = f'A new order received'
-                    # notification = messaging.Notification(
-                    #     title=f'A new order received',
-                    #     body=message,
-                    # )
-                    # message = messaging.Message(
-                    #     notification=notification,
-                    #     token=get_room.firebase_token
-                    # )
-                    # messaging.send(message)
+                    try:
+                        message = f'A new room order received'
+                        title = 'Room Order received'
+                        token = get_room.firebase_token
+                        firebase_status = push_notification(message, title, token)
+                    except:
+                        traceback.print_exc()
 
                     # telegram notification for order received
                     order_list_url = f'{request.scheme}://{request.get_host()}/dashboard/foods/outdoor-orders/'
@@ -801,7 +798,6 @@ class CartModelView(viewsets.ModelViewSet):
                 instance.quantity += 1
                 instance.save()
             
-             # Calculate total price and total items
             get_cart_items = Cart.objects.filter(room=cart.room)
             
             # Calculate total price and total items
@@ -815,7 +811,7 @@ class CartModelView(viewsets.ModelViewSet):
         
 
             response_data = {
-                "total_items": total_items,
+                "total_items": get_cart_items.count(),
                 "items_amount": amount,
                 "total_tax": total_tax,
                 "total_price": total_price_including_tax,
@@ -1395,18 +1391,56 @@ class ServiceCartModelView(viewsets.ModelViewSet):
 
         return Response(extra_data, status=status.HTTP_201_CREATED)
 
+   
+    # decrement item in cart
     def destroy(self, request, *args, **kwargs):
         cart_id = self.kwargs["pk"]
         instance = self.get_object()
         cart = ServiceCart.objects.get(id=cart_id)
-        self.perform_destroy(instance)
+        
+        # decrease qty by 1
+        if instance.quantity > 1:
+            instance.quantity -= 1
+            instance.save()
+        else:
+            # delete cart item if qty=1
+            self.perform_destroy(instance)
+        
         get_cart_items = ServiceCart.objects.filter(room=cart.room)
         amounts = sum(item.service.price * 1 for item in get_cart_items)
+        
         response_data = {
             "total_price": amounts,
             "total_items": get_cart_items.count(),
         }
+        
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+    # increment item in cart
+    def update(self, request, *args, **kwargs):
+        cart_id = self.kwargs["pk"]
+        instance = self.get_object()
+        cart = ServiceCart.objects.get(id=cart_id)
+        
+        # increase qty by 1
+        if instance.quantity:
+            instance.quantity += 1
+            instance.save()
+        
+        
+        get_cart_items = ServiceCart.objects.filter(room=cart.room)
+        
+        # calculate total price
+        amounts = sum(item.service.price * 1 for item in get_cart_items)
+        
+        response_data = {
+            "total_price": amounts,
+            "total_items": get_cart_items.count(),
+        }
+        
+        return Response(response_data, status=status.HTTP_200_OK)
+
 
 
 class ServiceOrderPlaceAPIView(APIView):
@@ -1441,17 +1475,13 @@ class ServiceOrderPlaceAPIView(APIView):
                 cart_items.delete()
                 
                 # Send push notification
-                # registration_token = room.user.firebase_token
-                # message = f'Order received from room number {room.room_number}'
-                # notification = messaging.Notification(
-                #     title=f'Order received from room number {room.room_number}',
-                #     body=message,
-                # )
-                # message = messaging.Message(
-                #     notification=notification,
-                #     token=registration_token,
-                # )
-                # messaging.send(message)
+                try:
+                    message = f'A new room order received'
+                    title = 'Room Order received'
+                    token = room.user.firebase_token
+                    firebase_status = push_notification(message, title, token)
+                except:
+                    traceback.print_exc()
 
                 # # telegram notification for service received 
                 service_url = f'{request.scheme}://{request.get_host()}/dashboard/services/orders/'
