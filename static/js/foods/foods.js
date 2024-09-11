@@ -43,6 +43,7 @@ $(document).ready(function () {
   
     // Add to cart
     $('.add-to-cart').on('click', function (e) {
+      e.preventDefault(); 
       const room_id = $(this).attr('room_id');
       const token = $(this).attr('token');
       const food_id = $(this).attr('id');

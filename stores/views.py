@@ -811,7 +811,7 @@ class CartModelView(viewsets.ModelViewSet):
         
 
             response_data = {
-                "total_items": get_cart_items.count(),
+                "total_items": total_items,
                 "items_amount": amount,
                 "total_tax": total_tax,
                 "total_price": total_price_including_tax,
