@@ -212,7 +212,7 @@
             <h5>Cart</h5>
             {%for cart in cart_items%}
             <li id="cart-item-{{cart.id}}" cart_id="{{cart.id}}" class="cart">
-                <div class="product-box">
+                <div class="product-box" style="width: 80%;">
                     <img src="{{cart.item.image}}" />
                     <div class="content">
                         <p class="name">{{cart.item.title}}</p>
@@ -221,7 +221,7 @@
                     </div>
                 </div>
 
-                <span class="close delete-cart-item" id="{{cart.id}}" token="{{csrf_token}}" style="margin-left: 70px;">
+                <span class="close delete-cart-item" id="{{cart.id}}" token="{{csrf_token}}">
                     <i class="bi bi-dash-lg"></i>
                 </span>
                 <span class="close add-cart-item" id="{{cart.id}}" token="{{csrf_token}}">

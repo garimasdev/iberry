@@ -200,7 +200,7 @@ $(document).ready(function () {
               '" cart_id="' +
               cart_id +
               '" class="cart">' +
-              '<div class="product-box">' +
+              '<div class="product-box" style="width: 80%;">' +
               '<img src="' +
               image +
               '"/>' +
@@ -222,7 +222,7 @@ $(document).ready(function () {
               cart_id +
               '" token="' +
               token +
-              '" style="margin-left: 70px;"><i class="bi bi-dash-lg"></i></span>' +
+              '"><i class="bi bi-dash-lg"></i></span>' +
               '<span class="close add-cart-item" id="' +
               cart_id +
               '" token="' +

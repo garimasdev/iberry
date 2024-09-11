@@ -81,7 +81,7 @@ $(document).ready(function () {
   
           $('.cart-bar .cart-list').append(
             `<li id="cart-item-${cart_id}" cart_id="${cart_id}" class="cart">
-              <div class="product-box">
+              <div class="product-box" style="width: 80%;">
                 <img src="${image}"/>
                 <div class="content">
                   <p class="name">${name}</p>
@@ -89,7 +89,7 @@ $(document).ready(function () {
                   <span class="quantity"> Qty: ${quantity}</span>
                 </div>
               </div>
-              <span class="close delete-cart-item" id="${cart_id}" token="${token}" style="margin-left: 70px;">
+              <span class="close delete-cart-item" id="${cart_id}" token="${token}">
                 <i class="bi bi-dash-lg"></i>
               </span>
               <span class="close add-cart-item" id="${cart_id}" token="${token}">
