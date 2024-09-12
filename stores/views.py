@@ -731,12 +731,12 @@ class CartModelView(viewsets.ModelViewSet):
 
         # Calculate total price and total items excluding tax(before checkout)
         amount = sum(item.price * item.quantity for item in get_cart_items)
-        # calculate total no of items(quantity items)
-        total_items = sum(item.quantity for item in get_cart_items)
         # calculate total gst tax for each item
         total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
         # calculate total amount including tax (checkout)
         total_price_including_tax = amount + total_tax
+        # calculate total no of items(quantity items)
+        total_items = sum(item.quantity for item in get_cart_items)
         
         # total_items = sum(item.quantity for item in cart_items)
         # amounts = sum(item.price * item.quantity for item in cart_items)
@@ -985,11 +985,16 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
             
              # Calculate total price and total items
             get_cart_items = OutdoorCart.objects.filter(user=cart.user)
+            
+            # Calculate total price and total items
             amount = sum(item.price * item.quantity for item in get_cart_items)
-            total_items = sum(item.quantity for item in get_cart_items)
-            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
+            # calculate total tax for each item
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items),2)
+            # calculate total amount including tax
             total_price_including_tax = amount + total_tax
-
+            # calculate total no of items
+            total_items = sum(item.quantity for item in get_cart_items)
+        
 
             response_data = {
                 "total_items": total_items,

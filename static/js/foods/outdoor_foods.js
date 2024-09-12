@@ -1,25 +1,22 @@
 $(document).ready(function () {
-    const cart_badge = $('#cart-badge')
-    const floaing_cart = $('#float-cart')
+    const cart_badge = $('#cart-badge');
+    const floaing_cart = $('#float-cart');
     let cart_items = 0
   
     $('.cart-icon').on('click', function (e) {
-      $('.cart-bar').toggleClass('active')
+      $('.cart-bar').toggleClass('active');
     })
   
     $('.float-cart-btn').on('click', function (e) {
-      $('.cart-bar').toggleClass('active')
+      $('.cart-bar').toggleClass('active');
     })
   
-    const roomID = $('#room_ID').val()
-    const user = $('#user').val()
-    const token = $('csrfmiddlewaretoken').val()
+    const roomID = $('#room_ID').val();
+    const user = $('#user').val();
+    const token = $('csrfmiddlewaretoken').val();
   
     const renderEmptyCart = `
-    <div
-    class="d-flex justify-content-center align-items-center w-100 flex-column"
-    id="float-cart-empty"
-  >
+    <div class="d-flex justify-content-center align-items-center w-100 flex-column" id="float-cart-empty">
     <span class="bowl-icon">
       <i class="bx bx-bowl-hot bx-sm"></i>
     </span>
@@ -41,7 +38,7 @@ $(document).ready(function () {
         dataType: 'json',
   
         success: function (response) {
-          cart_items += response.results.length
+          cart_items += response.results[0].quantity
           cart_badge.html(cart_items)
           var total = 0
           var selectedData = []
@@ -147,12 +144,13 @@ $(document).ready(function () {
   
     //add to cart
     $('.add-to-cart').on('click', function (e) {
+      e.preventDefault();
       const user_id = localStorage.getItem('user_id')
       const room_id = $(this).attr('room_id')
       const token = $(this).attr('token')
       const food_id = $(this).attr('id')
       const anonymous_user_id = $(this).attr('anonymous_user_id')
-      const qunatity = $('#quantity-' + food_id).val()
+      const quantity = $('#quantity-' + food_id).val()
       // const price_id = $("#price-" + food_id).attr('id');
       var selectedData = []
   
@@ -174,89 +172,55 @@ $(document).ready(function () {
           user: room_id,
           item: food_id,
           price: selectedData[0].id,
-          quantity: qunatity,
+          quantity: quantity,
           anonymous_user_id: anonymous_user_id,
           cart_user_id: user_id
         },
         dataType: 'json',
         success: function (response) {
-          console.log(response);
-          // window.location.reload()
-
-          $('#add-to-cart-' + food_id).modal('hide')
-          cart_items += response.total_items
-          cart_badge.html(cart_items)
-          const cart_id = response.id
-          const image = $('.item-' + food_id)
-            .find('.image img')
-            .attr('src')
-          const name = $('.item-' + food_id)
-            .find('.product_name').first()
-            .text()
-          // const price = $(".item-" + food_id).find(".product_price strong").text();
-          $('.cart-bar .cart-list').append(
-            '<li id="cart-item-' +
-              cart_id +
-              '" cart_id="' +
-              cart_id +
-              '" class="cart">' +
-              '<div class="product-box" style="width: 80%;">' +
-              '<img src="' +
-              image +
-              '"/>' +
-              '<div class="content">' +
-              '<p class="name">' +
-              name +
-              '</p>' +
-              '<strong class="price">Price: ₹ ' +
-              (selectedData[0].sell_price != 'None'
-                ? selectedData[0].sell_price
-                : selectedData[0].price) +
-              '  </strong>' +
-              '<span class="quantity"> Qty: ' +
-              qunatity +
-              '</span>' +
-              '</div>' +
-              '</div>' +
-              '<span class="close delete-cart-item" id="' +
-              cart_id +
-              '" token="' +
-              token +
-              '"><i class="bi bi-dash-lg"></i></span>' +
-              '<span class="close add-cart-item" id="' +
-              cart_id +
-              '" token="' +
-              token +
-              '"><i class="bi bi-plus-lg"></i></span>' +
-              '</li>'
-          )
+          $('#add-to-cart-' + food_id).modal('hide');
+          cart_badge.html(response.total_items);
           
-          // overall tax and total items
-          $('.items_amount').html('Item Total: <b>₹ ' + response.items_amount + '</b>')
-          $('.total_tax').html('Overall Tax: <b>₹ ' + response.total_tax + '</b>')
-          // price including tax
-          $('.total_price').text('₹ ' + response.total_price)
-          $('.cart-icon span').text(response.total_items)
+          const cart_id = response.id
+          const image = $('.item-' + food_id).find('.image img').attr('src')
+          const name = $('.item-' + food_id).find('.product_name').first().text()
+          // const price = $(".item-" + food_id).find(".product_price strong").text();
+          
+          $('.cart-bar .cart-list').append(
+            `<li id="cart-item-${cart_id}" cart_id="${cart_id}" class="cart">
+              <div class="product-box" style="width: 80%;">
+                <img src="${image}"/>
+                <div class="content">
+                  <p class="name">${name}</p>
+                  <strong class="price">Price: ₹ ${selectedData[0].sell_price != 'None' ? selectedData[0].sell_price : selectedData[0].price}</strong>
+                  <span class="quantity"> Qty: ${quantity}</span>
+                </div>
+              </div>
+              <span class="close delete-cart-item" id="${cart_id}" token="${token}">
+                <i class="bi bi-dash-lg"></i>
+              </span>
+              <span class="close add-cart-item" id="${cart_id}" token="${token}">
+                <i class="bi bi-plus-lg"></i>
+              </span>
+            </li>`
+          );
+          
+          // Update the cart summary
+          $('.items_amount').html(`Item Total: <b>₹ ${response.items_amount}</b>`);
+          $('.total_tax').html(`Overall Tax: <b>₹ ${response.total_tax}</b>`);
+          $('.total_price').text(`₹ ${response.total_price}`);
+          $('.cart-icon span').text(response.total_items);
   
           // render  floating cart
           $('#float-cart-empty').remove()
   
-          if (floaing_cart.children().attr('id') === 'float-cart-filled') {
-            $('.float-total-price').text('₹ ' + response.total_price)
-            $('.float-total-items').text(
-              response.total_items + ' items in your cart'
-            )
+          if ($('#float-cart').children().attr('id') === 'float-cart-filled') {
+            $('.float-total-price').text(`₹ ${response.total_price}`);
+            $('.float-total-items').text(`${response.total_items} items in your cart`);
           } else {
-            $('#float-cart').append(
-              `
-              <div
-              class="d-flex justify-content-between w-100 align-items-center"
-              id="float-cart-filled"
-            >
-              <img
-                src="https://b.zmtcdn.com/data/dish_photos/6b2/53c20eaec8cb89832ed50a3d545a56b2.jpg?fit=around|130:130&crop=130:130;*,*"
-                alt=""
-              />
+            $('#float-cart').append(`
+              <div class="d-flex justify-content-between w-100 align-items-center" id="float-cart-filled">
+              <img src="https://b.zmtcdn.com/data/dish_photos/6b2/53c20eaec8cb89832ed50a3d545a56b2.jpg?fit=around|130:130&crop=130:130;*,*" alt=""/>
               <div>
                 <h2 class="fw-bold title" id="cart">${user}</h2>
                 <span class="float subtitle float-total-items"> ${response.total_items} items in your cart</span>
@@ -267,34 +231,23 @@ $(document).ready(function () {
               <button class="btn-close btn btn-light" aria-label="close"></button>
             </div>
               `
-            )
+            );
   
             $('.float-cart-btn').on('click', function (e) {
-              $('.cart-bar').toggleClass('active')
-            })
+              $('.cart-bar').toggleClass('active');
+            });
           }
         },
         error: function (error) {
-          console.log('The error', error.responseJSON)
           $('#add-to-cart-' + food_id).modal('hide')
-          if (
-            error.responseJSON.non_field_errors[0] ==
-            'The fields room, item must make a unique set.'
-          ) {
-            $('.response')
-              .empty()
-              .show()
-              .html(
-                '<div class="alert alert-danger" role="alert">The item already added to your cart.</div>'
-              )
-              .delay(2000)
-              .fadeOut(500)
+          if (error.responseJSON.non_field_errors[0] === 'The fields room, item must make a unique set.') {
+            $('.response').empty().show().html('<div class="alert alert-danger" role="alert">The item already added to your cart.</div>').delay(2000).fadeOut(500);
           } else {
             alert('An error occurred while adding the product to cart')
           }
         },
-      })
-    })
+      });
+    });
     
     
     // decrease item from cart
@@ -337,9 +290,7 @@ $(document).ready(function () {
           if (response.total_items > 0) {
             //   floating total price
             $('.float-total-price').text('₹ ' + response.total_price)
-            $('.float-total-items').text(
-              response.total_items + ' items in your cart'
-              )
+            $('.float-total-items').text(response.total_items + ' items in your cart')
             } else {
               $('#float-cart-filled').remove()
               // window.location.reload()
@@ -400,9 +351,6 @@ $(document).ready(function () {
         },
       })
     });
-  
-  
-  
   
   });
   

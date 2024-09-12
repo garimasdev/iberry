@@ -16,7 +16,9 @@ $(document).ready(function () {
   
     const renderEmptyCart = `
     <div class="d-flex justify-content-center align-items-center w-100 flex-column" id="float-cart-empty">
-      <span class="bowl-icon"><i class="bx bx-bowl-hot bx-sm"></i></span>
+      <span class="bowl-icon">
+      <i class="bx bx-bowl-hot bx-sm"></i>
+      </span>
       <p class="m-0">Your cart is empty</p>
     </div>
     `;
@@ -122,7 +124,8 @@ $(document).ready(function () {
                   <span class="float-total-price">₹${response.total_price}</span> <span>View Cart</span>
                 </button>
                 <button class="btn-close btn btn-light" aria-label="close"></button>
-              </div>`
+              </div>
+              `
             );
             $('.float-cart-btn').on('click', function (e) {
               $('.cart-bar').toggleClass('active');
