@@ -14,7 +14,6 @@
 <link rel="stylesheet" href="/static/css/foods/item.css">
 <link rel="stylesheet" href="/static/css/foods/float_cart.css"/>
 <link rel="stylesheet" href="/static/css/foods/cart.css"> 
-<link rel="stylesheet" type="text/css" href="/static/css/includes/menu.css" />
 
 
 {% endblock stylesheets %} 
@@ -107,12 +106,15 @@
     <ul class="categories">
 
         <!-- search box -->
-        <li class="search-item">
-            <form action="" method="get" class="search-box" autocomplete="off" onkeyup="autoResults(this.value)">
-                {% csrf_token %}
-                <i class="bi bi-search"></i>
-                <input type="text" class="search-text" name="q" placeholder="Search..." />
-            </form>
+        <li class="search-box-item">
+            <div class="search-container">
+                <form action="" method="get" class="search-box" autocomplete="off">
+                    {% csrf_token %}
+                    <i class="bi bi-search" id="search-icon"></i>
+                    <input type="text" class="search-text" name="q" placeholder="Powered by Iberry Wifi Security..." />
+                    <div id="result" class="autocomplete-results"></div>
+                </form>
+            </div>
         </li>
 
         {%if sub_categories|length > 0 %}
@@ -269,6 +271,102 @@
 {%endblock content%} {% block javascripts %}
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script src="/static/js/foods/outdoor_foods.js"></script>
+
+<!-- collapse and expand search box -->
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchIcon = document.getElementById('search-icon');
+        const searchBox = document.querySelector('.search-box');
+    
+        searchIcon.addEventListener('click', function() {
+            searchBox.classList.toggle('expanded');
+            searchBox.querySelector('.search-text').focus();
+        });
+    
+        // Optional: close the search box when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!searchBox.contains(event.target) && event.target !== searchIcon) {
+                searchBox.classList.remove('expanded');
+            }
+        });
+    });
+</script>
+     -->
+
+<!-- search box suggestion -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchIcon = document.getElementById('search-icon');
+        const searchBox = document.querySelector('.search-box');
+        const resultContainer = document.getElementById('result');
+        const searchInput = document.querySelector('.search-text');
+    
+        function fetchSuggestions(query) {
+            var data = {
+                q: query
+            };
+            
+            fetch("{% url 'stores:search-suggestions' %}", {
+                method: 'POST',
+                headers: {
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(results => {
+                    const suggest = results.data
+                    displaySuggestions(suggest);
+                });
+        }
+    
+        function displaySuggestions(suggestions) {
+            resultContainer.innerHTML = '';
+            if (suggestions.length === 0) {
+                resultContainer.style.display = 'none';
+                return;
+            }
+            let list = '';
+            suggestions.forEach(term => {
+                list += `<li onclick="selectResult('${term.title}')">${term.title}</li>`;
+            });
+            resultContainer.innerHTML = `<ul>${list}</ul>`;
+            resultContainer.style.display = 'block';
+        }
+    
+        function selectResult(term) {
+            searchInput.value = term;
+            resultContainer.innerHTML = '';
+            resultContainer.style.display = 'none';
+        }
+    
+        searchIcon.addEventListener('click', function() {
+            searchBox.classList.toggle('expanded');
+            searchInput.focus();
+        });
+    
+        searchInput.addEventListener('input', function() {
+            const query = searchInput.value.trim();
+            if (query) {
+                fetchSuggestions(query);
+            } else {
+                resultContainer.innerHTML = '';
+                resultContainer.style.display = 'none';
+            }
+        });
+    
+        document.addEventListener('click', function(event) {
+            if (!searchBox.contains(event.target) && event.target !== searchIcon) {
+                searchBox.classList.remove('expanded');
+                resultContainer.style.display = 'none';
+            }
+        });
+    });
+</script>
+    
+
+
+
 <script>
     window.onload = function() {
         fetch('/outdoor_cart/user_id', {

@@ -1,6 +1,7 @@
 from django.urls import path
 from accounts.views import UsersViewPage
 from . import views
+from .views import SearchSuggestionsView
 from django.contrib.auth.views import LogoutView
 from rest_framework import routers
 router = routers.SimpleRouter()
@@ -29,6 +30,9 @@ urlpatterns = [
     path('store/<str:room_token>/foods/items/', views.HomeViewPage.as_view(), name="foods-items"),
     path('store/<str:room_token>/foods/bar/', views.BarPageView.as_view(), name="foods-bar"),
     path('store/<str:room_token>/foods/<str:item_id>/', views.ProductDetailView.as_view(), name='food-item-view'),
+
+    # search food items
+    path('search/suggestions/', SearchSuggestionsView, name='search-suggestions'),
     
 
     # Payment urls

@@ -22,7 +22,7 @@
 .categories li {
     background: #ffffff;
     white-space: nowrap;
-    padding: 8px 30px;
+    padding: 8px 15px;
     border-radius: 8px;
 }
 
@@ -63,12 +63,21 @@
     border-radius: 8px;
     padding: 5px 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease;
+    width: 40px; /* Collapsed width */
+    overflow: hidden;
+}
+
+
+.search-box.expanded {
+    width: 300px; /* Expanded width */
 }
 
 .search-box i {
     font-size: 18px;
     color: #012970;
     margin-right: 8px;
+    cursor: pointer;
 }
 
 .search-text {
@@ -78,7 +87,47 @@
     color: #012970;
     background: transparent;
     padding: 5px;
+    width: 100%;
 }
+
+
+/* Search box autocomplete styles */
+.autocomplete-results {
+    position: absolute;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 100%; /* Match search box width */
+    top: 100%; /* Position below search box */
+    left: 0;
+    display: none; /* Hidden by default */
+}
+
+.autocomplete-results ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.autocomplete-results li {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.autocomplete-results li:hover {
+    background-color: #f0f0f0;
+}
+
+/* Adjust to show autocomplete results when search box is expanded */
+.search-box.expanded + .autocomplete-results {
+    display: block;
+}
+
+
 
 @media only screen and (max-width: 930px) {
     .categories {

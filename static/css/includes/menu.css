@@ -3,26 +3,6 @@
     padding: 0px 20px;
 }
 
-.search-box {
-    display: flex;
-    background: #f6f9ff;
-    padding: 8px 15px;
-    border-radius: 30px;
-    width: 350px;
-    column-gap: 8px;
-}
-
-.search-box i {
-    font-size: 18px;
-}
-
-.search-box .search-text {
-    border: none;
-    outline: none;
-    background: transparent;
-    width: 100%;
-}
-
 .dropdown-toggle::after {
     border-top: none !important;
     border-right: none !important;
@@ -149,11 +129,7 @@ nav .menu-list li.cart-icon span {
 
 
 /* Responsive Styling for Smaller Screens */
-@media only screen and (max-width: 550px) {
-    .search-box {
-        width: 300px;
-    }
-}
+
 
 @media only screen and (max-width: 500px) {
     .menu-first-part {
@@ -165,8 +141,3 @@ nav .menu-list li.cart-icon span {
     }
 }
 
-@media only screen and (max-width: 420px) {
-    .search-box {
-        width: 250px;
-    }
-}

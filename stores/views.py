@@ -416,6 +416,23 @@ class OutdoorHomeViewPage(TemplateView):
             traceback.print_exc()
 
 
+from django.db.models import Q
+
+def SearchSuggestionsView(request):
+    if request.method == 'POST':
+        try:
+            payload = json.loads(request.body) 
+            query = payload.get('q', '')
+
+            suggestions = Item.objects.filter(Q(title__istartswith=query) | Q(title__icontains=query))[:5]
+            suggestions = ItemSerializer(suggestions, many=True).data
+            return JsonResponse({
+                'data': suggestions
+            })
+        except:
+            traceback.print_exc()
+
+
 
 # phonepe payment gateway integration 
 import uuid  
