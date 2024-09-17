@@ -2,7 +2,7 @@
     display: inline-flex;
     white-space: nowrap;
     align-items: center;
-    padding: 15px 20px;
+    padding: 5px 20px;
     margin-top: 60px;
     width: 100%;
     overflow-y: hidden;
@@ -84,7 +84,7 @@
 
 @media only screen and (max-width: 450px) {
     .top-back-and-types {
-        padding: 10px 5px;
+        padding: 5px 5px;
         justify-content: space-between;
     }
     .top-back-and-types .back-btn {

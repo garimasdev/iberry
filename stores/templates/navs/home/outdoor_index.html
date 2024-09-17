@@ -14,6 +14,7 @@
 <link rel="stylesheet" href="/static/css/foods/item.css">
 <link rel="stylesheet" href="/static/css/foods/float_cart.css"/>
 <link rel="stylesheet" href="/static/css/foods/cart.css"> 
+<link rel="stylesheet" type="text/css" href="/static/css/includes/menu.css" />
 
 
 {% endblock stylesheets %} 
@@ -104,6 +105,16 @@
 
     
     <ul class="categories">
+
+        <!-- search box -->
+        <li class="search-item">
+            <form action="" method="get" class="search-box" autocomplete="off" onkeyup="autoResults(this.value)">
+                {% csrf_token %}
+                <i class="bi bi-search"></i>
+                <input type="text" class="search-text" name="q" placeholder="Search..." />
+            </form>
+        </li>
+
         {%if sub_categories|length > 0 %}
         <!--Main Category-->
         {%for sub_category in sub_categories%}
