@@ -142,7 +142,8 @@ class Dialer(models.Model):
     def __str__(self):
         return f"{self.c2c_name}"
     
-    
+import hashlib
+
 class Room(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room_number	= models.IntegerField()
@@ -163,7 +164,7 @@ class Room(models.Model):
     def save(self, *args, **kwargs):
         created = not self.pk
         if created:
-            self.room_token = str(uuid.uuid4().int & (10**8-1))
+            self.room_token = hashlib.md5((self.user.username + '_' + str(self.room_number)).encode()).hexdigest()
             # short_url_generate = getShortUrl(self.room_token)
             self.short_url = "https://iberry.caucasianbarrels.com/store/"+self.room_token+"/"
             # "https://curt.shop/?"+short_url_generate['token']
