@@ -112,9 +112,9 @@
                 <form action="" method="get" class="search-box" autocomplete="off">
                     {% csrf_token %}
                     <i class="bi bi-search" id="search-icon"></i>
-                    <input type="text" class="search-text" name="q" placeholder="Powered by Iberry Wifi Security..." />
-                    <div id="searchSuggestions"></div> 
-                    <!-- <datalist id="suggestions"></datalist> -->
+                    <input type="text" class="search-text" name="q" list="suggestions" placeholder="Powered by Iberry Wifi Security..." />
+                    <!-- <div id="searchSuggestions"></div>  -->
+                    <datalist id="suggestions"></datalist>
                 </form>
             </div>
         </li>
@@ -279,72 +279,72 @@
 <!-- search box suggestion -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const searchIcon = document.getElementById('search-icon');
-        const searchBox = document.querySelector('.search-box');
-        const searchInput = document.querySelector('.search-text');
-        const container = document.getElementById('searchSuggestions');
+    // Select necessary DOM elements
+    const searchIcon = document.getElementById('search-icon');
+    const searchBox = document.querySelector('.search-box');
+    const searchInput = document.querySelector('.search-text');
+    const container = document.getElementById('suggestions');
     
-        function fetchSuggestions(query) {
-            var data = {
-                q: query
-            };
-            console.log(data);
-            
-            fetch("{% url 'stores:search-suggestions' %}", {
-                method: 'POST',
-                headers: {
-                'X-CSRFToken': '{{csrf_token}}'
+    // Function to fetch suggestions from the server
+    function fetchSuggestions(query) {
+        const data = { q: query };
+        
+        fetch("{% url 'stores:search-suggestions' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
             },
-                body: JSON.stringify(data)
-            })
-                .then(response => response.json())
-                .then(results => {
-                    console.log(results);
-                    const suggestions = results.data
-                    displaySuggestions(suggestions);
-                });
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(results => {
+            const suggestions = results.data;
+            displaySuggestions(suggestions);
+        })
+        .catch(error => console.error('Error fetching suggestions:', error));
+    }
+    
+    // Function to display suggestions in the container
+    function displaySuggestions(suggestions) {
+        container.innerHTML = '';
+        
+        if (suggestions.length === 0) {
+            return;
         }
-    
-        function displaySuggestions(suggestions) {
-            if (suggestions.length === 0) {
-                container.style.display = 'none';
-                return;
-            }
-            container.innerHTML = ''; // Clear the existing suggestions
-            suggestions.forEach(suggestion => {
-                const suggestionItem = document.createElement('div');
-                suggestionItem.textContent = suggestion.title;
-                suggestionItem.addEventListener('click', () => {
-                    searchInput.value = suggestion.title; // Adjust as needed
-                    container.style.display = 'none';
+        
+        suggestions.forEach(suggestion => {
+            const option = document.createElement('option');
+            option.value = suggestion.title; // Set the value of the option
+            container.appendChild(option)
             });
-                container.appendChild(suggestionItem);
-            });
-            container.style.display = 'block'; // Show the container
-        }
+    }
     
-        searchIcon.addEventListener('click', function() {
-            searchBox.classList.toggle('expanded');
-            searchInput.focus();
-        });
-    
-        searchInput.addEventListener('input', function() {
-            const query = searchInput.value.trim();
-            if (query) {
-                fetchSuggestions(query);
-            } else {
-                container.innerHTML = '';
-                container.style.display = 'none';
-            }
-        });
-    
-        document.addEventListener('click', function(event) {
-            if (!searchBox.contains(event.target) && event.target !== searchIcon) {
-                searchBox.classList.remove('expanded');
-                container.style.display = 'none';
-            }
-        });
+    // Expand or collapse the search box when the icon is clicked
+    searchIcon.addEventListener('click', function() {
+        searchBox.classList.toggle('expanded');
+        searchInput.focus(); // Focus the input when the search box is expanded
     });
+    
+    // Fetch suggestions based on input value
+    searchInput.addEventListener('input', function() {
+        const query = searchInput.value.trim();
+        if (query) {
+            fetchSuggestions(query);
+        } else {
+            container.innerHTML = '';
+            // container.style.display = 'none'; // Hide suggestions when input is empty
+        }
+    });
+    
+    // Hide the search box and suggestions when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!searchBox.contains(event.target) && event.target !== searchIcon) {
+            searchBox.classList.remove('expanded'); // Collapse the search box
+            // container.style.display = 'none'; // Hide suggestions
+        }
+    });
+});
+
 </script>
     
 
