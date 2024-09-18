@@ -103,6 +103,7 @@
     </div>
 
     
+    
     <ul class="categories">
 
         <!-- search box -->
@@ -112,7 +113,8 @@
                     {% csrf_token %}
                     <i class="bi bi-search" id="search-icon"></i>
                     <input type="text" class="search-text" name="q" placeholder="Powered by Iberry Wifi Security..." />
-                    <div id="result" class="autocomplete-results"></div>
+                    <div id="searchSuggestions"></div> 
+                    <!-- <datalist id="suggestions"></datalist> -->
                 </form>
             </div>
         </li>
@@ -272,39 +274,21 @@
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script src="/static/js/foods/outdoor_foods.js"></script>
 
-<!-- collapse and expand search box -->
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const searchIcon = document.getElementById('search-icon');
-        const searchBox = document.querySelector('.search-box');
-    
-        searchIcon.addEventListener('click', function() {
-            searchBox.classList.toggle('expanded');
-            searchBox.querySelector('.search-text').focus();
-        });
-    
-        // Optional: close the search box when clicking outside
-        document.addEventListener('click', function(event) {
-            if (!searchBox.contains(event.target) && event.target !== searchIcon) {
-                searchBox.classList.remove('expanded');
-            }
-        });
-    });
-</script>
-     -->
 
+<!-- collapse and expand search box -->
 <!-- search box suggestion -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const searchIcon = document.getElementById('search-icon');
         const searchBox = document.querySelector('.search-box');
-        const resultContainer = document.getElementById('result');
         const searchInput = document.querySelector('.search-text');
+        const container = document.getElementById('searchSuggestions');
     
         function fetchSuggestions(query) {
             var data = {
                 q: query
             };
+            console.log(data);
             
             fetch("{% url 'stores:search-suggestions' %}", {
                 method: 'POST',
@@ -315,29 +299,28 @@
             })
                 .then(response => response.json())
                 .then(results => {
-                    const suggest = results.data
-                    displaySuggestions(suggest);
+                    console.log(results);
+                    const suggestions = results.data
+                    displaySuggestions(suggestions);
                 });
         }
     
         function displaySuggestions(suggestions) {
-            resultContainer.innerHTML = '';
             if (suggestions.length === 0) {
-                resultContainer.style.display = 'none';
+                container.style.display = 'none';
                 return;
             }
-            let list = '';
-            suggestions.forEach(term => {
-                list += `<li onclick="selectResult('${term.title}')">${term.title}</li>`;
+            container.innerHTML = ''; // Clear the existing suggestions
+            suggestions.forEach(suggestion => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.textContent = suggestion.title;
+                suggestionItem.addEventListener('click', () => {
+                    searchInput.value = suggestion.title; // Adjust as needed
+                    container.style.display = 'none';
             });
-            resultContainer.innerHTML = `<ul>${list}</ul>`;
-            resultContainer.style.display = 'block';
-        }
-    
-        function selectResult(term) {
-            searchInput.value = term;
-            resultContainer.innerHTML = '';
-            resultContainer.style.display = 'none';
+                container.appendChild(suggestionItem);
+            });
+            container.style.display = 'block'; // Show the container
         }
     
         searchIcon.addEventListener('click', function() {
@@ -350,15 +333,15 @@
             if (query) {
                 fetchSuggestions(query);
             } else {
-                resultContainer.innerHTML = '';
-                resultContainer.style.display = 'none';
+                container.innerHTML = '';
+                container.style.display = 'none';
             }
         });
     
         document.addEventListener('click', function(event) {
             if (!searchBox.contains(event.target) && event.target !== searchIcon) {
                 searchBox.classList.remove('expanded');
-                resultContainer.style.display = 'none';
+                container.style.display = 'none';
             }
         });
     });
@@ -394,8 +377,8 @@
 <!-- <script src="https://mercury.phonepe.com/web/bundle/checkout.js"></script> -->
 
 
-<!-- quantity increment or decrement while adding item to cart -->
 
+<!-- quantity increment or decrement while adding item to cart -->
 <script>
 
     document.getElementById('back_btn_basehtml').style.display = 'None';

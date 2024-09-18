@@ -60,7 +60,7 @@
     display: flex;
     align-items: center;
     background: #ffffff;
-    border-radius: 8px;
+    border-radius: 30px;
     padding: 5px 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease;
@@ -70,7 +70,7 @@
 
 
 .search-box.expanded {
-    width: 300px; /* Expanded width */
+    width: 280px; /* Expanded width */
 }
 
 .search-box i {
@@ -92,7 +92,7 @@
 
 
 /* Search box autocomplete styles */
-.autocomplete-results {
+/* .autocomplete-results {
     position: absolute;
     background: #ffffff;
     border: 1px solid #ddd;
@@ -101,10 +101,9 @@
     max-height: 200px;
     overflow-y: auto;
     z-index: 1000;
-    width: 100%; /* Match search box width */
-    top: 100%; /* Position below search box */
+    width: 100%;
+    top: 100%; 
     left: 0;
-    display: none; /* Hidden by default */
 }
 
 .autocomplete-results ul {
@@ -122,10 +121,37 @@
     background-color: #f0f0f0;
 }
 
-/* Adjust to show autocomplete results when search box is expanded */
 .search-box.expanded + .autocomplete-results {
     display: block;
-}
+} */
+
+
+#suggestions {
+    display: block; /* Show the datalist */
+    position: absolute;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    width: 100%;
+    top: calc(100% + 5px);
+    left: 0;
+  }
+
+  
+#suggestions div {
+    padding: 10px;
+    cursor: pointer;
+    }
+
+#suggestions div:hover {
+    background-color: #f0f0f0;
+    }
+
+
 
 
 
