@@ -1,11 +1,24 @@
 <link rel="stylesheet" type="text/css" href="/static/css/includes/sub_menu.css">
+
 <div class="top-back-and-types">
+
     {%if '/store/'|add:room_number|add:'/' != request.path %}
-    <button id="back_btn_basehtml" type="button" onclick="history.back()" class="back-btn"><i class="bi bi-arrow-left-short"></i> <span >Back</span></button>
+    <button id="back_btn_basehtml" type="button" onclick="history.back()" class="back-btn">
+        <i class="bi bi-arrow-left-short"></i> 
+        <span >Back</span>
+    </button>
+
+    
     <!--another button-->
-    {%if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/bar/' in request.path or '/store/'|add:room_number|add:'/foods/outdoor_items/' in request.path %}  {% with request.GET.urlencode as current_params %}
+    {%if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/bar/' in request.path or '/store/'|add:room_number|add:'/foods/outdoor_items/' in request.path %}  
+    {% with request.GET.urlencode as current_params %}
+    
     <ul class="item-types">
-        {%if request.path != '/store/'|add:room_number|add:'/foods/bar/'%}
+        
+        {% if request.user.business_type == 0 %}
+        {% if request.path != '/store/'|add:room_number|add:'/foods/bar/' %}
+        
+        <!-- veg category -->
         <li class="item-type veg {%if request.GET.item_type == 'Veg' %}active{%endif%}">
             <a href="{%if request.GET %}
             {% if "item_type=Veg" not in current_params %}
@@ -17,6 +30,9 @@
                 <span>Veg</span>
             </a>
         </li>
+
+        
+        <!-- non-veg category -->
         <li class="item-type non-veg {%if request.GET.item_type == 'Non Veg' %}active{%endif%}">
             <a href="{%if request.GET %}
             {% if "item_type=Non Veg" not in current_params %}
@@ -28,7 +44,11 @@
                 <span>Non Veg</span>
             </a>
         </li>
+        
         {%endif%}
+        {%endif%}
+        
+        <!-- Day Deal category -->
         <li class="item-type day-deal {%if request.GET.item_type == 'Day Deal' %}active{%endif%}">
             <a href="{%if request.GET %}
             {% if "item_type=Day Deal" not in current_params %}
@@ -41,5 +61,6 @@
             </a>
         </li>
     </ul>
+
     {% endwith %} {%endif%} {%endif%}
 </div>

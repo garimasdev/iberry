@@ -44,6 +44,10 @@ class User(AbstractUser):
         ('m', 'male'),
         ('f', 'female'),
     )
+    BUSINESS_TYPES = (
+        (0, 'Food'),
+        (1, 'Non-Food'),
+    )
     
     username_validator = UnicodeUsernameValidator()
     username = models.CharField(
@@ -80,6 +84,8 @@ class User(AbstractUser):
     razorpay_clientsecret = models.CharField(max_length=255, null=True, blank=True)
     # GST details fields
     gst_number = models.CharField(max_length=15, null=True, blank=True, unique=True)
+    # business type
+    business_type = models.PositiveSmallIntegerField(default=0, choices=BUSINESS_TYPES)
 
 
     USERNAME_FIELD = 'username'
