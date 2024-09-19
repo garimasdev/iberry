@@ -418,11 +418,11 @@ h6 {
     line-height: 1;
 }
 
-@media (min-width: 1200px) {
+/* @media (min-width: 1200px) {
     .logo {
         width: 280px;
     }
-}
+} */
 
 .logo img {
     max-height: 26px;
@@ -435,6 +435,26 @@ h6 {
     color: #012970;
     font-family: cursive;
 }
+
+@media (max-width: 990px) {
+    .logo span {
+        font-size: 20px; /* Adjust the font size for better visibility */
+        text-align: center; /* Center the text */
+    }
+
+    /* Optionally adjust the logo container */
+    .menu-first-part {
+        justify-content: center; /* Center the logo in the menu */
+        width: 100%; /* Use full width */
+    }
+
+    .logo {
+        width: auto; /* Allow automatic width */
+        margin: 0 auto; /* Center the logo */
+    }
+}
+
+
 
 .header {
     transition: all 0.5s;
