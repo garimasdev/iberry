@@ -307,6 +307,7 @@
         .then(results => {
             const suggestions = results.data;
             displaySuggestions(suggestions);
+            alert("display suggestions")
         })
         .catch(error => console.error('Error fetching suggestions:', error));
     }
@@ -318,6 +319,7 @@
         if (suggestions.length === 0) {
             return;
         }
+        alert("options suggestions", option.value)
         
         suggestions.forEach(suggestion => {
             const option = document.createElement('option');
@@ -338,6 +340,7 @@
         const query = searchInput.value.trim();
         if (query) {
             fetchSuggestions(query);
+            alert("input suggest")
         } else {
             container.innerHTML = '';
             // container.style.display = 'none'; // Hide suggestions when input is empty
