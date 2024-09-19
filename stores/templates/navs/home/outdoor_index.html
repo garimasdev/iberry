@@ -307,7 +307,6 @@
         .then(results => {
             const suggestions = results.data;
             displaySuggestions(suggestions);
-            alert("display suggestions", suggestions)
 
         })
         .catch(error => console.error('Error fetching suggestions:', error));
@@ -320,14 +319,12 @@
         if (suggestions.length === 0) {
             return;
         }
-        alert("options suggestions", option.value)
         
         suggestions.forEach(suggestion => {
             const option = document.createElement('option');
             option.value = suggestion.title; // Set the value of the option
             container.appendChild(option)
         });
-        alert("options suggestions", option.value)
     }
     
     // Expand or collapse the search box when the icon is clicked
