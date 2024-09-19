@@ -82,19 +82,19 @@
                     <div class="col-md-12">
                         <div class="mb-3">
                             <label for="username" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="username">
+                            <input type="text" class="form-control" id="username" required>
                         </div>
                         <div class="mb-3">
                             <label for="phone" class="form-label">Phone</label>
-                            <input type="tel" class="form-control" id="phone">
+                            <input type="tel" class="form-control" id="phone" required>
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email">
+                            <input type="email" class="form-control" id="email" required>
                         </div>
                         <div class="mb-3">
                             <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address"></textarea>
+                            <textarea class="form-control" id="address" required></textarea>
                         </div>
                     </div>
                 </div>
@@ -141,6 +141,7 @@
     {%for categoriesItems in items%}
     <h4 class="category">{{categoriesItems.category}}</h4>
     
+    <!-- products display required -->
     <div class="products">
         {%for item in categoriesItems.items%}
         <div class="product item-{{item.id}}" name="item">
