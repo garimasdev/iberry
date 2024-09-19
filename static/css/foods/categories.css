@@ -1,5 +1,4 @@
 /* Categories CSS */
-
 .categories {
     position: relative;
     width: 100%;
@@ -24,11 +23,18 @@
     white-space: nowrap;
     padding: 8px 15px;
     border-radius: 8px;
+    box-shadow: 0 5px 9px -1px #4154f1;
+    /* box-shadow: 0 7px 9px -2px black; */
 }
 
 .categories li a {
     text-decoration: none;
     font-family: 'Roboto', sans-serif;
+    /* font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; */
+    font-family: "Playfair Display", system-ui;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: italic; 
     color: black;
     font-size: 18px;
 }
@@ -92,8 +98,8 @@
 
 
 /* Search box autocomplete styles */
-#suggestions {
-    display: block; /* Show the datalist */
+/* #suggestions {
+    display: block;
     position: absolute;
     background: #ffffff;
     border: 1px solid #ddd;
@@ -115,7 +121,7 @@
 
 #suggestions div:hover {
     background-color: #f0f0f0;
-    }
+    } */
 
 
 

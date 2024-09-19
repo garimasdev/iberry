@@ -14,8 +14,7 @@
     {% with request.GET.urlencode as current_params %}
     
     <ul class="item-types">
-        
-        {% if request.user.business_type == 0 %}
+        {% if business_type == 0 %}
         {% if request.path != '/store/'|add:room_number|add:'/foods/bar/' %}
         
         <!-- veg category -->

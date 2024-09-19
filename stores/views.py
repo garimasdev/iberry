@@ -312,6 +312,7 @@ class OutdoorHomeViewPage(TemplateView):
             if pk:
                 try:
                     room = User.objects.get(outdoor_token=pk)
+                    print("outdoor_token ", room)
                     # check if anonymous id already exist
                     if 'anonymous_user_id' not in self.request.session:
                         self.request.session['anonymous_user_id'] = ''.join(random.choices(string.ascii_uppercase+string.digits, k=12))
@@ -348,9 +349,7 @@ class OutdoorHomeViewPage(TemplateView):
             # Filter Item by Category
             elif category_filter:
                 try:
-                    category = Category.objects.filter(
-                        user=room, name=category_filter
-                    ).exclude(name__in=["Bar"])
+                    category = Category.objects.filter(user=room, name=category_filter).exclude(name__in=["Bar"])
                     get_sub_category = SubCategory.objects.filter(category=category[0])
 
                     if item_type:
@@ -392,6 +391,7 @@ class OutdoorHomeViewPage(TemplateView):
             context['phone'] = outdoor_token.phone
             context["items"] = items
             context["room_id"] = pk
+            context["business_type"] = outdoor_token.business_type
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
             # total item amount
             context["items_amount"] = amount
@@ -1069,7 +1069,9 @@ class OutdoorOrderModelView(APIView):
                 overall_tax = 0
                 for cart in cart_items:
                     item = cart.item
+                    # we need to get the item from Item model for above  item
                     quantity = cart.quantity
+                    # here we need to update the qty of that object of Item model and save it
                     total_amount += cart.price * quantity
                     overall_tax += (item.tax_rate / 100) * (cart.price * quantity)
                     order_item = OutdoorOrderItem.objects.create(

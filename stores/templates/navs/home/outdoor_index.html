@@ -4,6 +4,11 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
 
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+
 <!-- pwa manifest -->
 <link rel="manifest" href="/manifest.json?token={{room_id}}">
 <meta name="theme-color" content="#317EFB"/>
@@ -107,12 +112,12 @@
     <ul class="categories">
 
         <!-- search box -->
-        <li class="search-box-item">
+        <li class="search-box-item" style="padding: 4px 4px;">
             <div class="search-container">
                 <form action="" method="get" class="search-box" autocomplete="off">
                     {% csrf_token %}
                     <i class="bi bi-search" id="search-icon"></i>
-                    <input type="text" class="search-text" name="q" list="suggestions" placeholder="Powered by Iberry Wifi Security..." />
+                    <input type="text" class="search-text" name="q" list="suggestions" placeholder="Search..." />
                     <!-- <div id="searchSuggestions"></div>  -->
                     <datalist id="suggestions"></datalist>
                 </form>
@@ -282,8 +287,10 @@
     // Select necessary DOM elements
     const searchIcon = document.getElementById('search-icon');
     const searchBox = document.querySelector('.search-box');
+    const searchBoxItem = document.querySelector('.search-box-item');
     const searchInput = document.querySelector('.search-text');
     const container = document.getElementById('suggestions');
+    
     
     // Function to fetch suggestions from the server
     function fetchSuggestions(query) {
@@ -320,7 +327,7 @@
     }
     
     // Expand or collapse the search box when the icon is clicked
-    searchIcon.addEventListener('click', function() {
+    searchBoxItem.addEventListener('click', function() {
         searchBox.classList.toggle('expanded');
         searchInput.focus(); // Focus the input when the search box is expanded
     });
