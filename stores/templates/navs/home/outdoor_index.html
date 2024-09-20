@@ -111,19 +111,6 @@
     
     <ul class="categories">
 
-        <!-- search box -->
-        <li class="search-box-item" style="padding: 4px 4px;">
-            <div class="search-container">
-                <form action="" method="get" class="search-box" autocomplete="off">
-                    {% csrf_token %}
-                    <i class="bi bi-search" id="search-icon"></i>
-                    <input type="text" class="search-text" name="q" list="suggestions" placeholder="Search..." />
-                    <!-- <div id="searchSuggestions"></div>  -->
-                    <datalist id="suggestions"></datalist>
-                </form>
-            </div>
-        </li>
-
         {%if sub_categories|length > 0 %}
         <!--Main Category-->
         {%for sub_category in sub_categories%}
@@ -279,83 +266,6 @@
 {%endblock content%} {% block javascripts %}
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script src="/static/js/foods/outdoor_foods.js"></script>
-
-
-<!-- collapse and expand search box -->
-<!-- search box suggestion -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Select necessary DOM elements
-    const searchIcon = document.getElementById('search-icon');
-    const searchBox = document.querySelector('.search-box');
-    const searchBoxItem = document.querySelector('.search-box-item');
-    const searchInput = document.querySelector('.search-text');
-    const container = document.getElementById('suggestions');
-    
-    
-    // Function to fetch suggestions from the server
-    function fetchSuggestions(query) {
-        const data = { q: query };
-        
-        fetch("{% url 'stores:search-suggestions' %}", {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(results => {
-            const suggestions = results.data;
-            displaySuggestions(suggestions);
-
-        })
-        .catch(error => console.error('Error fetching suggestions:', error));
-    }
-    
-    // Function to display suggestions in the container
-    function displaySuggestions(suggestions) {
-        container.innerHTML = '';
-        
-        if (suggestions.length === 0) {
-            return;
-        }
-        
-        suggestions.forEach(suggestion => {
-            const option = document.createElement('option');
-            option.value = suggestion.title; // Set the value of the option
-            container.appendChild(option)
-        });
-    }
-    
-    // Expand or collapse the search box when the icon is clicked
-    searchBoxItem.addEventListener('click', function() {
-        searchBox.classList.toggle('expanded');
-        searchInput.focus(); // Focus the input when the search box is expanded
-    });
-    
-    // Fetch suggestions based on input value
-    searchInput.addEventListener('input', function() {
-        const query = searchInput.value.trim();
-        if (query) {
-            fetchSuggestions(query);
-        } else {
-            container.innerHTML = '';
-            // container.style.display = 'none'; // Hide suggestions when input is empty
-        }
-    });
-    
-    // Hide the search box and suggestions when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!searchBox.contains(event.target) && event.target !== searchIcon) {
-            searchBox.classList.remove('expanded'); // Collapse the search box
-            // container.style.display = 'none'; // Hide suggestions
-        }
-    });
-});
-
-</script>
-    
 
 
 

@@ -3,10 +3,10 @@
 <div class="top-back-and-types">
 
     {%if '/store/'|add:room_number|add:'/' != request.path %}
-    <button id="back_btn_basehtml" type="button" onclick="history.back()" class="back-btn">
+    <!-- <button id="back_btn_basehtml" type="button" onclick="history.back()" class="back-btn">
         <i class="bi bi-arrow-left-short"></i> 
         <span >Back</span>
-    </button>
+    </button> -->
 
     
     <!--another button-->
@@ -14,6 +14,20 @@
     {% with request.GET.urlencode as current_params %}
     
     <ul class="item-types">
+        <!-- search box -->
+        <li class="search-box-item">
+            <div class="search-container">
+                <form action="" method="get" class="search-box" autocomplete="off">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="ab98vXIBj50QuHOYiMihpbEGnQMFol64SkD8ntN1OEjpcN2gVyJcgGSScvwNMgHH">
+                    <i class="bi bi-search" id="search-icon"></i>
+                    <input type="text" class="search-text" name="q" list="suggestions" placeholder="Search...">
+                    <div id="suggestions" class="autocomplete-results" style="display: none;">
+                    </div> 
+                    <!-- <datalist id="suggestions"></datalist> -->
+                </form>
+            </div>
+        </li>
+        
         {% if business_type == 0 %}
         {% if request.path != '/store/'|add:room_number|add:'/foods/bar/' %}
         
@@ -63,3 +77,96 @@
 
     {% endwith %} {%endif%} {%endif%}
 </div>
+
+
+<!-- collapse and expand search box -->
+<!-- search box suggestion -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchIcon = document.getElementById('search-icon');
+        const searchBox = document.querySelector('.search-box');
+        const searchInput = document.querySelector('.search-text');
+        const container = document.getElementById('suggestions');
+        const temp = document.getElementById('categories-items');
+
+        // searchInput.addEventListener('focus', () => {
+        //     const temp = document.getElementById('categories-items');
+        //     temp.classList.remove('categories-item-list');
+        // });focusout
+
+        searchInput.addEventListener('focusout', () => {
+            console.log('css');
+            if (temp.classList.contains('categories-item-list')) {
+                temp.classList.remove('categories-item-list');
+            } else {
+                temp.classList.add('categories-item-list');
+            }
+            
+        });
+
+        function fetchSuggestions(query) {
+            var data = {
+                q: query
+            };
+            
+            fetch("{% url 'stores:search-suggestions' %}", {
+                method: 'POST',
+                headers: {
+                'X-CSRFToken': '{{csrf_token}}'
+            },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(results => {
+                    const suggestions = results.data
+                    displaySuggestions(suggestions);
+                });
+        }
+    
+        function displaySuggestions(suggestions) {
+            if (suggestions.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            container.innerHTML = ''; // Clear the existing suggestions
+            suggestions.forEach(suggestion => {
+                const suggestionItem = document.createElement('div');
+                suggestionItem.textContent = suggestion.title;
+                // Add padding or margin to the suggestion item
+                suggestionItem.style.padding = '10px';
+                suggestionItem.style.margin = '2px 0';
+
+                suggestionItem.addEventListener('click', () => {
+                    searchInput.value = suggestion.title;
+                    container.style.display = 'none';
+                });
+
+                container.appendChild(suggestionItem);
+            });
+            container.style.display = 'block'; // Show the container
+        }
+    
+        searchIcon.addEventListener('click', function() {
+            searchBox.classList.toggle('expanded');
+            temp.classList.toggle('categories-item-list');
+        });
+    
+        searchInput.addEventListener('input', function() {
+            const query = searchInput.value.trim();
+            if (query) {
+                fetchSuggestions(query);
+            } else {
+                container.innerHTML = '';
+                container.style.display = 'none';
+            }
+        });
+    
+        document.addEventListener('click', function(event) {
+            if (!searchBox.contains(event.target) && event.target !== searchIcon) {
+                searchBox.classList.remove('expanded');
+                container.style.display = 'none';
+            }
+        });
+    });
+</script>
+    
