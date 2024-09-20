@@ -14,6 +14,8 @@
     {% with request.GET.urlencode as current_params %}
     
     <ul class="item-types">
+
+        {{business_type}}
         <!-- search box -->
         <li class="search-box-item">
             <div class="search-container">
@@ -27,6 +29,7 @@
                 </form>
             </div>
         </li>
+        
         
         {% if business_type == 0 %}
         {% if request.path != '/store/'|add:room_number|add:'/foods/bar/' %}
