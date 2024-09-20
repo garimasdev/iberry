@@ -1068,11 +1068,14 @@ class OutdoorOrderModelView(APIView):
                 order = OutdoorOrder.objects.create(order_id=order_id, user=get_room)
                 total_amount = 0
                 overall_tax = 0
+
                 for cart in cart_items:
                     item = cart.item
                     # we need to get the item from Item model for above  item
                     quantity = cart.quantity
                     # here we need to update the qty of that object of Item model and save it
+                    item.quantity -= quantity
+                    item.save()
                     total_amount += cart.price * quantity
                     overall_tax += (item.tax_rate / 100) * (cart.price * quantity)
                     order_item = OutdoorOrderItem.objects.create(
@@ -1095,24 +1098,6 @@ class OutdoorOrderModelView(APIView):
                 temp_user.customer_address = data['address']
                 temp_user.save()
 
-
-                # try:
-                #     message = f'A new order received'
-                #     notification = messaging.Notification(
-                #         title=f'A new order received',
-                #         body=message,
-                #     )
-                #     message = messaging.Message(
-                #         notification=notification,
-                #         token=get_room.firebase_token
-                #     )
-                #     messaging.send(message)
-                #     message  =  'hi'
-                #     telegram_notification(get_room.channel_name, get_room.bot_token, message)
-                # except:
-                #     telegram_notification(get_room.channel_name, get_room.bot_token, json.dumps(traceback.format_exc()))
-                #     traceback.print_exc()
-                
                 try:
                     message = f'A new outdoor order received'
                     title = 'Outdoor Order received'
