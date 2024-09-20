@@ -2,7 +2,6 @@
 
 <div class="top-back-and-types">
 
-    {%if '/store/'|add:room_number|add:'/' != request.path %}
     <!-- <button id="back_btn_basehtml" type="button" onclick="history.back()" class="back-btn">
         <i class="bi bi-arrow-left-short"></i> 
         <span >Back</span>
@@ -10,8 +9,6 @@
 
     
     <!--another button-->
-    {%if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/bar/' in request.path or '/store/'|add:room_number|add:'/foods/outdoor_items/' in request.path %}  
-    {% with request.GET.urlencode as current_params %}
     
     <ul class="item-types">
 
@@ -32,7 +29,7 @@
         
         
         {% if business_type == 0 %}
-        {% if request.path != '/store/'|add:room_number|add:'/foods/bar/' %}
+        {% if '/foods/bar/' not in request.path %}
         
         <!-- veg category -->
         <li class="item-type veg {%if request.GET.item_type == 'Veg' %}active{%endif%}">
@@ -78,7 +75,7 @@
         </li>
     </ul>
 
-    {% endwith %} {%endif%} {%endif%}
+    
 </div>
 
 
