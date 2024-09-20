@@ -280,7 +280,8 @@ class HomeViewPage(TemplateView):
                 get_sub_category, many=True
             ).data
             context["items"] = items
-            context["room_id"] = room.id
+            context["room_id"] = pk
+            context["room_token"] = room.id
             context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
             # total item amount
             context["items_amount"] = amount
@@ -313,7 +314,6 @@ class OutdoorHomeViewPage(TemplateView):
             if pk:
                 try:
                     room = User.objects.get(outdoor_token=pk)
-                    print("outdoor_token ", room)
                     # check if anonymous id already exist
                     if 'anonymous_user_id' not in self.request.session:
                         self.request.session['anonymous_user_id'] = ''.join(random.choices(string.ascii_uppercase+string.digits, k=12))
@@ -1623,15 +1623,29 @@ class ValidateConfigStoreToken(APIView):
 # contact us static page
 def contact_us(request):
     room_id = request.GET.get('room_id')
-    user = User.objects.filter(outdoor_token=room_id)[0]
-    return render(request, 'navs/home/contact_us.html',{
-        'address': user.address,
-        'phone': user.phone,
-        'email': user.email,
-        'room_id': room_id,
-        'user': user,
-        'picture': user.picture.url
-    })
+    try:
+        # Attempt to find a user using the outdoor_token
+        user = User.objects.filter(outdoor_token=room_id).first()
+
+        if not user:
+            # If outdoor_token doesn't match, check against room_token
+            room = Room.objects.filter(room_token=room_id).first()
+            if room:
+                user = room.user
+
+        # If a user was found, fetch the terms
+        if user:
+            return render(request, 'navs/home/contact_us.html',{
+                'address': user.address,
+                'phone': user.phone,
+                'email': user.email,
+                'room_id': room_id,
+                'user': user,
+                'picture': user.picture.url
+            })
+        return render(request, 'navs/home/error.html')
+    except:
+        traceback.print_exc()
 
 
 def contact_send(request):
@@ -1677,77 +1691,130 @@ def contact_send(request):
 # terms and condition static page
 def terms_and_conditions(request):
     room_id = request.GET.get('room_id')
-    user = User.objects.filter(outdoor_token=room_id)[0]
-    terms = TermHeading.objects.get(user=user, page=0)
-    sub_terms = SubHeading.objects.filter(main=terms)
+    try:
+        # Attempt to find a user using the outdoor_token
+        user = User.objects.filter(outdoor_token=room_id).first()
 
-    return render(request, 'navs/home/terms_conditions.html', {
-        'main_title': terms.main_title,
-        'main_content': terms.main_content,
-        'sub_terms': sub_terms,
-        'email': user.email,
-        'address': user.address,
-        'room_id': room_id,
-        'user': user,
-        'picture': user.picture.url
-    })
+        if not user:
+            # If outdoor_token doesn't match, check against room_token
+            room = Room.objects.filter(room_token=room_id).first()
+            if room:
+                user = room.user
+
+        # If a user was found, fetch the terms
+        if user:
+            terms = TermHeading.objects.get(user=user, page=0)
+            sub_terms = SubHeading.objects.filter(main=terms)
+
+            return render(request, 'navs/home/terms_conditions.html', {
+                'main_title': terms.main_title,
+                'main_content': terms.main_content,
+                'sub_terms': sub_terms,
+                'email': user.email,
+                'address': user.address,
+                'room_id': room_id,
+                'user': user,
+                'picture': user.picture.url
+            })
+    except:
+        traceback.print_exc()
 
 
 # privacy policy static page
 def privacy_policy(request):
     room_id = request.GET.get('room_id')
-    user = User.objects.filter(outdoor_token=room_id)[0]
-    terms = TermHeading.objects.get(user=user, page=1)
-    sub_terms = SubHeading.objects.filter(main=terms)
+    try:
+        # Try to find the user using outdoor_token
+        user = User.objects.filter(outdoor_token=room_id).first()
 
-    return render(request, 'navs/home/privacy_policy.html', {
-        'main_title': terms.main_title,
-        'main_content': terms.main_content,
-        'sub_terms': sub_terms,
-        'email': user.email,
-        'address': user.address,
-        'room_id': room_id,
-        'user': user,
-        'picture': user.picture.url
-    })
+        if not user:
+            # If no user found with outdoor_token, check room_token
+            room = Room.objects.filter(room_token=room_id).first()
+            if room:
+                user = room.user
+
+        # If a user was found, fetch the privacy policy terms
+        if user:
+            terms = TermHeading.objects.get(user=user, page=1)
+            sub_terms = SubHeading.objects.filter(main=terms)
+
+
+        return render(request, 'navs/home/privacy_policy.html', {
+            'main_title': terms.main_title,
+            'main_content': terms.main_content,
+            'sub_terms': sub_terms,
+            'email': user.email,
+            'address': user.address,
+            'room_id': room_id,
+            'user': user,
+            'picture': user.picture.url
+        })
+    except:
+        traceback.print_exc()
 
 
 
 # shipping policy static page 
 def shipping_policy(request):
     room_id = request.GET.get('room_id')
-    user = User.objects.filter(outdoor_token=room_id)[0]
-    terms = TermHeading.objects.get(user=user, page=2)
-    sub_terms = SubHeading.objects.filter(main=terms)
+    try:
+        # check user using outdoor_token
+        user = User.objects.filter(outdoor_token=room_id).first()
 
-    return render(request, 'navs/home/shipping_policy.html', {
-        'main_title': terms.main_title,
-        'main_content': terms.main_content,
-        'sub_terms': sub_terms,
-        'email': user.email,
-        'room_id': room_id,
-        'user': user,
-        'picture': user.picture.url
-    })
+        if not user:
+            # check user using room_token
+            room = Room.objects.filter(room_token=room_id).first()
+            if room:
+                user = room.user
+
+        #  fetch the privacy policy terms
+        if user:
+            terms = TermHeading.objects.get(user=user, page=2)
+            sub_terms = SubHeading.objects.filter(main=terms)
+
+        return render(request, 'navs/home/shipping_policy.html', {
+            'main_title': terms.main_title,
+            'main_content': terms.main_content,
+            'sub_terms': sub_terms,
+            'email': user.email,
+            'room_id': room_id,
+            'user': user,
+            'picture': user.picture.url
+        })
+    except:
+        traceback.print_exc()
 
 
 
 # cancel refund static page
 def cancel_refund(request):
     room_id = request.GET.get('room_id')
-    user = User.objects.filter(outdoor_token=room_id)[0]
-    terms = TermHeading.objects.get(user=user, page=3)
-    sub_terms = SubHeading.objects.filter(main=terms)
+    try:
+        # Try to find the user using outdoor_token
+        user = User.objects.filter(outdoor_token=room_id).first()
 
-    return render(request, 'navs/home/cancel_refund.html', {
-        'main_title': terms.main_title,
-        'main_content': terms.main_content,
-        'sub_terms': sub_terms,
-        'email': user.email,
-        'room_id': room_id,
-        'user': user,
-        'picture': user.picture.url
-    })
+        if not user:
+            # If no user found with outdoor_token, check room_token
+            room = Room.objects.filter(room_token=room_id).first()
+            if room:
+                user = room.user
+
+        # If a user was found, fetch the privacy policy terms
+        if user:
+            terms = TermHeading.objects.get(user=user, page=3)
+            sub_terms = SubHeading.objects.filter(main=terms)
+
+        return render(request, 'navs/home/cancel_refund.html', {
+            'main_title': terms.main_title,
+            'main_content': terms.main_content,
+            'sub_terms': sub_terms,
+            'email': user.email,
+            'room_id': room_id,
+            'user': user,
+            'picture': user.picture.url
+        })
+    except:
+        traceback.print_exc()
 
 
 

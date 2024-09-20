@@ -56,21 +56,35 @@
 
     {% if request.path == '/store/'|add:room_id|add:'/foods/outdoor_items/' %} 
         {% include 'includes/outdoor_menu.html' %} 
+
     {% elif request.path == '/contact-us/' %} 
         {% include 'includes/outdoor_menu.html' %} 
-    {% elif request.path == '/terms-and-conditions/'%} 
+        
+    {% elif request.path == '/terms-and-conditions/' %} 
         {% include 'includes/outdoor_menu.html' %} 
+
     {% elif request.path == '/shipping-policy/' %} 
         {% include 'includes/outdoor_menu.html' %} 
+
     {% elif request.path == '/privacy-policy/' %} 
         {% include 'includes/outdoor_menu.html' %} 
+
     {% elif request.path == '/cancel-refund-policy/' %} 
         {% include 'includes/outdoor_menu.html' %} 
+
     {% elif '/outdoor_order_status/' in request.path %} 
-        {% include 'includes/outdoor_menu.html' %} 
+        {% include 'includes/outdoor_menu.html' %}
+
+    {% elif '/store/' in request.path and '/foods/items/' in request.path %} 
+        {% with room_token=request.path|slice:"7:37" %} 
+            {% include 'includes/menu.html' with room_token=room_token %} 
+        {% endwith %}
+        
     {% else %} 
         {% include 'includes/menu.html' %} 
     {% endif %}
+
+
 
     <main class="content">
         {% include 'includes/sub_menu.html' %} {% block content %} {% endblock %}
