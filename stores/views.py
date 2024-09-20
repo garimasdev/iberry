@@ -1071,9 +1071,8 @@ class OutdoorOrderModelView(APIView):
 
                 for cart in cart_items:
                     item = cart.item
-                    # we need to get the item from Item model for above  item
                     quantity = cart.quantity
-                    # here we need to update the qty of that object of Item model and save it
+                    # Update the quantity in the Item model
                     item.quantity -= quantity
                     item.save()
                     total_amount += cart.price * quantity
@@ -1152,6 +1151,9 @@ def PlaceOrderAPIView(request):
                     for cart in cart_items:
                         item = cart.item
                         quantity = cart.quantity
+                        # Update the quantity in the Item model
+                        item.quantity -= quantity
+                        item.save()
                         total_amount += cart.price * quantity
                         overall_tax += (item.tax_rate / 100) * (cart.price * quantity)
                         order_item = OrderItem.objects.create(
