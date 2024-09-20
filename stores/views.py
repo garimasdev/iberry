@@ -290,6 +290,7 @@ class HomeViewPage(TemplateView):
             context["total_price"] = total_price_including_tax
             context["logo"] = room.user.picture.url
             context["hotel_name"] = room.user.username
+            context["business_type"] = room.user.business_type
 
             return context
         except:
