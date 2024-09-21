@@ -628,7 +628,7 @@ class BarPageView(TemplateView):
         else:
             raise Http404("Store does not exist.")
 
-        get_category = Category.objects.filter(user=room.user, name="Bar")
+        get_category = Category.objects.filter(user=room.user, name__icontains="Bar")
         # Filter Item by Category
         if sub_category_filter:
             try:
