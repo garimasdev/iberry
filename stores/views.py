@@ -120,6 +120,8 @@ class ModulesViewPage(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # context['callfrom'] = 'indoor'
+        # context['room_number'] = kwargs.get('room_token')
         return context
 
 
@@ -280,6 +282,7 @@ class HomeViewPage(TemplateView):
                 get_sub_category, many=True
             ).data
             context["items"] = items
+            context['callfrom'] = 'indoor'
             context["room_id"] = pk
             context["room_token"] = room.id
             context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
@@ -389,6 +392,7 @@ class OutdoorHomeViewPage(TemplateView):
             ).data
             outdoor_token = User.objects.get(outdoor_token=pk)
             context['user'] = room
+            context['callfrom'] = 'outdoor'
             context['phone'] = outdoor_token.phone
             context["items"] = items
             context["room_id"] = pk
@@ -1610,15 +1614,18 @@ class ValidateConfigStoreToken(APIView):
 # contact us static page
 def contact_us(request):
     room_id = request.GET.get('room_id')
+    callfrom = None
     try:
         # Attempt to find a user using the outdoor_token
         user = User.objects.filter(outdoor_token=room_id).first()
+        callfrom = 'outdoor'
 
         if not user:
             # If outdoor_token doesn't match, check against room_token
             room = Room.objects.filter(room_token=room_id).first()
             if room:
                 user = room.user
+                callfrom= 'indoor'
 
         # If a user was found, fetch the terms
         if user:
@@ -1627,6 +1634,8 @@ def contact_us(request):
                 'phone': user.phone,
                 'email': user.email,
                 'room_id': room_id,
+                'room_number': room_id,
+                'callfrom': callfrom,
                 'user': user,
                 'picture': user.picture.url
             })
@@ -1678,15 +1687,18 @@ def contact_send(request):
 # terms and condition static page
 def terms_and_conditions(request):
     room_id = request.GET.get('room_id')
+    callfrom = None
     try:
         # Attempt to find a user using the outdoor_token
         user = User.objects.filter(outdoor_token=room_id).first()
+        callfrom = 'outdoor'
 
         if not user:
             # If outdoor_token doesn't match, check against room_token
             room = Room.objects.filter(room_token=room_id).first()
             if room:
                 user = room.user
+                callfrom = 'indoor'
 
         # If a user was found, fetch the terms
         if user:
@@ -1700,6 +1712,8 @@ def terms_and_conditions(request):
                 'email': user.email,
                 'address': user.address,
                 'room_id': room_id,
+                'callfrom': callfrom,
+                'room_number': room_id,
                 'user': user,
                 'picture': user.picture.url
             })
@@ -1710,15 +1724,18 @@ def terms_and_conditions(request):
 # privacy policy static page
 def privacy_policy(request):
     room_id = request.GET.get('room_id')
+    callfrom = None
     try:
         # Try to find the user using outdoor_token
         user = User.objects.filter(outdoor_token=room_id).first()
+        callfrom = 'outdoor'
 
         if not user:
             # If no user found with outdoor_token, check room_token
             room = Room.objects.filter(room_token=room_id).first()
             if room:
                 user = room.user
+                callfrom = 'indoor'
 
         # If a user was found, fetch the privacy policy terms
         if user:
@@ -1733,6 +1750,8 @@ def privacy_policy(request):
             'email': user.email,
             'address': user.address,
             'room_id': room_id,
+            'room_number': room_id,
+            'callfrom': callfrom,
             'user': user,
             'picture': user.picture.url
         })
@@ -1744,15 +1763,18 @@ def privacy_policy(request):
 # shipping policy static page 
 def shipping_policy(request):
     room_id = request.GET.get('room_id')
+    callfrom = None
     try:
         # check user using outdoor_token
         user = User.objects.filter(outdoor_token=room_id).first()
+        callfrom = 'outdoor'
 
         if not user:
             # check user using room_token
             room = Room.objects.filter(room_token=room_id).first()
             if room:
                 user = room.user
+                callfrom = 'indoor'
 
         #  fetch the privacy policy terms
         if user:
@@ -1765,6 +1787,8 @@ def shipping_policy(request):
             'sub_terms': sub_terms,
             'email': user.email,
             'room_id': room_id,
+            'room_number': room_id,
+            'callfrom': callfrom,
             'user': user,
             'picture': user.picture.url
         })
@@ -1776,15 +1800,18 @@ def shipping_policy(request):
 # cancel refund static page
 def cancel_refund(request):
     room_id = request.GET.get('room_id')
+    callfrom = None
     try:
         # Try to find the user using outdoor_token
         user = User.objects.filter(outdoor_token=room_id).first()
+        callfrom = 'outdoor'
 
         if not user:
             # If no user found with outdoor_token, check room_token
             room = Room.objects.filter(room_token=room_id).first()
             if room:
                 user = room.user
+                callfrom = 'indoor'
 
         # If a user was found, fetch the privacy policy terms
         if user:
@@ -1797,6 +1824,8 @@ def cancel_refund(request):
             'sub_terms': sub_terms,
             'email': user.email,
             'room_id': room_id,
+            'room_number': room_id,
+            'callfrom': callfrom,
             'user': user,
             'picture': user.picture.url
         })

@@ -12,6 +12,8 @@
     
     <ul class="item-types">
         
+        {% if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/outdoor_items/' in request.path %}
+
         <!-- search box -->
         <li class="search-box-item">
             <div class="search-container">
@@ -25,7 +27,7 @@
                 </form>
             </div>
         </li>
-        
+    {%endif%}        
         
         {% if business_type == 0 %}
         {% if '/foods/bar/' not in request.path %}
@@ -60,6 +62,7 @@
         {%endif%}
         {%endif%}
         
+        {% if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/outdoor_items/' in request.path %}
         <!-- Day Deal category -->
         <li class="item-type day-deal {%if request.GET.item_type == 'Day Deal' %}active{%endif%}">
             <a href="{%if request.GET %}
@@ -72,6 +75,7 @@
                 <span>Day Deal</span>
             </a>
         </li>
+        {%endif%}
     </ul>
 
     
