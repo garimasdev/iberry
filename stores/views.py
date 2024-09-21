@@ -221,9 +221,7 @@ class HomeViewPage(TemplateView):
             else:
                 raise Http404("Store does not exist.")
 
-            get_categories = Category.objects.filter(user=room.user).exclude(
-                name__in=["Bar"]
-            )
+            get_categories = Category.objects.filter(user=room.user).exclude(Q(name__icontains='bar'))
             # Filter Item by Sub Category
             if sub_category_filter:
                 try:
@@ -241,9 +239,7 @@ class HomeViewPage(TemplateView):
             # Filter Item by Category
             elif category_filter:
                 try:
-                    category = Category.objects.filter(
-                        user=room.user, name=category_filter
-                    ).exclude(name__in=["Bar"])
+                    category = Category.objects.filter(user=room.user, name=category_filter).exclude(Q(name__icontains='bar'))
                     get_sub_category = SubCategory.objects.filter(category=category[0])
 
                     if item_type:
@@ -276,7 +272,11 @@ class HomeViewPage(TemplateView):
 
             # amounts = sum(item.price * item.quantity for item in get_cart_items)
             context["categories"] = FoodCategoriesSerializer(
-                get_categories.exclude(name__in=["Bar", "Veg", "Non Veg"]), many=True
+                 get_categories.exclude(
+                    Q(name__icontains='bar') | 
+                    Q(name__icontains='veg') | 
+                    Q(name__icontains='non veg')
+                ),  many=True
             ).data
             context["sub_categories"] = FoodSubCategoriesSerializer(
                 get_sub_category, many=True
@@ -332,9 +332,7 @@ class OutdoorHomeViewPage(TemplateView):
             else:
                 raise Http404("Store does not exist.")
 
-            get_categories = Category.objects.filter(user=room).exclude(
-                name__in=["Bar"]
-            )
+            get_categories = Category.objects.filter(user=room).exclude(Q(name__icontains='bar'))
             # Filter Item by Sub Category
             if sub_category_filter:
                 try:
@@ -353,7 +351,7 @@ class OutdoorHomeViewPage(TemplateView):
             # Filter Item by Category
             elif category_filter:
                 try:
-                    category = Category.objects.filter(user=room, name=category_filter).exclude(name__in=["Bar"])
+                    category = Category.objects.filter(user=room, name=category_filter).exclude(Q(name__icontains='bar'))
                     get_sub_category = SubCategory.objects.filter(category=category[0])
 
                     if item_type:
@@ -385,7 +383,11 @@ class OutdoorHomeViewPage(TemplateView):
 
 
             context["categories"] = FoodCategoriesSerializer(
-                get_categories.exclude(name__in=["Bar", "Veg", "Non Veg"]), many=True
+                get_categories.exclude(
+                    Q(name__icontains='bar') | 
+                    Q(name__icontains='veg') | 
+                    Q(name__icontains='non veg')
+                ), many=True
             ).data
             context["sub_categories"] = FoodSubCategoriesSerializer(
                 get_sub_category, many=True
