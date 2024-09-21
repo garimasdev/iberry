@@ -185,12 +185,12 @@ class FoodsPageView(TemplateView):
 
         if room and flag is False:
             try:
-                bar_enabled = Category.objects.filter(user=room.user, name="Bar").exists()
+                bar_enabled = Category.objects.filter(user=room.user, name__icontains="Bar").exists()
             except Category.DoesNotExist:
                 bar_enabled = False
         else:
             try:
-                bar_enabled = Category.objects.filter(user=room, name="Bar").exists()
+                bar_enabled = Category.objects.filter(user=room, name__icontains="Bar").exists()
             except Category.DoesNotExist:
                 bar_enabled = False
 
