@@ -104,13 +104,7 @@
     {%endwith%}
 
     {% elif '/outdoor_order_status/' in request.path %} 
-    {% with request.GET as params %}
-        {% if params.callfrom == 'outdoor' %}
-            {% include 'includes/outdoor_menu.html' %} 
-        {% else %}
-            {% include 'includes/menu.html' %} 
-        {%endif%}
-    {%endwith%}
+        {% include 'includes/outdoor_menu.html' %} 
 
     {% elif '/store/' in request.path and '/foods/items/' in request.path %} 
         {% with room_token=request.path|slice:"7:37" %} 
