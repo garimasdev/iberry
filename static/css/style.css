@@ -436,7 +436,7 @@ h6 {
     font-family: cursive;
 }
 
-@media (max-width: 990px) {
+@media (max-width: 800px) {
     .logo span {
         font-size: 30px; /* Adjust the font size for better visibility */
         text-align: center; /* Center the text */
