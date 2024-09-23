@@ -107,9 +107,7 @@
         {% include 'includes/outdoor_menu.html' %} 
 
     {% elif '/store/' in request.path and '/foods/items/' in request.path %} 
-        {% with room_token=request.path|slice:"7:37" %} 
-            {% include 'includes/menu.html' with room_token=room_token %} 
-        {% endwith %}
+        {% include 'includes/menu.html' %} 
         
     {% else %} 
         {% include 'includes/menu.html' %} 

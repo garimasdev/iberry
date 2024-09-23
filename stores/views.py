@@ -121,7 +121,7 @@ class ModulesViewPage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # context['callfrom'] = 'indoor'
-        # context['room_number'] = kwargs.get('room_token')
+        context['room_number'] = kwargs.get('room_token')
         return context
 
 
@@ -197,6 +197,7 @@ class FoodsPageView(TemplateView):
         if flag is True:
             context['outdoor_token'] = True
         context["bar_enabled"] = bar_enabled
+        context["room_number"] = kwargs.get("room_token")
         return context
 
 
@@ -213,6 +214,7 @@ class HomeViewPage(TemplateView):
             get_sub_category = None
             search = self.request.GET.get("q")
             pk = self.kwargs.get("room_token")
+            print(pk)
             if pk:
                 try:
                     room = Room.objects.get(room_token=pk)
@@ -284,6 +286,7 @@ class HomeViewPage(TemplateView):
             context["items"] = items
             context['callfrom'] = 'indoor'
             context["room_id"] = pk
+            context["room_number"] = pk
             context["room_token"] = room.id
             context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
             # total item amount
@@ -663,6 +666,7 @@ class BarPageView(TemplateView):
         context["room_id"] = room.id
         context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
         context["total_price"] = amounts
+        context["room_number"] = pk
         return context
 
 
@@ -1301,6 +1305,7 @@ class ServicesPageView(TemplateView):
         context["room_id"] = room.id
         context["cart_items"] = GetServiceCartSerializer(get_cart_items, many=True).data
         context["total_price"] = amounts
+        context["room_number"] = pk
         return context
 
 
@@ -1336,6 +1341,7 @@ class ComplainCreateView(CreateView):
             raise Http404("Room does not exist.")
 
         context["room_id"] = room.id
+        context["room_number"] = pk
         return context
 
     def get_success_url(self):
