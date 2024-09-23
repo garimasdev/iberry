@@ -416,6 +416,7 @@ h6 {
 
 .logo {
     line-height: 1;
+    margin: 10px auto -6px;
 }
 
 /* @media (min-width: 1200px) {
@@ -430,15 +431,17 @@ h6 {
 }
 
 .logo span {
-    font-size: 30px;
+    font-size: 35px;
     font-weight: 700;
     color: #012970;
-    font-family: cursive;
+    font-family: "Great Vibes", cursive;
+    font-weight: 400;
+    font-style: normal;
 }
 
 @media (max-width: 800px) {
     .logo span {
-        font-size: 30px; /* Adjust the font size for better visibility */
+        font-size: 35px; /* Adjust the font size for better visibility */
         text-align: center; /* Center the text */
     }
 
@@ -450,8 +453,15 @@ h6 {
 
     .logo {
         width: auto; /* Allow automatic width */
-        margin: 0 auto; /* Center the logo */
+        margin: 10px auto -6px; /* Center the logo */
     }
+}
+
+.logo-active {
+    color: gray;
+    font-family: serif;
+    font-size: smaller;
+    text-decoration: underline;
 }
 
 
