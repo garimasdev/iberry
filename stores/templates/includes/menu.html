@@ -1,19 +1,18 @@
 <link rel="stylesheet" type="text/css" href="/static/css/includes/menu.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <nav id="header" class="header fixed-top d-flex align-items-center">
-  <div
-    class="d-flex align-items-center justify-content-between menu-first-part"
-  >
+  <div class="align-items-center justify-content-between menu-first-part" style="text-align: center;">
   <!-- logo display -->
+  <div style="display: flex;">
     <a href="/" class="logo d-flex align-items-center">
-      <!-- <img src="{{logo}}" alt="" /> -->
-      <span class="d-none d-lg-block menu-title">{{hotel_name|title}}</span>
+        <!-- <img src="{{logo}}" alt="" /> -->
+        <span class="d-lg-block menu-title">{{hotel_name|title}}</span>
     </a>
-    <!-- <form action="" method="get" class="search-box">
-      {% csrf_token %}
-      <i class="bi bi-search"></i>
-      <input type="text" class="search-text" name="q" placeholder="Search" />
-    </form> -->
+  </div>
+  <div>
+    <span style="font-size: xx-small; color: gray;">
+      <a href="https://iberrywifisecurity.com/" target="_blank" style="color: gray;">Powered by Iberry WiFi</a> </span>
+  </div>  
   </div>
   <!-- End Logo -->
 
