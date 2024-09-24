@@ -121,7 +121,10 @@ class ModulesViewPage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # context['callfrom'] = 'indoor'
-        context['room_number'] = kwargs.get('room_token')
+        room_token = kwargs.get('room_token')
+        room = Room.objects.get(room_token=room_token)
+        context['room_number'] = room_token
+        context["hotel_name"] = room.user.username
         return context
 
 
