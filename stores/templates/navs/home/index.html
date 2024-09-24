@@ -5,8 +5,7 @@
 <link rel="stylesheet" href="/static/css/foods/style.css">
 <link rel="stylesheet" href="/static/css/foods/categories.css">
 <link rel="stylesheet" href="/static/css/foods/item.css">
-<link rel="stylesheet" href="/static/css/foods/float_cart.css"
-/>
+<link rel="stylesheet" href="/static/css/foods/float_cart.css"/>
 <link rel="stylesheet" href="/static/css/foods/cart.css"> {% endblock stylesheets %} {% block content %}
 
 <section class="main-section">
@@ -101,7 +100,6 @@
                         </div>
                         <div class="modal-footer">
                             {% if item.quantity >= 1 %}
-                            {{room_id}}
                                 <button class="add-to-cart cart-btn" id="{{item.id}}" room_id="{{room_token}}" token="{{csrf_token}}">Add to Cart</button> 
                             {%endif%}
                         </div>

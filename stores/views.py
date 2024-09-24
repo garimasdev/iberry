@@ -1370,7 +1370,7 @@ class ComplainDetailsView(TemplateView):
             raise Http404("Complaint does not exist.")
         
         complaint_url = f'{self.request.scheme}://{self.request.get_host()}/dashboard/complaints/'
-        message = f'You have received the complaint from {room_token}. View the complaint here: \n<a href="{complaint_url}">Click here</a>'
+        message = f'You have received the complaint from {room.room_number}. View the complaint here: \n<a href="{complaint_url}">Click here</a>'
         telegram_notification(room.user.channel_name, room.user.bot_token, message)
 
 
