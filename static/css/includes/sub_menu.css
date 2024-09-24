@@ -54,8 +54,9 @@
 }
 
 .top-back-and-types .item-types .item-type span {
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 900;
+    font-family: cursive;
 }
 
 .top-back-and-types .item-types .item-type.veg svg {
