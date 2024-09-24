@@ -213,8 +213,7 @@ class HomeViewPage(TemplateView):
             item_type = self.request.GET.get("item_type")
             get_sub_category = None
             search = self.request.GET.get("q")
-            pk = self.kwargs.get("room_token")
-            print(pk)
+            pk = self.kwargs.get("room_token") 
             if pk:
                 try:
                     room = Room.objects.get(room_token=pk)
@@ -727,57 +726,60 @@ class CartModelView(viewsets.ModelViewSet):
         return instance.id
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        item_id = self.request.POST.get("item")
-        price_id = self.request.POST.get("price")
-        room_id = self.request.POST.get("room")
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            item_id = self.request.POST.get("item")
+            price_id = self.request.POST.get("price")
+            room_id = self.request.POST.get("room")
 
-        item = Item.objects.get(id=item_id)
-        price = 0
-        if int(price_id) > 1:
-            get_price = Price.objects.get(id=price_id)
-            if get_price.sell_price:
-                price = get_price.sell_price
+            item = Item.objects.get(id=item_id)
+            price = 0
+            if int(price_id) > 1:
+                get_price = Price.objects.get(id=price_id)
+                if get_price.sell_price:
+                    price = get_price.sell_price
+                else:
+                    price = get_price.price
             else:
-                price = get_price.price
-        else:
-            get_price = item.prices.first()
-            if get_price.sell_price:
-                price = get_price.sell_price
-            else:
-                price = get_price.price
+                get_price = item.prices.first()
+                if get_price.sell_price:
+                    price = get_price.sell_price
+                else:
+                    price = get_price.price
 
-        additional_data = {
-            "price": price,
-        }
-        for key, value in additional_data.items():
-            serializer.validated_data[key] = value
+            additional_data = {
+                "price": price,
+            }
+            for key, value in additional_data.items():
+                serializer.validated_data[key] = value
 
-        object_id = self.perform_create(serializer)
-        room = Room.objects.get(id=room_id)
-        get_cart_items = Cart.objects.filter(room=room)
+            object_id = self.perform_create(serializer)
+            room = Room.objects.get(id=room_id)
+            get_cart_items = Cart.objects.filter(room=room)
 
-        # Calculate total price and total items excluding tax(before checkout)
-        amount = sum(item.price * item.quantity for item in get_cart_items)
-        # calculate total gst tax for each item
-        total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
-        # calculate total amount including tax (checkout)
-        total_price_including_tax = amount + total_tax
-        # calculate total no of items(quantity items)
-        total_items = sum(item.quantity for item in get_cart_items)
-        
-        # total_items = sum(item.quantity for item in cart_items)
-        # amounts = sum(item.price * item.quantity for item in cart_items)
-        extra_data = {
-            "id": object_id,
-            "items_amount": amount,
-            "total_items": total_items,
-            "total_tax": total_tax,
-            "total_price": total_price_including_tax,
-        }
+            # Calculate total price and total items excluding tax(before checkout)
+            amount = sum(item.price * item.quantity for item in get_cart_items)
+            # calculate total gst tax for each item
+            total_tax = round(sum((item.item.tax_rate / 100) * (item.price * item.quantity) for item in get_cart_items), 2)
+            # calculate total amount including tax (checkout)
+            total_price_including_tax = amount + total_tax
+            # calculate total no of items(quantity items)
+            total_items = sum(item.quantity for item in get_cart_items)
+            
+            # total_items = sum(item.quantity for item in cart_items)
+            # amounts = sum(item.price * item.quantity for item in cart_items)
+            extra_data = {
+                "id": object_id,
+                "items_amount": amount,
+                "total_items": total_items,
+                "total_tax": total_tax,
+                "total_price": total_price_including_tax,
+            }
 
-        return Response(extra_data, status=status.HTTP_201_CREATED)
+            return Response(extra_data, status=status.HTTP_201_CREATED)
+        except:
+            traceback.print_exc()
 
     
     # decrease items in cart
@@ -1396,25 +1398,28 @@ class ServiceCartModelView(viewsets.ModelViewSet):
         return object_id
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        get_qunatity = self.request.POST.get("qunatity")
-        get_price = self.request.POST.get("price")
-        room_id = self.request.POST.get("room")
-        new_price = int(get_qunatity) * int(get_price)
-        serializer.validated_data["price"] = new_price
-        object_id = self.perform_create(serializer)
-        room = Room.objects.get(id=room_id)
-        cart_items = ServiceCart.objects.filter(room=room)
-        amounts = sum(item.service.price * 1 for item in cart_items)
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            get_qunatity = self.request.POST.get("qunatity")
+            get_price = self.request.POST.get("price")
+            room_id = self.request.POST.get("room")
+            new_price = int(get_qunatity) * int(get_price)
+            serializer.validated_data["price"] = new_price
+            object_id = self.perform_create(serializer)
+            room = Room.objects.get(id=room_id)
+            cart_items = ServiceCart.objects.filter(room=room)
+            amounts = sum(item.service.price * 1 for item in cart_items)
 
-        extra_data = {
-            "id": object_id,
-            "total_price": amounts,
-            "total_items": cart_items.count(),
-        }
+            extra_data = {
+                "id": object_id,
+                "total_price": amounts,
+                "total_items": cart_items.count(),
+            }
 
-        return Response(extra_data, status=status.HTTP_201_CREATED)
+            return Response(extra_data, status=status.HTTP_201_CREATED)
+        except:
+            traceback.print_exc()
 
    
     # decrement item in cart
@@ -1474,79 +1479,85 @@ class ServiceOrderPlaceAPIView(APIView):
     serializer_class = CustomOrderSerializer
 
     def post(self, request, format=None):
-        serializer = CustomOrderSerializer(data=request.data)
-        if serializer.is_valid():
-            room = Room.objects.get(id=serializer.data["room"])
-            cart_items = ServiceCart.objects.filter(room=room)
-            if cart_items:
-                order_id = str(uuid.uuid4().int & (10**8 - 1))
-                order = ServiceOrder.objects.create(order_id=order_id, room=room)
-                order.save()
-                total_amount = 0
-                for cart in cart_items:
-                    service = cart.service
-                    quantity = cart.quantity
-                    total_amount += cart.service.price * quantity
-                    order_service = ServiceOrderItem.objects.create(
-                        order=order,
-                        service=service,
-                        quantity=quantity,
-                        price=cart.price,
+        try:
+            serializer = CustomOrderSerializer(data=request.data)
+            if serializer.is_valid():
+                room = Room.objects.get(id=serializer.data["room"])
+                cart_items = ServiceCart.objects.filter(room=room)
+                if cart_items:
+                    order_id = str(uuid.uuid4().int & (10**8 - 1))
+                    order = ServiceOrder.objects.create(order_id=order_id, room=room)
+                    order.save()
+                    total_amount = 0
+                    for cart in cart_items:
+                        service = cart.service
+                        quantity = cart.quantity
+                        total_amount += cart.service.price * quantity
+                        order_service = ServiceOrderItem.objects.create(
+                            order=order,
+                            service=service,
+                            quantity=quantity,
+                            price=cart.price,
+                        )
+                        order.services.add(order_service)
+
+                    order.total_price = total_amount
+                    order.save()
+                    cart_items.delete()
+                    
+                    # Send push notification
+                    try:
+                        message = f'A new room order received'
+                        title = 'Room Order received'
+                        token = room.user.firebase_token
+                        firebase_status = push_notification(message, title, token)
+                    except:
+                        traceback.print_exc()
+
+                    # # telegram notification for service received 
+                    service_url = f'{request.scheme}://{request.get_host()}/dashboard/services/orders/'
+                    message = f'You have received the service from {room.room_token}. View the service here: \n<a href="{service_url}">Click here</a>'
+                    telegram_notification(room.user.channel_name, room.user.bot_token, message)
+
+                    return Response(
+                        {
+                            "success": "Order has been Placed.",
+                            "room_id": room.room_token,
+                            "order_id": order_id,
+                        },
+                        status=status.HTTP_201_CREATED,
                     )
-                    order.services.add(order_service)
+                else:
+                    return Response(
+                        {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
+                    )
 
-                order.total_price = total_amount
-                order.save()
-                cart_items.delete()
-                
-                # Send push notification
-                try:
-                    message = f'A new room order received'
-                    title = 'Room Order received'
-                    token = room.user.firebase_token
-                    firebase_status = push_notification(message, title, token)
-                except:
-                    traceback.print_exc()
-
-                # # telegram notification for service received 
-                service_url = f'{request.scheme}://{request.get_host()}/dashboard/services/orders/'
-                message = f'You have received the service from {room.room_token}. View the service here: \n<a href="{service_url}">Click here</a>'
-                telegram_notification(room.user.channel_name, room.user.bot_token, message)
-
-                return Response(
-                    {
-                        "success": "Order has been Placed.",
-                        "room_id": room.room_token,
-                        "order_id": order_id,
-                    },
-                    status=status.HTTP_201_CREATED,
-                )
-            else:
-                return Response(
-                    {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
-                )
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            traceback.print_exc()
 
 
 class ServiceOrderStatusViewPage(TemplateView):
     template_name = "navs/service/service_order_status.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        room_token = self.kwargs.get("room_token")
-        order_id = self.kwargs.get("order_id")
-        if room_token and order_id:
-            try:
-                order = ServiceOrder.objects.get(order_id=order_id)
-            except ServiceOrder.DoesNotExist:
+        try:
+            context = super().get_context_data(**kwargs)
+            room_token = self.kwargs.get("room_token")
+            order_id = self.kwargs.get("order_id")
+            if room_token and order_id:
+                try:
+                    order = ServiceOrder.objects.get(order_id=order_id)
+                except ServiceOrder.DoesNotExist:
+                    raise Http404("Order does not exist.")
+            else:
                 raise Http404("Order does not exist.")
-        else:
-            raise Http404("Order does not exist.")
 
-        context["order"] = ServiceOrdersSerializer(order).data
+            context["order"] = ServiceOrdersSerializer(order).data
 
-        return context
+            return context
+        except:
+            traceback.print_exc()
 
 
 class ServiceOrderModelView(viewsets.ModelViewSet):

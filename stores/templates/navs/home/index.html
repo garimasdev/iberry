@@ -47,7 +47,8 @@
                 {% endwith %}
             </div>
             <button class="cart-view" data-bs-toggle="modal" data-bs-target="#add-to-cart-{{item.id}}"><i class="bi bi-plus-circle"></i></button>
-            <!-- Modal -->
+            
+            <!-- Add to Cart Modal -->
             <div class="modal fade" id="add-to-cart-{{item.id}}" tabindex="-1" aria-labelledby="add-to-cart" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -100,7 +101,8 @@
                         </div>
                         <div class="modal-footer">
                             {% if item.quantity >= 1 %}
-                                <button class="add-to-cart cart-btn" id="{{item.id}}" room_id="{{room_id}}" token="{{csrf_token}}">Add to Cart</button> 
+                            {{room_id}}
+                                <button class="add-to-cart cart-btn" id="{{item.id}}" room_id="{{room_token}}" token="{{csrf_token}}">Add to Cart</button> 
                             {%endif%}
                         </div>
                     </div>
@@ -143,7 +145,7 @@
             <p class="total_tax" style=" margin: 5px 0;">Overall Tax: <strong>₹ {{ total_tax }}</strong></p>
             <!-- <p>Delivery Charge: <strong>₹ {{ delivery_charge }}</strong></p> -->
         </div>
-        <button class="place-order" room_id="{{room_id}}">
+        <button class="place-order" room_id="{{room_token}}">
             <span class="checkout">Checkout</span> 
             <span class="total_price">₹ {{total_price}}</span>
         </button>
