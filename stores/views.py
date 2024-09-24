@@ -200,7 +200,8 @@ class FoodsPageView(TemplateView):
         if flag is True:
             context['outdoor_token'] = True
         context["bar_enabled"] = bar_enabled
-        context["room_number"] = kwargs.get("room_token")
+        context["room_number"] = pk
+        context['hotel_name'] = room.user.username
         return context
 
 
@@ -669,6 +670,7 @@ class BarPageView(TemplateView):
         context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
         context["total_price"] = amounts
         context["room_number"] = pk
+        context['hotel_name'] = room.user.username
         return context
 
 
@@ -1311,6 +1313,8 @@ class ServicesPageView(TemplateView):
         context["cart_items"] = GetServiceCartSerializer(get_cart_items, many=True).data
         context["total_price"] = amounts
         context["room_number"] = pk
+        context["hotel_name"] = room.user.username
+
         return context
 
 
@@ -1347,6 +1351,7 @@ class ComplainCreateView(CreateView):
 
         context["room_id"] = room.id
         context["room_number"] = pk
+        context["hotel_name"] = room.user.username
         return context
 
     def get_success_url(self):
@@ -1393,7 +1398,11 @@ class ServiceCartModelView(viewsets.ModelViewSet):
     serializer_class = ServiceCartSerializer
 
     def get_queryset(self):
-        return ServiceCart.objects.all()
+        room_id = self.request.query_params.get("room_id")
+        if room_id:
+            return ServiceCart.objects.filter(room=room_id)
+        else:
+            return ServiceCart.objects.all()
 
     def perform_create(self, serializer):
         instance = serializer.save()
@@ -1407,6 +1416,8 @@ class ServiceCartModelView(viewsets.ModelViewSet):
             get_qunatity = self.request.POST.get("qunatity")
             get_price = self.request.POST.get("price")
             room_id = self.request.POST.get("room")
+
+
             new_price = int(get_qunatity) * int(get_price)
             serializer.validated_data["price"] = new_price
             object_id = self.perform_create(serializer)

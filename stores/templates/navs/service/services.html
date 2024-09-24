@@ -2,6 +2,11 @@
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
+<!-- google fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,500&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="/static/css/foods/style.css">
 <link rel="stylesheet" href="/static/css/foods/categories.css">
 <link rel="stylesheet" href="/static/css/foods/cart.css">
@@ -102,7 +107,10 @@
             </li>
             {%endfor%}
         </ul>
-        <button class="place-order" room_id="{{room_id}}"><span class="checkout">Checkout</span> <span class="total_price">₹ {{total_price}}</span></button>
+        <button class="place-order" room_id="{{room_id}}">
+            <span class="checkout">Checkout</span> 
+            <span class="total_price">₹ {{total_price}}</span>
+        </button>
 
     </aside>
 
