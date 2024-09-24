@@ -91,11 +91,11 @@ $(document).ready(function() {
     $(document).on("click", ".place-order", function(e) {
         e.preventDefault();
         const roomId = $(this).attr("room_id");
-        const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        // const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
         $.ajax({
-            headers: {
-                "X-CSRFToken": token
-            },
+            // headers: {
+            //     "X-CSRFToken": token
+            // },
             type: "POST",
             url: "/service-order/",
             contentType: 'application/json',

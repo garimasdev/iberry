@@ -1,3 +1,4 @@
+from inspect import trace
 import json
 import os
 import string
@@ -1256,6 +1257,7 @@ class OutdoorOrderStatusViewPage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         room_token = self.kwargs.get("room_token")
+        room = Room.objects.get(room_token=room_token)
         order_id = self.kwargs.get("order_id")
         if room_token and order_id:
             try:
@@ -1267,6 +1269,7 @@ class OutdoorOrderStatusViewPage(TemplateView):
 
         context['order'] = FoodOutdoorOrdersSerializer(order).data
         context['room_id'] = room_token
+        context['hotel_name'] = room.user.username
         return context
 
 
@@ -1295,29 +1298,32 @@ class ServicesPageView(TemplateView):
     template_name = "navs/service/services.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        pk = self.kwargs.get("room_token")
-        if pk:
-            try:
-                room = Room.objects.get(room_token=pk)
-            except Room.DoesNotExist:
+        try:
+            context = super().get_context_data(**kwargs)
+            pk = self.kwargs.get("room_token")
+            if pk:
+                try:
+                    room = Room.objects.get(room_token=pk)
+                except Room.DoesNotExist:
+                    raise Http404("Room does not exist.")
+            else:
                 raise Http404("Room does not exist.")
-        else:
-            raise Http404("Room does not exist.")
 
-        get_services = Service.objects.filter(user=room.user)
+            get_services = Service.objects.filter(user=room.user)
 
-        get_cart_items = ServiceCart.objects.filter(room=room)
-        amounts = sum(item.service.price * 1 for item in get_cart_items)
+            get_cart_items = ServiceCart.objects.filter(room=room)
+            amounts = sum(item.service.price * 1 for item in get_cart_items)
 
-        context["services"] = ServiceSerializer(get_services, many=True).data
-        context["room_id"] = room.id
-        context["cart_items"] = GetServiceCartSerializer(get_cart_items, many=True).data
-        context["total_price"] = amounts
-        context["room_number"] = pk
-        context["hotel_name"] = room.user.username
+            context["services"] = ServiceSerializer(get_services, many=True).data
+            context["room_id"] = room.id
+            context["cart_items"] = GetServiceCartSerializer(get_cart_items, many=True).data
+            context["total_price"] = amounts
+            context["room_number"] = pk
+            context["hotel_name"] = room.user.username
 
-        return context
+            return context
+        except:
+            traceback.print_exc()
 
 
 class ComplainCreateView(CreateView):
@@ -1560,6 +1566,7 @@ class ServiceOrderStatusViewPage(TemplateView):
         try:
             context = super().get_context_data(**kwargs)
             room_token = self.kwargs.get("room_token")
+            room = Room.objects.get(room_token=room_token)
             order_id = self.kwargs.get("order_id")
             if room_token and order_id:
                 try:
@@ -1570,6 +1577,7 @@ class ServiceOrderStatusViewPage(TemplateView):
                 raise Http404("Order does not exist.")
 
             context["order"] = ServiceOrdersSerializer(order).data
+            context['hotel_name'] = room.user.username
 
             return context
         except:
