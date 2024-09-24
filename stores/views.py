@@ -666,7 +666,7 @@ class BarPageView(TemplateView):
             get_sub_categories, many=True
         ).data
         context["items"] = items
-        context["room_id"] = room.id
+        context["room_token"] = room.id
         context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
         context["total_price"] = amounts
         context["room_number"] = pk
@@ -1234,6 +1234,7 @@ class OrderStatusViewPage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         room_token = self.kwargs.get("room_token")
+        room = Room.objects.get(room_token=room_token)
         order_id = self.kwargs.get("order_id")
         if room_token and order_id:
             try:
@@ -1244,6 +1245,7 @@ class OrderStatusViewPage(TemplateView):
             raise Http404("Order does not exist.")
 
         context["order"] = FoodOrdersSerializer(order).data
+        context['hotel_name'] = room.user.username
 
         return context
 
