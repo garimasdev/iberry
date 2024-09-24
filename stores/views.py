@@ -1538,7 +1538,7 @@ class ServiceOrderPlaceAPIView(APIView):
 
                     # # telegram notification for service received 
                     service_url = f'{request.scheme}://{request.get_host()}/dashboard/services/orders/'
-                    message = f'You have received the service from {room.room_token}. View the service here: \n<a href="{service_url}">Click here</a>'
+                    message = f'You have received the service from {room.room_number}. View the service here: \n<a href="{service_url}">Click here</a>'
                     telegram_notification(room.user.channel_name, room.user.bot_token, message)
 
                     return Response(
