@@ -433,7 +433,7 @@ h6 {
 }
 
 .logo span {
-    font-size: 35px;
+    font-size: 30px;
     font-weight: 700;
     color: #012970;
     font-family: "Great Vibes", cursive;
@@ -443,14 +443,14 @@ h6 {
 
 @media (max-width: 800px) {
     .logo span {
-        font-size: 35px; /* Adjust the font size for better visibility */
-        text-align: center; /* Center the text */
+        font-size: 30px;
+        text-align: center;
     }
 
     /* Optionally adjust the logo container */
     .menu-first-part {
-        justify-content: center; /* Center the logo in the menu */
-        width: 100%; /* Use full width */
+        justify-content: center;
+        width: 100%; 
     }
 
     .logo {
