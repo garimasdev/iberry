@@ -202,7 +202,7 @@ class FoodsPageView(TemplateView):
             context['outdoor_token'] = True
         context["bar_enabled"] = bar_enabled
         context["room_number"] = pk
-        context['hotel_name'] = room.user.username
+        context['hotel_name'] = room.user.name
         return context
 
 
@@ -417,7 +417,7 @@ class OutdoorHomeViewPage(TemplateView):
             #     context['picture'] = room.picture.url
             # else:
             #     context['picture'] = None
-            context['hotel_name'] = room.username
+            context['hotel_name'] = room.name
             context["anonymous_user_id"] = temp_user_id.anonymous_user_id
             context["razorpay_clientid"] = room.razorpay_clientid
             context["razorpay_clientsecret"] = room.razorpay_clientsecret
@@ -671,7 +671,7 @@ class BarPageView(TemplateView):
         context["cart_items"] = CartItemSerializer(get_cart_items, many=True).data
         context["total_price"] = amounts
         context["room_number"] = pk
-        context['hotel_name'] = room.user.username
+        context['hotel_name'] = room.user.name
         return context
 
 
@@ -1246,7 +1246,7 @@ class OrderStatusViewPage(TemplateView):
             raise Http404("Order does not exist.")
 
         context["order"] = FoodOrdersSerializer(order).data
-        context['hotel_name'] = room.user.username
+        context['hotel_name'] = room.user.name
 
         return context
 
@@ -1268,8 +1268,7 @@ class OutdoorOrderStatusViewPage(TemplateView):
             raise Http404("Order does not exist.")
 
         context['order'] = FoodOutdoorOrdersSerializer(order).data
-        context['room_id'] = room_token
-        context['hotel_name'] = room.user.username
+        context['hotel_name'] = room.user.name
         return context
 
 
@@ -1577,7 +1576,7 @@ class ServiceOrderStatusViewPage(TemplateView):
                 raise Http404("Order does not exist.")
 
             context["order"] = ServiceOrdersSerializer(order).data
-            context['hotel_name'] = room.user.username
+            context['hotel_name'] = room.user.name
 
             return context
         except:

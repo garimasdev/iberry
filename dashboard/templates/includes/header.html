@@ -1,13 +1,22 @@
 <!-- ======= Header ======= -->
 <link rel="stylesheet" href="/static/css/dashboard/header.css">
+<link rel="stylesheet" type="text/css" href="/static/css/includes/menu.css" />
+<!-- google fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+
 <header id="header" class="header fixed-top d-flex align-items-center">
 
-    <div class="d-flex align-items-center justify-content-between">
-        <a href="/dashboard/" class="logo d-flex align-items-center">
-            <img src="/media/img/logo.png" alt="">
-            <span class="d-none d-lg-block">{{request.user.username}}</span>
-        </a>
-        <i class="bi bi-list toggle-sidebar-btn"></i>
+    <div class="align-items-center justify-content-between">
+        <div style="display: flex;">
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+            <a href="/dashboard/" class="logo d-flex align-items-center">
+                <!-- <img src="/media/img/logo.png" alt=""> -->
+                <span class="d-lg-block menu-title" style="padding: 0px 0px 15px; font-size: 25px;">{{request.user.name}}</span>
+            </a>
+        </div>
     </div>
     <!-- End Logo -->
 
