@@ -437,9 +437,11 @@ def SearchSuggestionsView(request):
         try:
             payload = json.loads(request.body) 
             query = payload.get('q', '')
+            outdoor_token = payload.get('outdoor_token')
 
+            user = User.objects.get(outdoor_token=outdoor_token)
             # suggestions = Item.objects.filter(Q(title__istartswith=query) | Q(title__icontains=query))[:5]
-            suggestions = Item.objects.filter(title__istartswith=query, user__pk=request.user.pk)
+            suggestions = Item.objects.filter(title__istartswith=query, user__pk=user.pk)
             suggestions = ItemSerializer(suggestions, many=True).data
             return JsonResponse({
                 'data': suggestions
