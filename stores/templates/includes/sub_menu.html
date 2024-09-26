@@ -114,7 +114,8 @@
 
         function fetchSuggestions(query) {
             var data = {
-                q: query
+                q: query,
+                outdoor_token: '{{room_number}}'
             };
             
             fetch("{% url 'stores:search-suggestions' %}", {
