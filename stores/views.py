@@ -1257,7 +1257,7 @@ class OutdoorOrderStatusViewPage(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         room_token = self.kwargs.get("room_token")
-        room = Room.objects.get(room_token=room_token)
+        user = User.objects.get(outdoor_token=room_token)
         order_id = self.kwargs.get("order_id")
         if room_token and order_id:
             try:
@@ -1268,7 +1268,10 @@ class OutdoorOrderStatusViewPage(TemplateView):
             raise Http404("Order does not exist.")
 
         context['order'] = FoodOutdoorOrdersSerializer(order).data
-        context['hotel_name'] = room.user.name
+        context['hotel_name'] = user.name
+        context['room_token'] = room_token
+        context['room_number'] = room_token
+        context['room_id'] = room_token
         return context
 
 
