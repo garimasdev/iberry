@@ -20,9 +20,12 @@
                 <form action="" method="get" class="search-box" autocomplete="off">
                     <input type="hidden" name="csrfmiddlewaretoken" value="ab98vXIBj50QuHOYiMihpbEGnQMFol64SkD8ntN1OEjpcN2gVyJcgGSScvwNMgHH">
                     <i class="bi bi-search" id="search-icon"></i>
+                    <!-- <div>
+                        <input type="text" class="search-text" name="q" list="suggestions" placeholder="Search...">
+                        <div id="suggestions" class="autocomplete-results" style="display: block; height: auto; top: 117px; bottom: 0px; position: absolute; z-index: 99; background: white;"></div>
+                    </div>  -->
                     <input type="text" class="search-text" name="q" list="suggestions" placeholder="Search...">
-                    <div id="suggestions" class="autocomplete-results" style="display: none;">
-                    </div> 
+                    <div id="suggestions" class="autocomplete-results" style="display: block; height: 250px; overflow-y: auto; top: 117px; bottom: 0px; position: absolute; z-index: 99; background: white; cursor: pointer;">
                     <!-- <datalist id="suggestions"></datalist> -->
                 </form>
             </div>
@@ -91,6 +94,8 @@
         const searchInput = document.querySelector('.search-text');
         const container = document.getElementById('suggestions');
         const temp = document.getElementById('categories-items');
+
+        searchInput.focus();
 
         // searchInput.addEventListener('focus', () => {
         //     const temp = document.getElementById('categories-items');

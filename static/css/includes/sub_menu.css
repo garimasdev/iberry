@@ -116,7 +116,7 @@
     align-items: center;
     background: #ffffff;
     border-radius: 30px;
-    padding: 8px 11px;
+    padding: 6px 16px 10px 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: width 0.3s ease;
     width: 40px; /* Collapsed width */
@@ -155,29 +155,24 @@
 
 
 /* Search box autocomplete styles */
-/* #suggestions {
-    display: block;
+#auto-suggestions {
+    display: none;
     position: absolute;
-    background: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    max-height: 200px;
-    overflow-y: auto;
-    z-index: 1000;
-    width: 100%;
-    top: 100%;
-    left: 0;
+    bottom: 0px;
+    top: 102px;
+    z-index: 99;
+    background: whitesmoke;
+    height: auto;
   }
 
   
-#suggestions div {
+/* #suggestions div {
     padding: 10px;
     cursor: pointer;
     }
 
 #suggestions div:hover {
     background-color: #f0f0f0;
-    } */
+    }  */
 
 
