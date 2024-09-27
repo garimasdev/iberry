@@ -437,12 +437,24 @@ def SearchSuggestionsView(request):
         try:
             payload = json.loads(request.body) 
             query = payload.get('q', '')
-            outdoor_token = payload.get('outdoor_token')
+            token = payload.get('token')
 
-            user = User.objects.get(outdoor_token=outdoor_token)
+            suggestions = []
+
+            try:
+                user = User.objects.get(outdoor_token=token)
+                suggestions = Item.objects.filter(title__istartswith=query, user=user.pk).distinct()
+            except User.DoesNotExist:
+                # If User is not found, try to find the Room by room_token
+                try:
+                    room = Room.objects.get(room_token=token)
+                    suggestions = Item.objects.filter(title__istartswith=query, user=room.user).distinct()
+                except Room.DoesNotExist:
+                    return JsonResponse({'error': 'Room not found'}, status=404)
+
             # suggestions = Item.objects.filter(Q(title__istartswith=query) | Q(title__icontains=query))[:5]
-            suggestions = Item.objects.filter(title__istartswith=query, user__pk=user.pk)
             suggestions = ItemSerializer(suggestions, many=True).data
+
             return JsonResponse({
                 'data': suggestions
             })
