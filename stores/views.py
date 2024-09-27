@@ -1696,7 +1696,8 @@ def contact_us(request):
                 'room_number': room_id,
                 'callfrom': callfrom,
                 'user': user,
-                'picture': user.picture.url
+                'picture': user.picture.url,
+                'hotel_name': user.name
             })
         return render(request, 'navs/home/error.html')
     except:
@@ -1774,7 +1775,8 @@ def terms_and_conditions(request):
                 'callfrom': callfrom,
                 'room_number': room_id,
                 'user': user,
-                'picture': user.picture.url
+                'picture': user.picture.url,
+                'hotel_name': user.name
             })
     except:
         traceback.print_exc()
@@ -1812,7 +1814,8 @@ def privacy_policy(request):
             'room_number': room_id,
             'callfrom': callfrom,
             'user': user,
-            'picture': user.picture.url
+            'picture': user.picture.url,
+            'hotel_name': user.name
         })
     except:
         traceback.print_exc()
@@ -1849,7 +1852,8 @@ def shipping_policy(request):
             'room_number': room_id,
             'callfrom': callfrom,
             'user': user,
-            'picture': user.picture.url
+            'picture': user.picture.url,
+            'hotel_name': user.name
         })
     except:
         traceback.print_exc()
@@ -1886,7 +1890,8 @@ def cancel_refund(request):
             'room_number': room_id,
             'callfrom': callfrom,
             'user': user,
-            'picture': user.picture.url
+            'picture': user.picture.url,
+            'hotel_name': user.name
         })
     except:
         traceback.print_exc()
