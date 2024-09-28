@@ -4,6 +4,7 @@ import os
 import string
 import random
 import traceback
+from unicodedata import category
 from urllib import response
 from dashboard.models import *
 import uuid
@@ -432,23 +433,29 @@ class OutdoorHomeViewPage(TemplateView):
 
 from django.db.models import Q
 
+# fetching items for search suggestions
 def SearchSuggestionsView(request):
     if request.method == 'POST':
         try:
             payload = json.loads(request.body) 
             query = payload.get('q', '')
             token = payload.get('token')
-
-            suggestions = []
-
+            
             try:
+                # if token is outdoor token
                 user = User.objects.get(outdoor_token=token)
-                suggestions = Item.objects.filter(title__istartswith=query, user=user.pk).distinct()
+                # excluding bar items from outdoor menu
+                get_category = Category.objects.filter(name__icontains='bar', user=user).values_list('id', flat=True)
+                suggestions = Item.objects.filter(title__istartswith=query, user=user.pk).exclude(category_id__in=get_category).distinct()
+            
             except User.DoesNotExist:
-                # If User is not found, try to find the Room by room_token
+            
                 try:
+                    # If User is not found then token is room token
                     room = Room.objects.get(room_token=token)
-                    suggestions = Item.objects.filter(title__istartswith=query, user=room.user).distinct()
+                    # excluding bar menu from indoor menu
+                    get_category = Category.objects.filter(name__icontains='bar', user=room.user).values_list('id', flat=True)
+                    suggestions = Item.objects.filter(title__istartswith=query, user=room.user).exclude(category_id__in=get_category).distinct()
                 except Room.DoesNotExist:
                     return JsonResponse({'error': 'Room not found'}, status=404)
 
