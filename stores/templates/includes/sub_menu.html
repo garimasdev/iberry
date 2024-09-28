@@ -20,13 +20,8 @@
                 <form action="" method="get" class="search-box" autocomplete="off">
                     <input type="hidden" name="csrfmiddlewaretoken" value="ab98vXIBj50QuHOYiMihpbEGnQMFol64SkD8ntN1OEjpcN2gVyJcgGSScvwNMgHH">
                     <i class="bi bi-search" id="search-icon"></i>
-                    <!-- <div>
-                        <input type="text" class="search-text" name="q" list="suggestions" placeholder="Search...">
-                        <div id="suggestions" class="autocomplete-results" style="display: block; height: auto; top: 117px; bottom: 0px; position: absolute; z-index: 99; background: white;"></div>
-                    </div>  -->
                     <input type="text" class="search-text" name="q" list="suggestions" placeholder="Search...">
-                    <div id="suggestions" class="autocomplete-results" style="display: block; height: 250px; overflow-y: auto; top: 117px; bottom: 0px; position: absolute; z-index: 99; background: white; cursor: pointer;">
-                    <!-- <datalist id="suggestions"></datalist> -->
+                    <div id="suggestions" class="autocomplete-results">
                 </form>
             </div>
         </li>
@@ -103,7 +98,6 @@
         // });focusout
 
         searchInput.addEventListener('focusout', () => {
-            console.log('css');
             if (temp.classList.contains('categories-item-list')) {
                 temp.classList.remove('categories-item-list');
             } else {
@@ -139,18 +133,19 @@
             }
             container.innerHTML = ''; // Clear the existing suggestions
             suggestions.forEach(suggestion => {
-                const suggestionItem = document.createElement('div');
+                const item = document.createElement('div')
+                const suggestionItem = document.createElement('a');
                 suggestionItem.textContent = suggestion.title;
                 // Add padding or margin to the suggestion item
-                suggestionItem.style.padding = '10px';
-                suggestionItem.style.margin = '2px 0';
+                item.style.padding = '5px';
+                item.style.margin = '2px 0';
+                suggestionItem.style.color = 'black';
+                suggestionItem.style.textTransform = 'capitalize';
+                suggestionItem.style.textDecoration = 'none';
+                suggestionItem.href = window.location.href + '?q=' + suggestion.title;
 
-                suggestionItem.addEventListener('click', () => {
-                    searchInput.value = suggestion.title;
-                    container.style.display = 'none';
-                });
-
-                container.appendChild(suggestionItem);
+                item.appendChild(suggestionItem);
+                container.appendChild(item);
             });
             container.style.display = 'block'; // Show the container
         }
