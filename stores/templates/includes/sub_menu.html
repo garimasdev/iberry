@@ -109,7 +109,8 @@
         function fetchSuggestions(query) {
             var data = {
                 q: query,
-                token: '{{room_number}}'
+                token: '{{room_number}}',
+                bar_url: window.location.href
             };
             
             fetch("{% url 'stores:search-suggestions' %}", {

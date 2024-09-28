@@ -440,22 +440,29 @@ def SearchSuggestionsView(request):
             payload = json.loads(request.body) 
             query = payload.get('q', '')
             token = payload.get('token')
+            bar_url = payload.get('bar_url')
             
             try:
                 # if token is outdoor token
                 user = User.objects.get(outdoor_token=token)
                 # excluding bar items from outdoor menu
-                get_category = Category.objects.filter(name__icontains='bar', user=user).values_list('id', flat=True)
-                suggestions = Item.objects.filter(title__istartswith=query, user=user.pk).exclude(category_id__in=get_category).distinct()
+                suggestions = Item.objects.filter(title__istartswith=query, user=user.pk).exclude(category__name__icontains='bar').distinct()
             
             except User.DoesNotExist:
             
                 try:
                     # If User is not found then token is room token
                     room = Room.objects.get(room_token=token)
-                    # excluding bar menu from indoor menu
-                    get_category = Category.objects.filter(name__icontains='bar', user=room.user).values_list('id', flat=True)
-                    suggestions = Item.objects.filter(title__istartswith=query, user=room.user).exclude(category_id__in=get_category).distinct()
+
+                    if 'foods/bar/' in bar_url:
+                        # Fetch only bar items for bar URL
+                        category = Category.objects.get(name__icontains='bar', user=room.user)
+                        suggestions = Item.objects.filter(title__istartswith=query, user=room.user, category=category).distinct()
+                        
+                    else:
+                        # excluding bar menu from indoor menu
+                        suggestions = Item.objects.filter(title__istartswith=query, user=room.user).exclude(category__name__icontains='bar').distinct()
+                
                 except Room.DoesNotExist:
                     return JsonResponse({'error': 'Room not found'}, status=404)
 
