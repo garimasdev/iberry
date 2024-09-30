@@ -441,15 +441,29 @@ def SearchSuggestionsView(request):
             query = payload.get('q', '')
             token = payload.get('token')
             bar_url = payload.get('bar_url')
+
+            # Split the query into individual words
+            query_words = query.split()
             
+            
+            # outdoor token search
             try:
                 # if token is outdoor token
                 user = User.objects.get(outdoor_token=token)
                 # excluding bar items from outdoor menu
-                suggestions = Item.objects.filter(title__istartswith=query, user=user.pk).exclude(category__name__icontains='bar').distinct()
+                suggestions = Item.objects.filter(user=user.pk).exclude(category__name__icontains='bar').distinct()
+
+                # Use Q objects to build a dynamic filter
+                if query_words:
+                    q_filter = Q()
+                    for word in query_words:
+                        q_filter |= Q(title__icontains=word)
+
+                    suggestions = suggestions.filter(q_filter)
             
             except User.DoesNotExist:
             
+                # Indoor token BAR search
                 try:
                     # If User is not found then token is room token
                     room = Room.objects.get(room_token=token)
@@ -459,6 +473,7 @@ def SearchSuggestionsView(request):
                         category = Category.objects.get(name__icontains='bar', user=room.user)
                         suggestions = Item.objects.filter(title__istartswith=query, user=room.user, category=category).distinct()
                         
+                    # Indoor token FOOD search
                     else:
                         # excluding bar menu from indoor menu
                         suggestions = Item.objects.filter(title__istartswith=query, user=room.user).exclude(category__name__icontains='bar').distinct()
@@ -468,6 +483,7 @@ def SearchSuggestionsView(request):
 
             # suggestions = Item.objects.filter(Q(title__istartswith=query) | Q(title__icontains=query))[:5]
             suggestions = ItemSerializer(suggestions, many=True).data
+
 
             return JsonResponse({
                 'data': suggestions
