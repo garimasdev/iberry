@@ -471,12 +471,21 @@ def SearchSuggestionsView(request):
                     if 'foods/bar/' in bar_url:
                         # Fetch only bar items for bar URL
                         category = Category.objects.get(name__icontains='bar', user=room.user)
-                        suggestions = Item.objects.filter(title__istartswith=query, user=room.user, category=category).distinct()
+                        suggestions = Item.objects.filter(user=room.user, category=category).distinct()
                         
                     # Indoor token FOOD search
                     else:
                         # excluding bar menu from indoor menu
-                        suggestions = Item.objects.filter(title__istartswith=query, user=room.user).exclude(category__name__icontains='bar').distinct()
+                        suggestions = Item.objects.filter(user=room.user).exclude(category__name__icontains='bar').distinct()
+
+                    
+                    # Use Q objects to build a dynamic filter
+                    if query_words:
+                        q_filter = Q()
+                        for word in query_words:
+                            q_filter |= Q(title__icontains=word)
+                        suggestions = suggestions.filter(q_filter)
+
                 
                 except Room.DoesNotExist:
                     return JsonResponse({'error': 'Room not found'}, status=404)
