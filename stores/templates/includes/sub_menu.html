@@ -133,17 +133,38 @@
                 return;
             }
             container.innerHTML = ''; // Clear the existing suggestions
+
+            // Get the current URL and search parameters
+            const currentUrl = new URL(window.location.href);
+            const searchParams = new URLSearchParams(currentUrl.search);
+
+            
             suggestions.forEach(suggestion => {
                 const item = document.createElement('div')
                 const suggestionItem = document.createElement('a');
                 suggestionItem.textContent = suggestion.title;
+
                 // Add padding or margin to the suggestion item
                 item.style.padding = '5px';
                 item.style.margin = '2px 0';
                 suggestionItem.style.color = 'black';
                 suggestionItem.style.textTransform = 'capitalize';
                 suggestionItem.style.textDecoration = 'none';
-                suggestionItem.href = window.location.href + '?q=' + suggestion.title;
+
+                // Check if 'q' parameter exists
+                if (searchParams.has('q')) {
+                    // If 'q' exists, set the URL with an additional query parameter
+                    searchParams.set('q', suggestion.title);
+                    // Optionally, add another query parameter here if needed
+                    // searchParams.append('newParam', 'value');
+                } else {
+                    // If 'q' does not exist, add it
+                    searchParams.set('q', suggestion.title);
+                }
+
+                // Update the suggestion item's href
+                suggestionItem.href = currentUrl.origin + currentUrl.pathname + '?' + searchParams.toString();
+
 
                 item.appendChild(suggestionItem);
                 container.appendChild(item);
