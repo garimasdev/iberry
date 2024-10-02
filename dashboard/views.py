@@ -931,23 +931,50 @@ class ExtensionCreateView(UserAccessMixin, CreateView):
 # registering a new client
 def RegisterNewClient(request):
     if request.method == 'POST':
+        # Business type mapping
+        BUSINESS_TYPE_MAPPING = {
+            'food': 0,
+            'non-food': 1,
+        }
         try:
             payload = json.loads(request.body)
+
+            # Validate password matching
+            if payload['password'] != payload.get('confirm_password'):
+                return JsonResponse({
+                    'status': False,
+                    'message': 'Passwords do not match.'
+                })
+
+            # Get the business type
+            business_type = payload.get('businessType', '')  # Default to 'food'
+            business_type_number = BUSINESS_TYPE_MAPPING.get(business_type, 0)
+            
+            # create a new user
             user = User.objects.create_user(
-                username=payload['username'], 
-                email=payload['email'], 
-                password=payload['password'], 
+                username=payload.get('username'), 
+                name=payload.get('name'), 
+                email=payload.get('email'), 
+                password=payload.get('password'), 
+                address=payload.get('address', ''),
+                phone=payload.get('phone', ''),
                 # telegram channel name and bot token
-                channel_name=payload['teleChannel'], 
-                bot_token=payload['botToken']
+                channel_name=payload.get('teleChannel', ''), 
+                bot_token=payload.get('botToken', ''),
+                # by default 0: Food business type
+                business_type=business_type_number
             )
+            user.save()
+            
             group = Group.objects.get(name='All Permission')
             user.groups.add(group)
-            user.save()
+            
             return JsonResponse({
                 'status': True
             })
+        
         except:
+            traceback.print_exc()
             return JsonResponse({
                 'status': False
             })

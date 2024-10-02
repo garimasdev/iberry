@@ -11,28 +11,52 @@
             <div class="mb-3">
                 <label for="new_client_email" class="form-label">Email address</label>
                 <input type="email" class="form-control" id="new_client_email">
-              </div>
-              <div class="mb-3">
+            </div>
+            <div class="mb-3">
                 <label for="new_client_username" class="form-label">Username</label>
                 <input type="text" class="form-control" id="new_client_username">
-              </div>
-              <div class="mb-3">
-                <label for="tele_channel" class="form-label">Telegram Channel Name</label>
-                <input type="text" class="form-control" id="tele_channel">
-              </div>
-              <div class="mb-3">
-                <label for="bot_token" class="form-label">Telegram Bot Token</label>
-                <input type="text" class="form-control" id="bot_token">
-              </div>
-              <div class="mb-3">
+            </div>
+            <div class="mb-3">
+                <label for="new_client_username" class="form-label">Name</label>
+                <input type="text" class="form-control" id="new_client_name">
+            </div>
+            <div class="mb-3">
                 <label for="new_client_pass" class="form-label">Password</label>
                 <input type="password" class="form-control" id="new_client_pass">
-              </div>
-              <button type="submit" class="btn btn-primary" onclick="newClient();">Submit</button>
+            </div>
+            <div class="mb-3">
+                <label for="confirm_pass" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm_pass">
+            </div>            
+            <div class="mb-3">
+                <label for="address" class="form-label">Address</label>
+                <input type="text" class="form-control" id="address">
+            </div>
+            <div class="mb-3">
+                <label for="phone_no" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="phone_no">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Business Type</label>
+                <select class="form-control" id="business_type">
+                    <option value="" disabled selected>Select business type</option>
+                    <option value="food">Food</option>
+                    <option value="non-food">Non-Food</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="tele_channel" class="form-label">Telegram Channel Name</label>
+                <input type="text" class="form-control" id="tele_channel">
+            </div>
+            <div class="mb-3">
+                <label for="bot_token" class="form-label">Telegram Bot Token</label>
+                <input type="text" class="form-control" id="bot_token">
+            </div>
+            <button type="submit" class="btn btn-primary" onclick="newClient()">Submit</button>
         </div>
     </div>
     <hr>
-    <div class="card">
+    <!-- <div class="card">
         <div class="card-body">
             <h5 class="card-title">Change Client Password</h5>
             <div class="mb-3">
@@ -45,7 +69,7 @@
               </div>
               <button type="submit" class="btn btn-primary" onclick="submitForm();">Submit</button>
         </div>
-    </div>
+    </div> -->
 </main>
 <!-- End #main -->
 {% endblock content %}
@@ -94,17 +118,33 @@
         // Get values from input fields
         var email = document.getElementById('new_client_email').value.trim();
         var username = document.getElementById('new_client_username').value.trim();
+        var name = document.getElementById('new_client_name').value.trim();
+        var password = document.getElementById('new_client_pass').value.trim();
+        var confirmPassword = document.getElementById('confirm_pass').value.trim();
         var teleChannel = document.getElementById('tele_channel').value.trim();
         var botToken = document.getElementById('bot_token').value.trim();
-        var password = document.getElementById('new_client_pass').value.trim();
-
+        var address = document.getElementById('address').value.trim();
+        var phone = document.getElementById('phone_no').value.trim();
+        var business_type = document.getElementById('business_type').value.trim();
+        
+        // Check if password and confirm password match
+        if (password !== confirmPassword) {
+            alert('Passwords do not match. Please try again.');
+            return;
+        }
+        
         // Create an object with the data
         var data = {
             email: email,
             username: username,
+            name: name,
             teleChannel: teleChannel,
             botToken:botToken,
-            password: password
+            password: password,
+            confirm_password: confirmPassword,
+            address: address,
+            phone: phone,
+            businessType: business_type
         };
 
         // Make a fetch request to your server
@@ -118,17 +158,16 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
             if (data.status === true) {
-                alert('new user created');
+                alert('New user created successfully.');
             } else {
-                alert('new user does not created');
+                alert('New user could not be created: ' + (data.message || 'Unknown error'));
             }
             window.location.reload();
             // Handle success response from the server
         })
         .catch((error) => {
-            alert('new user does not created');
+            alert('New user could not be created. Please try again.');
             // Handle error
             window.location.reload();
         });
