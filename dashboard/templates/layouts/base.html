@@ -46,11 +46,16 @@
     <link href="/static/vendor/quill/quill.bubble.css" rel="stylesheet">
     <link href="/static/vendor/remixicon/remixicon.css" rel="stylesheet">
     <link href="/static/vendor/simple-datatables/style.css" rel="stylesheet">
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
     <link href="/static/css/style.css" rel="stylesheet">
 
     <!-- Specific Page JS goes HERE  -->
-    {% block stylesheets %}{% endblock stylesheets %}
+    {% block stylesheets %}
+    
+    {% endblock stylesheets %}
 
 </head>
 
@@ -93,6 +98,8 @@
                 <div class="modal-body" id="outdoor_qrcode">
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyToClipboard();">
+                        <i class="fa-regular fa-copy"></i>  Copy URL</button>
                     <button type="button" class="btn btn-outline-success" onclick="javascript:window.print();"><i class="bi bi-printer-fill"></i> Print</button>
                     <a class="btn btn-outline-primary" href="#" id="outdoorqrdl"><i class="bi bi-download"></i> Download</a>
                 </div>
@@ -141,7 +148,9 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-analytics.js"></script>
     <!-- <script src="/firebase-messaging-sw.js"></script> -->
 
-    <script>
+   
+   <!-- firebase configuration -->
+   <script>
         var firebaseConfig = {
             apiKey: "AIzaSyB3YnNXnBSDkuJp3QZKYYgnM52Jwawipoc",
             authDomain: "iberry-81920.firebaseapp.com",
@@ -265,6 +274,26 @@
     </script>
 
     
+    <!-- api for copy paste in clipboard -->
+    <script>
+        function copyToClipboard() {
+            // fetching outdoor_token
+            const outdoorToken = "{{ outdoor_token|escapejs }}";
+            const url = `https://qr.nukadscan.com/store/${outdoorToken}/foods/outdoor_items/`;
+
+            // Use the Clipboard API
+            navigator.clipboard.writeText(url).then(() => {
+                console.log('URL copied to clipboard!');
+                // success message
+                alert('URL copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // error message
+                alert('Failed to copy: ' + err);
+            });
+        }
+    </script>
+
     <script>
         $(document).ready(function() {
             $('.toast').toast('show');

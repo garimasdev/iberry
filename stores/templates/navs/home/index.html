@@ -141,10 +141,12 @@
             </li>
             {%endfor%}
         </ul>
+         <!-- Instruction Box -->
+        <div class="instruction-box" style="padding: 10px; margin-top: 15px; border-top: 1px solid #ddd;">
+            <textarea id="instructions" cols="35" rows="2" placeholder="Add any special instructions here..."></textarea>
+        </div>
         <!-- Add sections for tax and delivery charges -->
         <div class="cart-summary" data-bs-toggle="modal" data-bs-target="#asktheuser" style="margin-top: auto; padding: 10px; border-top: 1px solid #ddd;">
-            <!-- <p style="margin: 5px 0;">Total Price: </p>
-            <p style=" margin: 5px 0;">Overall Tax: </p> -->
             <p class="items_amount" style="margin: 5px 0;">Item Total: <strong>₹ {{ items_amount }}</strong></p>
             <p class="total_tax" style=" margin: 5px 0;">Overall Tax: <strong>₹ {{ total_tax }}</strong></p>
             <!-- <p>Delivery Charge: <strong>₹ {{ delivery_charge }}</strong></p> -->
