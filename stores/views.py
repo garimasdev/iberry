@@ -132,9 +132,12 @@ class ModulesViewPage(TemplateView):
 
 def filterItemByCategories(user, categories=None, sub_category=None, item_type=None, search=None):
     items = []
+
+    # filter based on specific sub-category provided, 
     if sub_category:
         new_item = {}
         base_query = Q(user=user, sub_category=sub_category)
+
         if item_type:
             if item_type == "Day Deal":
                 base_query &= Q(prices__sell_price__isnull=False)
@@ -146,6 +149,8 @@ def filterItemByCategories(user, categories=None, sub_category=None, item_type=N
         if filtered_items.exists():
             new_item["items"] = FoodItemsSerializer(filtered_items, many=True).data
             items.append(new_item)
+    
+    # If no sub-category, iterate over the provided categories
     else:
         for item_category in categories:
             new_item = {"category": item_category.name}
@@ -232,17 +237,15 @@ class HomeViewPage(TemplateView):
             # Filter Item by Sub Category
             if sub_category_filter:
                 try:
-                    get_sub_category = SubCategory.objects.filter(name=sub_category_filter)
+                    get_sub_category = SubCategory.objects.filter(category__user__pk=room.user.pk, name=sub_category_filter)
                     if item_type:
-                        items = filterItemByCategories(
-                            room.user, sub_category=get_sub_category[0], item_type=item_type
-                        )
+                        items = filterItemByCategories(room.user, sub_category=get_sub_category[0], item_type=item_type)
                     else:
-                        items = filterItemByCategories(
-                            room.user, sub_category=get_sub_category[0]
-                        )
+                        items = filterItemByCategories(room.user, sub_category=get_sub_category[0])
+                
                 except SubCategory.DoesNotExist:
                     items = filterItemByCategories(room.user, get_categories)
+           
             # Filter Item by Category
             elif category_filter:
                 try:
@@ -344,16 +347,14 @@ class OutdoorHomeViewPage(TemplateView):
             # Filter Item by Sub Category
             if sub_category_filter:
                 try:
-                    get_sub_category = SubCategory.objects.filter(name=sub_category_filter)
+                    get_sub_category = SubCategory.objects.filter(category__user__pk=room.pk, name=sub_category_filter)
                     if item_type:
-                        items = filterItemByCategories(
-                            room, sub_category=get_sub_category[0], item_type=item_type
-                        )
+                        items = filterItemByCategories(room, sub_category=get_sub_category[0], item_type=item_type)
                     else:
-                        items = filterItemByCategories(
-                            room, sub_category=get_sub_category[0]
-                        )
-                except SubCategory.DoesNotExist:
+                        items = filterItemByCategories(room, sub_category=get_sub_category[0])
+
+                except IndexError:
+                    traceback.print_exc()
                     items = filterItemByCategories(room, get_categories)
 
             # Filter Item by Category
@@ -363,11 +364,10 @@ class OutdoorHomeViewPage(TemplateView):
                     get_sub_category = SubCategory.objects.filter(category=category[0])
 
                     if item_type:
-                        items = filterItemByCategories(
-                            room, category, item_type=item_type
-                        )
+                        items = filterItemByCategories(room, category, item_type=item_type)
                     else:
                         items = filterItemByCategories(room, category)
+                
                 except Category.DoesNotExist:
                     items = filterItemByCategories(room, get_categories)
 
