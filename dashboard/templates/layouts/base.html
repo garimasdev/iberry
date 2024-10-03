@@ -53,9 +53,68 @@
     <link href="/static/css/style.css" rel="stylesheet">
 
     <!-- Specific Page JS goes HERE  -->
-    {% block stylesheets %}
-    
-    {% endblock stylesheets %}
+    {% block stylesheets %}{% endblock stylesheets %}
+
+    <style>
+    .copy-text {
+        position: relative;
+        /* padding: 10px; */
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+    }
+    .copy-text input.text {
+        padding: 10px;
+        font-size: 18px;
+        background: #5784f5;
+        color: #555;
+        border: none;
+        outline: none;
+    }
+    .copy-text button {
+        padding: 6px;
+        background: white;
+        color: #5784f5;
+        font-size: 15px;
+        border: none;
+        outline: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .copy-text button:active {
+        background: #5784f5;
+    }
+    .copy-text button:before {
+        content: "Copied";
+        position: absolute;
+        top: -45px;
+        right: 0px;
+        background: #5784f5;
+        padding: 8px 10px;
+        border-radius: 20px;
+        font-size: 15px;
+        display: none;
+    }
+    .copy-text button:after {
+        content: "";
+        position: absolute;
+        top: -20px;
+        right: 25px;
+        width: 10px;
+        height: 10px;
+        background: #5784f5;
+        transform: rotate(45deg);
+        display: none;
+    }
+    .copy-text.active button:before,
+    .copy-text.active button:after {
+        display: block;
+    }
+
+    </style>
 
 </head>
 
@@ -97,11 +156,19 @@
                 </div>
                 <div class="modal-body" id="outdoor_qrcode">
                 </div>
+
+                <!-- Copy Url tooltip -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyToClipboard();">
-                        <i class="fa-regular fa-copy"></i>  Copy URL</button>
+                    <div class="copy-text">
+                        <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyToClipboard();">
+                            Copy URL
+                            <i class="fa fa-clone"></i>
+                        </button>
+                    </div>
+
+                    <!-- print & download -->
                     <button type="button" class="btn btn-outline-success" onclick="javascript:window.print();"><i class="bi bi-printer-fill"></i> Print</button>
-                    <a class="btn btn-outline-primary" href="#" id="outdoorqrdl"><i class="bi bi-download"></i> Download</a>
+                    <a class="btn btn-outline-primary" href="#" id="outdoorqrdl" style="color: black;"><i class="bi bi-download"></i> Download</a>
                 </div>
             </div>
         </div>
@@ -277,19 +344,18 @@
     <!-- api for copy paste in clipboard -->
     <script>
         function copyToClipboard() {
+            let copyText = document.querySelector(".copy-text");
             // fetching outdoor_token
             const outdoorToken = "{{ outdoor_token|escapejs }}";
             const url = `https://qr.nukadscan.com/store/${outdoorToken}/foods/outdoor_items/`;
 
             // Use the Clipboard API
             navigator.clipboard.writeText(url).then(() => {
-                console.log('URL copied to clipboard!');
-                // success message
-                alert('URL copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                // error message
-                alert('Failed to copy: ' + err);
+                copyText.classList.add("active");
+                window.getSelection().removeAllRanges();
+                setTimeout(function () {
+                    copyText.classList.remove("active");
+                }, 1500);
             });
         }
     </script>
