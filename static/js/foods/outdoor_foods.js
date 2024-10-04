@@ -1,7 +1,7 @@
 $(document).ready(function () {
     const cart_badge = $('#cart-badge');
     const floaing_cart = $('#float-cart');
-    let cart_items = 0
+
   
     $('.cart-icon').on('click', function (e) {
       $('.cart-bar').toggleClass('active');
@@ -13,7 +13,7 @@ $(document).ready(function () {
   
     const roomID = $('#room_ID').val();
     const user = $('#user').val();
-    const token = $('csrfmiddlewaretoken').val();
+    const token = $('input[name="csrfmiddlewaretoken"]').val();
   
     const renderEmptyCart = `
     <div class="d-flex justify-content-center align-items-center w-100 flex-column" id="float-cart-empty">
@@ -25,7 +25,7 @@ $(document).ready(function () {
   
     `
   
-    // get cart items
+    // Fetch cart items
     function fetchCartsByRoomId(roomId) {
       const user_id = localStorage.getItem('user_id')
       // AJAX request
@@ -38,101 +38,7 @@ $(document).ready(function () {
         dataType: 'json',
   
         success: function (response) {
-          cart_items += response.results[0].quantity
-          cart_badge.html(cart_items)
-          var total = 0
-          var selectedData = []
-  
-      // // Loop through each checked checkbox input
-      // $('.price-input-' + food_id + ':checked').each(function () {
-      //   var value = $(this).val()
-      //   var price = $(this).attr('price')
-      //   var sell_price = $(this).attr('sell_price')
-      //   selectedData.push({ id: value, price: price, sell_price: sell_price })
-      // })
-          for (var obj of response.results) {
-            total += obj.price
-          $('#add-to-cart-' + obj.id).modal('hide')}
-          // const cart_id = obj.id
-          // const image = $('.item-' + obj.item)
-          //   .find('.image img')
-          //   .attr('src')
-          // const name = $('.item-' + obj.item)
-          //   .find('.product_name').first()
-          //   .text()
-          // // const price = $(".item-" + food_id).find(".product_price strong").text();
-          // $('.cart-bar .cart-list').append(
-          //   '<li id="cart-item-' +
-          //     obj.id +
-          //     '" cart_id="' +
-          //     obj.id +
-          //     '" class="cart">' +
-          //     '<div class="product-box">' +
-          //     '<img src="' +
-          //     image +
-          //     '"/>' +
-          //     '<div class="content">' +
-          //     '<p class="name">' +
-          //     name +
-          //     '</p>' +
-          //     '<strong class="price">Price: ₹ ' +
-          //     obj.price +
-          //     // (selectedData[0].sell_price != 'None'
-          //     //   ? selectedData[0].sell_price
-          //     //   : selectedData[0].price) +
-          //     '  </strong>' +
-          //     '<span class="quantity"> Qty: ' +
-          //     obj.quantity +
-          //     '</span>' +
-          //     '</div>' +
-          //     '</div>' +
-          //     '<span class="close delete-cart-item" id="' +
-          //     cart_id +
-          //     '" token="' +
-          //     token +
-          //     '"><i class="bi bi-x-lg"></i></span>' +
-          //     '</li>'
-          // )
-          // }
-          // $('.total_price').text('₹ ' + total)
-          // $('.cart-icon span').text(response.results.length)
-  
-          // // render  floating cart
-          // $('#float-cart-empty').remove()
-  
-          // if (floaing_cart.children().attr('id') === 'float-cart-filled') {
-          //   $('.float-total-price').text('₹ ' + response.total_price)
-          //   $('.float-total-items').text(
-          //     response.total_items + ' items in your cart'
-          //   )
-          // } else {
-          //   $('#float-cart').append(
-          //     `
-          //     <div
-          //     class="d-flex justify-content-between w-100 align-items-center"
-          //     id="float-cart-filled"
-          //   >
-          //     <img
-          //       src="https://b.zmtcdn.com/data/dish_photos/6b2/53c20eaec8cb89832ed50a3d545a56b2.jpg?fit=around|130:130&crop=130:130;*,*"
-          //       alt=""
-          //     />
-          //     <div>
-          //       <h2 class="fw-bold title" id="cart">${user}</h2>
-          //       <span class="float subtitle float-total-items"> ${response.total_items} items in your cart</span>
-          //     </div>
-          //     <button class="d-flex btn btn-primary flex-column align-items-center float-cart-btn">
-          //       <span class="float-total-price">₹${response.total_price}</span> <span>View Cart</span>
-          //     </button>
-          //     <button class="btn-close btn btn-light" aria-label="close"></button>
-          //   </div>
-          //     `
-          //   )
-  
-          //   $('.float-cart-btn').on('click', function (e) {
-          //     $('.cart-bar').toggleClass('active')
-          //   })
-          // }
-          // console.log('Carts:', response)
+        
         },
         error: function (error) {
           console.error('Error fetching carts:', error)
@@ -212,8 +118,7 @@ $(document).ready(function () {
           $('.cart-icon span').text(response.total_items);
   
           // render  floating cart
-          $('#float-cart-empty').remove()
-  
+          $('#float-cart-empty').remove();
           if ($('#float-cart').children().attr('id') === 'float-cart-filled') {
             $('.float-total-price').text(`₹ ${response.total_price}`);
             $('.float-total-items').text(`${response.total_items} items in your cart`);

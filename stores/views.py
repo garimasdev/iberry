@@ -934,12 +934,17 @@ class OutdoorCartModelView(viewsets.ModelViewSet):
     serializer_class = OutdoorCartSerializer
 
     def get_queryset(self):
-        room_id = self.request.query_params.get("room_id")
-        user_id = self.request.query_params.get("user_id")
-        if room_id and user_id:
-            return OutdoorCart.objects.filter(user__outdoor_token=room_id, cart_user_id=user_id)
-        else:
-            return OutdoorCart.objects.all()
+        try:
+            room_id = self.request.query_params.get("room_id")
+            user_id = self.request.query_params.get("user_id")
+            # session of user id
+            self.request.session["user_id"] = user_id
+            if room_id and user_id:
+                return OutdoorCart.objects.filter(user__outdoor_token=room_id, cart_user_id=user_id)
+            else:
+                return OutdoorCart.objects.all()
+        except:
+            traceback.print_exc()
 
     def perform_create(self, serializer):
         instance = serializer.save()

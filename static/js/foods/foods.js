@@ -80,7 +80,7 @@ $(document).ready(function () {
           const cart_id = response.id;
           const image = $('.item-' + food_id).find('.image img').attr('src');
           const name = $('.item-' + food_id).find('.product_name').first().text();
-          console.log(response);
+
   
           $('.cart-bar .cart-list').append(
             `<li id="cart-item-${cart_id}" cart_id="${cart_id}" class="cart">
@@ -185,7 +185,6 @@ $(document).ready(function () {
           }
         },
         error: function (xhr, status, error) {
-          console.log(error);
         },
       });
     });
@@ -224,7 +223,6 @@ $(document).ready(function () {
           }
         },
         error: function (xhr, status, error) {
-          console.log(error);
         },
       });
     });
