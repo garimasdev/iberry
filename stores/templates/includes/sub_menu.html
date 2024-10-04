@@ -135,8 +135,8 @@
             container.innerHTML = ''; // Clear the existing suggestions
 
             // Get the current URL and search parameters
-            const currentUrl = new URL(window.location.href);
-            const searchParams = new URLSearchParams(currentUrl.search);
+            const currentUrl = window.location.href;
+            // const searchParams = new URLSearchParams(currentUrl.search);
 
             
             suggestions.forEach(suggestion => {
@@ -150,20 +150,20 @@
                 suggestionItem.style.color = 'black';
                 suggestionItem.style.textTransform = 'capitalize';
                 suggestionItem.style.textDecoration = 'none';
-
-                // Check if 'q' parameter exists
-                if (searchParams.has('q')) {
-                    // If 'q' exists, set the URL with an additional query parameter
-                    searchParams.set('q', suggestion.title);
-                    // Optionally, add another query parameter here if needed
-                    // searchParams.append('newParam', 'value');
+                        
+                
+                let updatedUrl = ''
+                if (currentUrl.includes('?')) {
+                    const baseUrl = currentUrl.split('?')[0];
+                    // If there are existing parameters
+                    updatedUrl = `${baseUrl}?q=${suggestion.title}`;
                 } else {
-                    // If 'q' does not exist, add it
-                    searchParams.set('q', suggestion.title);
+                    // If there are no existing parameters, append with a '?'
+                    updatedUrl = `${currentUrl}?q=${suggestion.title}`;
                 }
 
                 // Update the suggestion item's href
-                suggestionItem.href = currentUrl.origin + currentUrl.pathname + '?' + searchParams.toString();
+                suggestionItem.href = updatedUrl;
 
 
                 item.appendChild(suggestionItem);
