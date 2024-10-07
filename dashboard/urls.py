@@ -36,6 +36,15 @@ urlpatterns = [
     path('room/delete/<int:pk>/', views.RoomDeleteAPIView.as_view(), name="room-delete"),
     path('room/send-sms/', views.SendSMSAPIView.as_view(), name="room-send-sms"),
     
+    
+    # table paths
+    path('table/list/', views.TableViewPage.as_view(), name="table-list"),
+    path('table/add/', views.TableCreateView.as_view(), name="table-add"),
+    path('table/update/<int:pk>/', views.TableUpdateView.as_view(), name="table-update"),
+    path('table/update/status/<int:pk>/', views.TableUpdateAPIView.as_view(), name="table-status-update"),
+    path('table/delete/<int:pk>/', views.TableDeleteAPIView.as_view(), name="table-delete"),
+
+    
     #foods paths
     path('foods/items/', views.FoodsItemsViewPage.as_view(), name="foods-items"),
     path('foods/item/add/', views.FoodsItemCreateView.as_view(), name="foods-item-add"),

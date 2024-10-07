@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %} {% block title %} Room List {% endblock %}
+{% extends "layouts/base.html" %} {% block title %} Table List {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %} {% block content %}
@@ -6,35 +6,21 @@
 <main id="main" class="main">
     <div class="pagetitle">
         <div class="text-right" style="text-align: right;">
-            <a href="/dashboard/room/add/" type="button" class="btn btn-outline-primary">Add New Room</a>
+            <a href="/dashboard/table/add/" type="button" class="btn btn-outline-primary">Add New Table</a>
         </div>
     </div>
     <section class="section">
         <div class="row">
             <div class="col-lg-12">
-                <!--
-                <?php
-          $success_alert = $this->session->flashdata('success');
-          if (!empty($success_alert)) {
-            echo '<div class="alert alert-success" role="alert">' . $success_alert . '</div>';
-          }
-          $error_alert = $this->session->flashdata('error');
-          if (!empty($error_alert)) {
-            echo '<div class="alert alert-danger" role="alert">' . $error_alert . '</div>';
-          }
-          ?>-->
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Room List</h5>
+                        <h5 class="card-title">Table List</h5>
                         <!-- Table with stripped rows -->
                         <table class="table datatable">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Room No.</th>
-                                    <th scope="col">Extension Name</th>
-                                    <th scope="col">PBX Server</th>
-                                    <th scope="col">Janus Gateway</th>
+                                    <th scope="col">Table No.</th>
                                     <!-- <?= ($auth_token_data[0]['config_value'] == "Y") ? '<th scope="col">Auth Token</th>' : ''; ?> -->
                                     <th scope="col">Status</th>
                                     <th scope="col">QR Code</th>
@@ -43,28 +29,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for room in object_list %}
+                                {% for table in object_list %}
                                 <tr>
-                                    <td class="row">{{room.id}}</td>
-                                    <td>{{room.room_number}}</td>
-                                    <td>{{room.extension.extension_name}}</td>
-                                    <td>{{room.extension.pbx.pbx_name}}</td>
-                                    <td>{{room.extension.janus.janus_name}}</td>
+                                    <td class="row">{{table.id}}</td>
+                                    <td>{{table.table_number}}</td>
                                     <td>
                                         <div class="form-check form-switch">
-                                            <input class="form-check-input" type="checkbox" onclick="changeStatus('{{ room.room_number }}', this)" data-token="{{room.auth_token}}" data-room-number="{{ room.room_number }}" data-id="{{room.id}}" {%if room.status%}checked{%endif%}>
+                                            <input class="form-check-input" type="checkbox" onclick="changeStatus('{{ table.table_number }}', this)" data-token="{{table.auth_token}}" data-id="{{table.id}}" {%if table.status%}checked{%endif%}>
                                         </div>
                                     </td>
-                                    <td><a onclick="javascript:generate_qr(this);" data-url="{{ request.scheme }}://{{ request.get_host }}/check/store/{{room.room_token}}/config"><i class="bi bi-columns-gap"></i></a></td>
-                                    <td><a onclick="javascript:send_sms(this);" data-url="{{request.scheme}}://{{request.get_host}}/store/{{room.room_token}}/" data-token="{{room.auth_token}}"><i class="bi bi-chat-left-dots-fill"></i></a></td>
+                                    <td><a onclick="javascript:generate_qr(this);" data-url="{{ request.scheme }}://{{ request.get_host }}/check/store/{{table.table_token}}/config"><i class="bi bi-columns-gap"></i></a></td>
+                                    <td><a onclick="javascript:send_sms(this);" data-url="{{request.scheme}}://{{request.get_host}}/store/{{table.table_token}}/" data-token="{{table.auth_token}}"><i class="bi bi-chat-left-dots-fill"></i></a></td>
                                     <td>
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                               Actions
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li><a href="/dashboard/room/update/{{room.id}}/" class="dropdown-item" type="button">Update</a></li>
-                                                <li><a href="#Delete" data-id="{{ room.id }}" onClick="del_icon('{{ room.room_number }}', '{{ room.id }}')" title="Delete" class="dropdown-item delete-room" type="button">Delete</a></li>
+                                                <li><a href="/dashboard/table/update/{{table.id}}/" class="dropdown-item" type="button">Update</a></li>
+                                                <li><a href="#Delete" data-id="{{ table.id }}" onClick="del_icon('{{ table.table_number }}', '{{ table.id }}')" title="Delete" class="dropdown-item delete-table" type="button">Delete</a></li>
                                             </ul>
                                         </div>
                                     </td>
@@ -77,7 +60,7 @@
             </div>
         </div>
     </section>
-    {% for room in object_list %}
+    {% for table in object_list %}
     <!-- QR code -->
     <span id="qrCodeOpener" data-bs-toggle="modal" data-bs-target="#verticalycentered" style="display: none;">
     </span>
@@ -85,7 +68,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">QR Code {{room.room_number}}</h5>
+                    <h5 class="modal-title">QR Code {{table.table_number}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="qrcode">
@@ -97,6 +80,7 @@
             </div>
         </div>
     </div>
+
     <!-- Send SMS -->
     <span id="sendSms" data-bs-toggle="modal" data-bs-target="#sendSmsOpener">
     </span>
@@ -104,14 +88,14 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Send SMS for {{room.room_number}}</h5>
+                    <h5 class="modal-title">Send SMS for {{table.table_number}}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
                         <div class="col-md-12">
                             <div class="form-floating">
-                                <input type="text" id="sms_to" class="form-control" id="floatingSmsTo" placeholder="Enter Mobile Number" value=>
+                                <input type="text" id="sms_to" class="form-control" id="floatingSmsTo" placeholder="Enter Mobile Number" value="">
                                 <label for="floatingSmsTo">Enter Mobile Number<span class="text-danger">*</span></label>
                             </div>
                         </div>
@@ -136,7 +120,7 @@
 <script src="/static/vendor/qrcodejs/qrcode.js"></script>
 <script>
     
-    // Generate a Room QR code 
+    // Generate a Table QR code 
     const generate_qr = (e) => {
         document.getElementById("qrcode").innerHTML = "";
         var qrcode = new QRCode(document.getElementById("qrcode"), {
@@ -157,8 +141,8 @@
         }, 500);
     }
 
-
-    // Send SMS for Room qr code
+    
+    // Send SMS for Table qr code
     const send_sms = (e) => {
         let sms_content = "Click #LINK# to access hotel Phone System and Food menu. #TOKEN#Welcome to ibudha.com";
         sms_content = sms_content.replace('#LINK#', e.dataset.url);
@@ -177,7 +161,7 @@
         }
         const xhttp = new XMLHttpRequest();
         const token = "{{csrf_token}}";
-        const url = "/dashboard/room/send-sms/";
+        const url = "/dashboard/table/send-sms/";
         const params = 'sms_to=' + sms_to + '&sms_text=' + sms_text;
         xhttp.open('POST', url, true);
         xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
@@ -187,7 +171,7 @@
                 alert(response.msg);
                 return;
             } else {
-                window.location.href = "/dashboard/room/list/";
+                window.location.href = "/dashboard/table/list/";
             }
         }
         xhttp.setRequestHeader("X-CSRFToken", token);
@@ -195,42 +179,37 @@
     }
 
     
-    // Delete a Room no.
-    const del_icon = (room_number, room_id) => {
-        if (confirm(`Are you sure want to delete ${room_number} record`)) {
+    // Delete a Table no.
+    const del_icon = (table_number, table_id) => {
+        if (confirm(`Are you sure want to delete ${table_number} record`)) {
             const xhttp = new XMLHttpRequest();
             const token = "{{csrf_token}}";
             xhttp.onload = function() {
                 if (this.status == 204) {
-                    window.location.href = "/dashboard/room/list/";
+                    window.location.href = "/dashboard/table/list/";
                 }
             }
-            xhttp.open("DELETE", "/dashboard/room/delete/" + room_id + "/", true);
+            xhttp.open("DELETE", "/dashboard/table/delete/" + table_id + "/", true);
             xhttp.setRequestHeader("X-CSRFToken", token);
             xhttp.send();
         }
     }
 
-    
-
-    // Update Status for room number
-    const changeStatus = (room_number, e) => {
+    // Update Status for table number
+    const changeStatus = (table_number, e) => {
         // Check if the status of the checkbox is changing
-        if (confirm(`Are you sure you want to change the status of ${room_number} room?`)) {
-            const room_id = e.dataset.id;
+        if (confirm(`Are you sure you want to change the status of ${table_number} table?`)) {
+            const table_id = e.dataset.id;
             const status = e.checked; // Get the new status of the checkbox
             const xhttp = new XMLHttpRequest();
             const token = "{{csrf_token}}";
-            const url = "/dashboard/room/update/status/" + room_id + "/";
-            // const url = `/dashboard/room/update/status/${room_id}/`;
+            const url = "/dashboard/table/update/status/" + table_id + "/";
             const params = 'status=' + status;
-            
             xhttp.open('PUT', url, true);
             xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            
             xhttp.onload = function () {
                 if (this.status == 200) {
-                    window.location.href = "/dashboard/room/list/";
+                    window.location.href = "/dashboard/table/list/";
                 }
             }
             xhttp.setRequestHeader("X-CSRFToken", token);

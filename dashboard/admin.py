@@ -5,6 +5,7 @@ from dashboard.models import *
 # Register your models here.
 admin.site.register(Pbx)
 admin.site.register(Room)
+admin.site.register(Table)
 admin.site.register(Janus)
 admin.site.register(Global)
 admin.site.register(Extension)

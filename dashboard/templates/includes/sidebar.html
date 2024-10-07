@@ -14,6 +14,12 @@
                 <span>Rooms</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.path != '/dashboard/table/list/' %}collapsed{% endif %}" href="/dashboard/table/list/">
+                <i class="fas fa-utensils"></i>
+                <span>Tables</span>
+            </a>
+        </li>
 
         <li class="nav-item">
             <a class="nav-link {% if request.path not in 'foods'%}collapsed{% endif %}" data-bs-target="#foods-nav" data-bs-toggle="collapse" href="#">
@@ -70,7 +76,9 @@
 
         <li class="nav-item">
             <a class="nav-link {% if request.path not in 'complaints'%}collapsed{% endif %}" data-bs-target="#complaints-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-flag-fill"></i><span>Complaints</span><i class="bi bi-chevron-down ms-auto"></i>
+                <i class="bi bi-envelope-fill"></i>
+                <span>Complaints</span>
+                <i class="bi bi-chevron-down ms-auto"></i>
             </a>
             <ul id="complaints-nav" class="nav-content {% if 'complaints' not in request.path %}collapse{% endif %}" data-bs-parent="#sidebar-nav">
 
@@ -97,17 +105,17 @@
 
         <li class="nav-item">
             <a class="nav-link {% if request.path != '/dashboard/dialer/' %}collapsed{% endif %}" href="/dashboard/dialer/">
-                <i class="bi bi-cart4"></i>
+                <i class="bi bi-telephone"></i>
                 <span>Dialer Option</span>
             </a>
         </li>
-        <!--
-        <li class="nav-item">
+        
+        <!-- <li class="nav-item">
             <a class="nav-link {% if request.path != '/dashboard/users/' %} collapsed {% endif %}" href="/dashboard/users/">
                 <i class="bi bi-people"></i>
                 <span>Users</span>
             </a>
-        </li>-->
+        </li> -->
         <li class="nav-item">
             <a class="nav-link {% if request.path != '/dashboard/extension/' and request.path != '/dashboard/extension/add/' %} collapsed {% endif %}" href="/dashboard/extension/">
                 <i class="bi bi-puzzle"></i>
@@ -141,23 +149,22 @@
 
         <li class="nav-item">
             <a class="nav-link collapsed" href="/dashboard/payment_gateway/configuration">
-                <i class="bi bi-puzzle"></i>
+                <i class="bi bi-credit-card"></i>
                 <span>Payment Gateway Configuration</span>
             </a>
         </li>
 
-
         <li class="nav-item">
             <a class="nav-link collapsed" href="/dashboard/terms/configuration">
-                <i class="bi bi-puzzle"></i>
+                <i class="bi bi-file-earmark-text"></i>
                 <span>Policies Configuration</span>
             </a>
         </li>
-
+    
         {% if request.user.is_superuser == True %}
             <li class="nav-item">
                 <a class="nav-link collapsed" href="/dashboard/change/client/password">
-                    <i class="bi bi-puzzle"></i>
+                    <i class="bi bi-people"></i>
                     <span>User Management</span>
                 </a>
             </li>

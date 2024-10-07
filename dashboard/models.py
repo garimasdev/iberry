@@ -141,9 +141,11 @@ class Dialer(models.Model):
        
     def __str__(self):
         return f"{self.c2c_name}"
-    
-import hashlib
 
+
+   
+import hashlib
+# Room model for indoor
 class Room(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     room_number	= models.IntegerField()
@@ -167,6 +169,36 @@ class Room(models.Model):
             self.room_token = hashlib.md5((self.user.username + '_' + str(self.room_number)).encode()).hexdigest()
             # short_url_generate = getShortUrl(self.room_token)
             self.short_url = "https://iberry.caucasianbarrels.com/store/"+self.room_token+"/"
+            # "https://curt.shop/?"+short_url_generate['token']
+            self.auth_token = generateAuthToken()
+            
+        super().save(*args, **kwargs) 
+       
+
+
+# table model for indoor
+class Table(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    table_number = models.IntegerField()
+    table_token = models.CharField(max_length=50, null=True, blank=True)
+    short_url = models.CharField(max_length=150, null=True, blank=True)
+    auth_token = models.CharField(max_length=150, null=True, blank=True)
+    status = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+       ordering = ['-created_at']
+       
+    def __str__(self):
+        return f"{self.table_number}"
+    
+    
+    def save(self, *args, **kwargs):
+        created = not self.pk
+        if created:
+            self.table_token = hashlib.md5((self.user.username + '_' + str(self.table_number)).encode()).hexdigest()
+            # short_url_generate = getShortUrl(self.room_token)
+            self.short_url = "https://iberry.caucasianbarrels.com/store/"+self.table_token+"/"
             # "https://curt.shop/?"+short_url_generate['token']
             self.auth_token = generateAuthToken()
             

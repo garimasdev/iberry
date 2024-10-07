@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import serializers
 from django.utils import dateparse
-from dashboard.models import Complain, ComplainType, Dialer, Extension, Global, Janus, Pbx, Room, Service
+from dashboard.models import Complain, ComplainType, Dialer, Extension, Global, Janus, Pbx, Room, Service, Table
 from stores.models import Category, Item, OutdoorOrder, Order, OrderItem, OutdoorOrderItem, Price, ServiceOrder, ServiceOrderItem, SubCategory
                 
 
@@ -83,7 +83,31 @@ class RoomUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = ['status', 'auth_token']
+
+
+
+"""
+    Table Serializers
+"""
+class TableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Table
+        fields = '__all__'
+
+
+class OrderTableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Table
+        fields = ['table_number']
         
+        
+
+class TableUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Table
+        fields = ['status', 'auth_token']
+
+
 
 """
    Foods Category

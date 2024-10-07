@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %} {% block title %} Update the Room {% endblock %}
+{% extends "layouts/base.html" %} {% block title %} Update the Table {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %} {% block content %}
@@ -6,7 +6,7 @@
 <main id="main" class="main">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Update the Room</h5>
+            <h5 class="card-title">Update the Table</h5>
             <form class="row g-3" method="post" action="">
                 {% csrf_token %}
                 <div class="col-md-12">
@@ -16,20 +16,14 @@
                 <input type="hidden" name="user" value="{{request.user.id}}">
                 <div class="col-md-6">
                     <div class="form-floating">
-                        {{form.room_number}}
-                        <label for="floatingRoomNumber">Enter Room Number<span class="text-danger">*</span></label>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-floating mb-3">
-                        {{form.extension}}
-                        <label for="floatingExtension">Extension<span class="text-danger">*</span></label>
+                        {{form.table_number}}
+                        <label for="floatingTableNumber">Enter Table Number<span class="text-danger">*</span></label>
                     </div>
                 </div>
                 {{form.status}}
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Submit</button>
-                    <a href="/dashboard/room/list/" class="btn btn-secondary">Back</a>
+                    <a href="/dashboard/table/list/" class="btn btn-secondary">Back</a>
                 </div>
             </form>
             <!-- End floating Labels Form -->

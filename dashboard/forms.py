@@ -1,11 +1,15 @@
 from django import forms
 from django.forms import ModelForm
 
-from dashboard.models import Complain, ComplainType, Dialer, Extension, Janus, Pbx, Room, Service
+from dashboard.models import Complain, ComplainType, Dialer, Extension, Janus, Pbx, Room, Service, Table
 from dashboard.serializers import PriceSerializer
 from stores.models import Category, Item, Price, SubCategory
 
 
+
+"""
+Room Form
+"""
 class RoomForm(ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
@@ -19,6 +23,24 @@ class RoomForm(ModelForm):
         widgets = {
             "room_number": forms.TextInput(attrs={'class': 'form-select', 'placeholder': 'Enter Room Number', 'autofocus': True},),
             "extension": forms.Select(attrs={'class': 'form-select',},),
+            "status": forms.CheckboxInput(attrs={'class': 'form-check-input mt-0', 'hidden': True},),
+        }
+
+
+"""
+Table Form
+"""
+class TableForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(TableForm, self).__init__(*args, **kwargs)
+        
+        
+    class Meta:
+        model = Table
+        fields = "__all__"
+        widgets = {
+            "table_number": forms.TextInput(attrs={'class': 'form-select', 'placeholder': 'Enter Table Number', 'autofocus': True},),
             "status": forms.CheckboxInput(attrs={'class': 'form-check-input mt-0', 'hidden': True},),
         }
 

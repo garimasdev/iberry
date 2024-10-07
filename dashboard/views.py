@@ -19,9 +19,9 @@ from rest_framework.generics import UpdateAPIView, DestroyAPIView, CreateAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from django.db.models.functions import TruncDay
 from core import settings
-from dashboard.forms import ComplainTypeForm, DialerForm, ExtensionForm, FoodsCategoryForm, FoodsItemForm, JanusForm, PbxForm, RoomForm, ServiceForm, SubCategoryForm
+from dashboard.forms import ComplainTypeForm, DialerForm, ExtensionForm, FoodsCategoryForm, FoodsItemForm, JanusForm, PbxForm, RoomForm, ServiceForm, SubCategoryForm, TableForm
 from dashboard.models import Complain, ComplainType, Dialer, Extension, Global, Janus, Pbx, Room, Service
-from dashboard.serializers import ComplainSerializer, ComplainTypeSerializer, DialerSerializer, ExtensionSerializer, FoodCategoriesSerializer, FoodItemAPISerializer, FoodItemsSerializer, FoodOrdersSerializer, FoodOutdoorOrdersSerializer, FoodSubCategoriesSerializer, GlobalSerializer, GlobalUpdateSerializer, JanusSerializer, PbxSerializer, PriceSerializer, RoomSerializer, RoomUpdateSerializer, ServiceOrdersSerializer, ServiceSerializer, UpdateComplainSerializer
+from dashboard.serializers import ComplainSerializer, ComplainTypeSerializer, DialerSerializer, ExtensionSerializer, FoodCategoriesSerializer, FoodItemAPISerializer, FoodItemsSerializer, FoodOrdersSerializer, FoodOutdoorOrdersSerializer, FoodSubCategoriesSerializer, GlobalSerializer, GlobalUpdateSerializer, JanusSerializer, PbxSerializer, PriceSerializer, RoomSerializer, RoomUpdateSerializer, ServiceOrdersSerializer, ServiceSerializer, UpdateComplainSerializer, TableSerializer, TableUpdateSerializer, OrderTableSerializer
 from urllib.request import urlopen
 import json
 import urllib
@@ -359,6 +359,24 @@ def savetoken(request):
 """
 Room page view
 """
+class RoomViewPage(UserAccessMixin, ListView):
+    permission_required = 'dashboard.view_room'
+    template_name = "tabs/room/room_list.html"
+    serializer_class = RoomSerializer
+    model = Room
+    queryset = Room.objects.all()
+
+    def get_queryset(self):
+        q = self.request.GET.get('q')
+        if q:
+            object_list = self.model.objects.filter(
+                Q(name__icontains=q) | Q(email__icontains=q) | Q(user_type__icontains=q) | Q(user_id__icontains=q)
+            )
+        else:
+            object_list = self.model.objects.filter(user=self.request.user)
+        return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+
+
 class RoomCreateView(UserAccessMixin, CreateView):
     permission_required = 'dashboard.add_room'
     template_name = "tabs/room/room_add.html"
@@ -371,6 +389,7 @@ class RoomCreateView(UserAccessMixin, CreateView):
         kwargs = super(RoomCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+    
 
 
 class RoomUpdateAPIView(UserAccessMixin, UpdateAPIView):
@@ -379,6 +398,7 @@ class RoomUpdateAPIView(UserAccessMixin, UpdateAPIView):
     # serializer_class = RoomUpdateSerializer
     def update(self, request, *args, **kwargs):
         obj = self.get_object()
+        
         if request.body.decode('utf-8').split('=')[1] == 'false':
             obj.status = False
         else:
@@ -407,23 +427,6 @@ class RoomDeleteAPIView(DestroyAPIView):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
         
-    
-class RoomViewPage(UserAccessMixin, ListView):
-    permission_required = 'dashboard.view_room'
-    template_name = "tabs/room/room_list.html"
-    serializer_class = RoomSerializer
-    model = Room
-    queryset = Room.objects.all()
-
-    def get_queryset(self):
-        q = self.request.GET.get('q')
-        if q:
-            object_list = self.model.objects.filter(
-                Q(name__icontains=q) | Q(email__icontains=q) | Q(user_type__icontains=q) | Q(user_id__icontains=q)
-            )
-        else:
-            object_list = self.model.objects.filter(user=self.request.user)
-        return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
 
 from urllib.parse import quote
@@ -461,6 +464,83 @@ class SendSMSAPIView(APIView):
         #     import traceback
         #     traceback.print_exc()
         #     return Response({"status": "ERROR", "msg": f"Failed to send SMS: {str(e)}"})
+
+
+
+"""
+Table page view
+"""
+class TableViewPage(UserAccessMixin, ListView):
+    permission_required = 'dashboard.view_table'
+    template_name = "tabs/table/table_list.html"
+    serializer_class = TableSerializer
+    model = Table
+    queryset = Table.objects.all()
+
+    def get_queryset(self):
+        q = self.request.GET.get('q')
+        if q:
+            object_list = self.model.objects.filter(
+                Q(name__icontains=q) | Q(email__icontains=q) | Q(user_type__icontains=q) | Q(user_id__icontains=q)
+            )
+        else:
+            object_list = self.model.objects.filter(user=self.request.user)
+        return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+
+
+class TableCreateView(UserAccessMixin, CreateView):
+    try:
+        permission_required = 'dashboard.add_table'
+        template_name = "tabs/table/table_add.html"
+        model = Table
+        serializer_class = TableSerializer
+        form_class = TableForm
+        success_url	= '/dashboard/table/list/'
+        
+        def get_form_kwargs(self):
+            kwargs = super(TableCreateView, self).get_form_kwargs()
+            kwargs['user'] = self.request.user
+            return kwargs
+
+    except:
+        traceback.print_exc()
+
+
+class TableUpdateAPIView(UserAccessMixin, UpdateAPIView):
+    permission_required = 'dashboard.change_table'
+    queryset = Table.objects.all()
+    # serializer_class = RoomUpdateSerializer
+    def update(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if request.body.decode('utf-8').split('=')[1] == 'false':
+            obj.status = False
+        else:
+            obj.status = True
+
+        obj.auth_token = ''.join(random.choices(string.ascii_letters+string.digits, k=6))
+        obj.save()
+        return Response("New token generated")
+    
+
+class  TableUpdateView(UserAccessMixin, UpdateView):
+    permission_required = 'dashboard.change_table'
+    template_name = "tabs/table/table_update.html"
+    model = Table
+    form_class = TableForm
+    success_url	= '/dashboard/table/list/'
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
+        
+
+class TableDeleteAPIView(DestroyAPIView):
+    queryset = Table.objects.all()
+    serializer_class = TableSerializer
+        
+
 
 
 """
