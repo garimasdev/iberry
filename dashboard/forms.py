@@ -72,7 +72,7 @@ class TableUpdateForm(ModelForm):
         fields = ['table_number', 'status']
         widgets = {
             "table_number": forms.TextInput(attrs={'class': 'form-select', 'placeholder': 'Enter Table Number', 'autofocus': True},),
-            "status": forms.CheckboxInput(attrs={'class': 'form-check-input mt-0'}),
+            "status": forms.CheckboxInput(attrs={'class': 'form-check-input mt-0', 'hidden': True}),
         }
 
 
