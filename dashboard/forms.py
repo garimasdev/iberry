@@ -10,6 +10,7 @@ from stores.models import Category, Item, Price, SubCategory
 """
 Room Form
 """
+# room create form
 class RoomForm(ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
@@ -20,6 +21,19 @@ class RoomForm(ModelForm):
     class Meta:
         model = Room
         fields = "__all__"
+        
+
+# Update room form
+class RoomUpdateForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(RoomUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['extension'].queryset = Extension.objects.filter(user=user)
+        
+        
+    class Meta:
+        model = Room
+        fields = ['room_number', 'extension', 'status']
         widgets = {
             "room_number": forms.TextInput(attrs={'class': 'form-select', 'placeholder': 'Enter Room Number', 'autofocus': True},),
             "extension": forms.Select(attrs={'class': 'form-select',},),
@@ -30,6 +44,7 @@ class RoomForm(ModelForm):
 """
 Table Form
 """
+# New table form
 class TableForm(ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user')
@@ -41,7 +56,23 @@ class TableForm(ModelForm):
         fields = "__all__"
         widgets = {
             "table_number": forms.TextInput(attrs={'class': 'form-select', 'placeholder': 'Enter Table Number', 'autofocus': True},),
-            "status": forms.CheckboxInput(attrs={'class': 'form-check-input mt-0', 'hidden': True},),
+            "status": forms.CheckboxInput(attrs={'class': 'form-check-input mt-0'}),
+        }
+
+
+# update table form
+class TableUpdateForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user')
+        super(TableUpdateForm, self).__init__(*args, **kwargs)
+        
+        
+    class Meta:
+        model = Table
+        fields = ['table_number', 'status']
+        widgets = {
+            "table_number": forms.TextInput(attrs={'class': 'form-select', 'placeholder': 'Enter Table Number', 'autofocus': True},),
+            "status": forms.CheckboxInput(attrs={'class': 'form-check-input mt-0'}),
         }
 
 

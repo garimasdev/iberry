@@ -19,7 +19,7 @@ from rest_framework.generics import UpdateAPIView, DestroyAPIView, CreateAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from django.db.models.functions import TruncDay
 from core import settings
-from dashboard.forms import ComplainTypeForm, DialerForm, ExtensionForm, FoodsCategoryForm, FoodsItemForm, JanusForm, PbxForm, RoomForm, ServiceForm, SubCategoryForm, TableForm
+from dashboard.forms import ComplainTypeForm, DialerForm, ExtensionForm, FoodsCategoryForm, FoodsItemForm, JanusForm, PbxForm, RoomForm, RoomUpdateForm, ServiceForm, SubCategoryForm, TableForm, TableUpdateForm
 from dashboard.models import Complain, ComplainType, Dialer, Extension, Global, Janus, Pbx, Room, Service
 from dashboard.serializers import ComplainSerializer, ComplainTypeSerializer, DialerSerializer, ExtensionSerializer, FoodCategoriesSerializer, FoodItemAPISerializer, FoodItemsSerializer, FoodOrdersSerializer, FoodOutdoorOrdersSerializer, FoodSubCategoriesSerializer, GlobalSerializer, GlobalUpdateSerializer, JanusSerializer, PbxSerializer, PriceSerializer, RoomSerializer, RoomUpdateSerializer, ServiceOrdersSerializer, ServiceSerializer, UpdateComplainSerializer, TableSerializer, TableUpdateSerializer, OrderTableSerializer
 from urllib.request import urlopen
@@ -398,7 +398,7 @@ class RoomUpdateAPIView(UserAccessMixin, UpdateAPIView):
     # serializer_class = RoomUpdateSerializer
     def update(self, request, *args, **kwargs):
         obj = self.get_object()
-        
+
         if request.body.decode('utf-8').split('=')[1] == 'false':
             obj.status = False
         else:
@@ -413,7 +413,7 @@ class  RoomUpdateView(UserAccessMixin, UpdateView):
     permission_required = 'dashboard.change_room'
     template_name = "tabs/room/room_update.html"
     model = Room
-    form_class = RoomForm
+    form_class = RoomUpdateForm
     success_url	= '/dashboard/room/list/'
     
     def get_form_kwargs(self):
@@ -445,12 +445,10 @@ class SendSMSAPIView(APIView):
         # unicode = 'false'
         sms_text = quote(sms_text.replace('https://', ''))
         url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username=iberrtrpg.trans&password=atwFc&unicode=false&from=IBWIFI&to={sms_to}&dltPrincipalEntityId=1301160933730426574&dltContentId=1307168136868522350&text={sms_text}"
-        print(url_sms)
         # url_sms = f"https://pgapi.vispl.in/fe/api/v1/send?username=iberrtrpg.trans&password=atwFc&unicode=false&from=IBWIFI&to=9855021117&dltPrincipalEntityId=1301160933730426574&dltContentId=1307168136868522350&text=Click"
         
 
         urlopen(url_sms)
-        print('hii')
         import requests
         # try:
         resp = requests.get(url_sms)
@@ -526,14 +524,13 @@ class  TableUpdateView(UserAccessMixin, UpdateView):
     permission_required = 'dashboard.change_table'
     template_name = "tabs/table/table_update.html"
     model = Table
-    form_class = TableForm
+    form_class = TableUpdateForm
     success_url	= '/dashboard/table/list/'
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-    
         
 
 class TableDeleteAPIView(DestroyAPIView):
