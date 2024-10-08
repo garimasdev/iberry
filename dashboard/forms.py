@@ -21,6 +21,15 @@ class RoomForm(ModelForm):
     class Meta:
         model = Room
         fields = "__all__"
+
+    class Meta:
+        model = Room
+        fields = ['room_number', 'extension', 'status']
+        widgets = {
+            "room_number": forms.TextInput(attrs={'class': 'form-select', 'placeholder': 'Enter Room Number', 'autofocus': True},),
+            "extension": forms.Select(attrs={'class': 'form-select',},),
+            "status": forms.CheckboxInput(attrs={'class': 'form-check-input mt-0', 'hidden': True},),
+        }
         
 
 # Update room form
