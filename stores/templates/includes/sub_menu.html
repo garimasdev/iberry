@@ -12,7 +12,7 @@
     
     <ul class="item-types">
         
-        {% if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/outdoor_items/' in request.path  or '/store/'|add:room_number|add:'/foods/bar/' in request.path %}
+        {% if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/products/outdoor_items/' in request.path  or '/store/'|add:room_number|add:'/foods/bar/' in request.path %}
 
         <!-- search box -->
         <li class="search-box-item">
@@ -60,7 +60,7 @@
         {%endif%}
         {%endif%}
         
-        {% if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/foods/outdoor_items/' in request.path or '/store/'|add:room_number|add:'/foods/bar/' in request.path %}
+        {% if '/store/'|add:room_number|add:'/foods/items/' in request.path or '/store/'|add:room_number|add:'/products/outdoor_items/' in request.path or '/store/'|add:room_number|add:'/foods/bar/' in request.path %}
         <!-- Day Deal category -->
         <li class="item-type day-deal {%if request.GET.item_type == 'Day Deal' %}active{%endif%}">
             <a href="{%if request.GET %}

@@ -346,7 +346,7 @@
             let copyText = document.querySelector(".copy-text");
             // fetching outdoor_token
             const outdoorToken = "{{ outdoor_token|escapejs }}";
-            const url = `https://qr.nukadscan.com/store/${outdoorToken}/foods/outdoor_items/`;
+            const url = `https://qr.nukadscan.com/store/${outdoorToken}/products/outdoor_items/`;
 
             // Use the Clipboard API
             navigator.clipboard.writeText(url).then(() => {

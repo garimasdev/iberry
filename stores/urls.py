@@ -17,7 +17,7 @@ router.register(r'service-order', views.ServiceOrderModelView, basename='service
 urlpatterns = [
 
     # outdoor orders
-    path('store/<str:room_token>/foods/outdoor_items/', views.OutdoorHomeViewPage.as_view(), name="foods-outdoor-items"),
+    path('store/<str:room_token>/products/outdoor_items/', views.OutdoorHomeViewPage.as_view(), name="foods-outdoor-items"),
     path('outdoor-order/', views.OutdoorOrderModelView.as_view(), name='outdoor_order'),
     # outdoor cart unique id
     path('outdoor_cart/user_id', views.OutdoorCartUserid, name="outdoor_cart_user_id"),
