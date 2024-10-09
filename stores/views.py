@@ -406,6 +406,7 @@ class OutdoorHomeViewPage(TemplateView):
             context['phone'] = outdoor_token.phone
             context["items"] = items
             context["room_id"] = pk
+            # 0:food; 1:non-food
             context["business_type"] = outdoor_token.business_type
             context["cart_items"] = OutdoorCartItemSerializer(get_cart_items, many=True).data
             # total item amount
