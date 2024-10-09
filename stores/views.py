@@ -1821,7 +1821,8 @@ def terms_and_conditions(request):
                 'room_number': room_id,
                 'user': user,
                 'picture': user.picture.url,
-                'hotel_name': user.name
+                'hotel_name': user.name,
+                'business_type': user.business_type
             })
     except:
         traceback.print_exc()
@@ -1860,7 +1861,8 @@ def privacy_policy(request):
             'callfrom': callfrom,
             'user': user,
             'picture': user.picture.url,
-            'hotel_name': user.name
+            'hotel_name': user.name,
+            'business_type': user.business_type,
         })
     except:
         traceback.print_exc()
@@ -1898,7 +1900,8 @@ def shipping_policy(request):
             'callfrom': callfrom,
             'user': user,
             'picture': user.picture.url,
-            'hotel_name': user.name
+            'hotel_name': user.name,
+            'business_type': user.business_type,
         })
     except:
         traceback.print_exc()
@@ -1936,7 +1939,8 @@ def cancel_refund(request):
             'callfrom': callfrom,
             'user': user,
             'picture': user.picture.url,
-            'hotel_name': user.name
+            'hotel_name': user.name,
+            'business_type': user.business_type,
         })
     except:
         traceback.print_exc()
