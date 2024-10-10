@@ -96,14 +96,16 @@ class FoodsItemForm(ModelForm):
         user = kwargs.pop('user')
         super(FoodsItemForm, self).__init__(*args, **kwargs)
         self.fields['get_prices'].label = 'Get Prices'
-        get_instance = kwargs.pop('instance')
+
+        get_instance = kwargs.get('instance')
         
         get_category = Category.objects.filter(user=user)
         self.fields['category'].queryset = get_category
         self.fields['prices'].queryset = Price.objects.all()
         # self.fields['sub_category'].queryset = SubCategory.objects.filter(category=get_category)
+        
         if get_instance:
-            self.fields['get_prices'].initial = PriceSerializer(get_instance.prices, many=True).data
+            self.fields['get_prices'].initial = PriceSerializer(get_instance.prices.all(), many=True).data
     
         
     class Meta:

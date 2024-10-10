@@ -33,7 +33,7 @@ class SubCategory(models.Model):
 
 class Price(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, null=True, blank=True)
     price = models.IntegerField()
     sell_price = models.IntegerField(null=True, blank=True)
 

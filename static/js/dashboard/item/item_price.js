@@ -56,9 +56,11 @@ $(document).ready(function() {
         const name = $(this).attr("name");
         const price = $(this).attr("price");
         const sell_price = $(this).attr("sell_price");
+
         $("#id_name").val(name);
         $("#id_price").val(price);
         $("#id_sell_price").val(sell_price);
+        
         $(".price-save-btn").attr("id", id);
         $(".price-save-btn").addClass("price-update-btn");
         $("#price").modal("show");
