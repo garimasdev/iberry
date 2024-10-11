@@ -577,7 +577,6 @@ def CreatePaymentOrder(request):
                     temp_user.receipt = receipt
                     temp_user.order_total = str(cart_total * 100)
                     temp_user.customer_name = body['username']
-                    temp_user.customer_email = body['email']
                     temp_user.customer_phone = body['phone']
                     temp_user.customer_address = body['address']
                     temp_user.save()
