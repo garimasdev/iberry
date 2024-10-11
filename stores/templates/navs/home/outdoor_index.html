@@ -449,6 +449,7 @@
         if (addressLine2) address += ' ' + addressLine2;
         if (landmark) address += ', ' + landmark;
         address += ', ' + pincode;
+
         // const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
         $.ajax({
             headers: {
@@ -503,11 +504,47 @@
         var landmark = document.getElementById('landmark').value;
         var pincode = document.getElementById('pincode').value;
 
+        // Clear previous feedback messages
+        document.getElementById('usernameFeedback').style.display = 'none';
+        document.getElementById('phoneFeedback').style.display = 'none';
+        document.getElementById('addressLine1Feedback').style.display = 'none';
+        document.getElementById('addressLine2Feedback').style.display = 'none';
+        document.getElementById('pincodeFeedback').style.display = 'none';
+
+        
+        // Validate mandatory fields
+        let isValid = true;
+
+        if (!username) {
+            document.getElementById('usernameFeedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!phone) {
+            document.getElementById('phoneFeedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!addressLine1) {
+            document.getElementById('addressLine1Feedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!addressLine2) {
+            document.getElementById('addressLine2Feedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!pincode) {
+            document.getElementById('pincodeFeedback').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return;  // Prevent further execution if invalid
+        }
+        
         // Concatenate the address fields
         var address = addressLine1;
         if (addressLine2) address += ' ' + addressLine2;
         if (landmark) address += ', ' + landmark;
-        if (pincode) address += ', ' + pincode;
+        address += ', ' + pincode;
 
         localStorage.setItem("address", address);
 
