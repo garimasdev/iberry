@@ -244,7 +244,8 @@ $(document).ready(function () {
           room: roomId,
         }),
         success: function (response) {
-          $('.response').empty().show().html('<div class="alert alert-success" role="alert">Your order has been placed.</div>').delay(2000).fadeOut(500);
+          // $('.response').empty().show().html('<div class="alert alert-success" role="alert">Your order has been placed.</div>').delay(2000).fadeOut(500);
+          $('.response').empty().show().html('<div class="alert alert-success" role="alert">Your order has been placed.</div>');
           $('.cart-icon span').text('0');
           $('.cart').remove();
           $('.total_price').text('₹ 0');

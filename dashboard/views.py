@@ -50,8 +50,9 @@ class UserAccessMixin(PermissionRequiredMixin):
 
 # payment gateway dashboard
 def paymentGatewayConfiguration(request):
-    if request.method == 'GET':
-        return render(request, 'tabs/extension/payment_gateway_conf.html')
+    if request.method == 'GET': 
+        context = {'outdoor_token': request.user.outdoor_token}
+        return render(request, 'tabs/extension/payment_gateway_conf.html', context)
 
 
 # saving the payment details in user
@@ -117,7 +118,8 @@ def SaveGstDetailsConfig(request):
 def createTermsConfigurations(request):
     if request.method == 'GET':
         choices = TermHeading.STATUS
-        return render(request, 'tabs/custom_terms/custom_terms.html', {'choices': choices})
+        context = {'outdoor_token': request.user.outdoor_token}
+        return render(request, 'tabs/custom_terms/custom_terms.html', {'choices': choices}, context)
     
     if request.method == 'POST':
         try:
@@ -374,7 +376,13 @@ class RoomViewPage(UserAccessMixin, ListView):
             )
         else:
             object_list = self.model.objects.filter(user=self.request.user)
-        return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+        return object_list
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
 
 
 class RoomCreateView(UserAccessMixin, CreateView):
@@ -484,6 +492,13 @@ class TableViewPage(UserAccessMixin, ListView):
         else:
             object_list = self.model.objects.filter(user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+
 
 
 class TableCreateView(UserAccessMixin, CreateView):
@@ -600,6 +615,7 @@ class FoodsItemsViewPage(UserAccessMixin, ListView):
 
     def get_queryset(self):
         q = self.request.GET.get('q')
+        outdoor_token = {'outdoor_token': self.request.user.outdoor_token}
         if q:
             object_list = self.model.objects.filter(
                 Q(name__icontains=q) | Q(email__icontains=q) | Q(user_type__icontains=q) | Q(user_id__icontains=q)
@@ -608,6 +624,10 @@ class FoodsItemsViewPage(UserAccessMixin, ListView):
             object_list = self.model.objects.filter(user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
 
 class FoodsCategoryCreateView(UserAccessMixin, CreateView):
     permission_required = 'stores.add_category'
@@ -965,7 +985,10 @@ class DialerViewPage(UserAccessMixin, ListView):
             object_list = self.model.objects.filter(extension__user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
 
 class DialerUpdateView(UserAccessMixin, UpdateView):
     permission_required = 'dashboard.change_dialer'
@@ -1059,7 +1082,8 @@ def RegisterNewClient(request):
 
 def ChangeSetClientPassword(request):
     if request.method == 'GET':
-        return render(request, 'tabs/extension/client_setchange_pass.html')
+        context = {'outdoor_token': request.user.outdoor_token}
+        return render(request, 'tabs/extension/client_setchange_pass.html', context)
 
 def SetClientPassword(request):
     if request.method == 'POST':
@@ -1093,6 +1117,10 @@ class ExtensionViewPage(UserAccessMixin, ListView):
             object_list = self.model.objects.filter(user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
 
 class ExtensionUpdateView(UserAccessMixin, UpdateView):
     permission_required = 'dashboard.change_extension'
@@ -1273,16 +1301,16 @@ class OrderReportView(UserAccessMixin, FilterView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        orders = self.get_queryset()
+        # orders = self.get_queryset()
         # context['orders_placed'] = orders.count()
         # context['orders_delivered'] = orders.filter(status='delivered').count()
         # context['orders_canceled'] = orders.filter(status='canceled').count()
+        context['outdoor_token'] = self.request.user.outdoor_token
         return context
     
     def post(self, request, *args, **kwargs):
         # Get the date range from the URL parameters
         get_model = request.POST.get('model')
-        print(get_model)
         get_start_date = request.POST.get('start_date')
         get_end_date = request.POST.get('end_date')
         

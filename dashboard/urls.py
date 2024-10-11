@@ -11,22 +11,6 @@ app_name = 'dashboard'
 router.register(r'food/price', views.FoodPriceModelView, basename='food-price')
 urlpatterns = [
     path('', views.DashboardViewPage.as_view(), name="dashboard"),
-    # phonepe payment gateway
-    path('save/payment_gateway/configuration', views.savepaymentGatewayConfiguration, name='save_payment_GatewayConfiguration'),
-    path('payment_gateway/configuration', views.paymentGatewayConfiguration, name='payment_GatewayConfiguration'),
-    path('gst_details/configuration', views.GstDetailsConfig, name='gst_details_configuration'),
-    path('save/gst_details/configuration', views.SaveGstDetailsConfig, name='save_gst_details_Configuration'),
-    
-    # firebase notification
-    path('user/change_password/', views.UserChangePassword, name="user-change-password"),
-    path('save/token',views.savetoken, name="fcm-token"),
-
-    # Dynamic Policies
-    path('terms/configuration', views.createTermsConfigurations, name='create_terms_configurations'),
-    path('subterms/configuration', views.createSubheadingConfiguration, name='sub_heading_config'),
-    path('choice/subterms/config', views.choiceSubtermsConfig, name='choice_subterms_config'),
-    path('section/subterms/config', views.sectionSubtermsConfig, name='section_subterms_config'),
-    path('update/subterms/configuration', views.UpdateSubtermsConfiguration, name='update_subterms_configuration'),
 
     # room paths
     path('room/list/', views.RoomViewPage.as_view(), name="room-list"),
@@ -123,6 +107,26 @@ urlpatterns = [
     
     path('configuration/global/', views.GlobalViewPage.as_view(), name="global-list"),
     # path('configuration/global/<pk>/', views.GlobalUpdateAPIView, name='global-update'),
+    
+    
+    # phonepe payment gateway
+    path('save/payment_gateway/configuration', views.savepaymentGatewayConfiguration, name='save_payment_GatewayConfiguration'),
+    path('payment_gateway/configuration', views.paymentGatewayConfiguration, name='payment_GatewayConfiguration'),
+    path('gst_details/configuration', views.GstDetailsConfig, name='gst_details_configuration'),
+    path('save/gst_details/configuration', views.SaveGstDetailsConfig, name='save_gst_details_Configuration'),
+    
+    # firebase notification
+    path('save/token',views.savetoken, name="fcm-token"),
+
+    # Dynamic Policies
+    path('terms/configuration', views.createTermsConfigurations, name='create_terms_configurations'),
+    path('subterms/configuration', views.createSubheadingConfiguration, name='sub_heading_config'),
+    path('choice/subterms/config', views.choiceSubtermsConfig, name='choice_subterms_config'),
+    path('section/subterms/config', views.sectionSubtermsConfig, name='section_subterms_config'),
+    path('update/subterms/configuration', views.UpdateSubtermsConfiguration, name='update_subterms_configuration'),
+
+    # user management
+    path('user/change_password/', views.UserChangePassword, name="user-change-password"),
     
     #Report Order
     path('reports/', views.OrderReportView.as_view(), name='order_report'),
