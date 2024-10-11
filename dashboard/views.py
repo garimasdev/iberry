@@ -86,7 +86,8 @@ def savepaymentGatewayConfiguration(request):
 # GST details dashboard 
 def GstDetailsConfig(request):
     if request.method == 'GET':
-        return render(request, 'tabs/extension/payment_gateway_conf.html')
+        context = {'outdoor_token': request.user.outdoor_token}
+        return render(request, 'tabs/extension/payment_gateway_conf.html', context)
 
 
 # saving the GST details in user
@@ -397,6 +398,11 @@ class RoomCreateView(UserAccessMixin, CreateView):
         kwargs = super(RoomCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 
@@ -428,6 +434,11 @@ class  RoomUpdateView(UserAccessMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
         
 
@@ -515,6 +526,11 @@ class TableCreateView(UserAccessMixin, CreateView):
             kwargs['user'] = self.request.user
             return kwargs
 
+        def get_context_data(self, **kwargs):
+            context = super().get_context_data(**kwargs)
+            context['outdoor_token'] = self.request.user.outdoor_token
+            return context
+
     except:
         traceback.print_exc()
 
@@ -546,6 +562,11 @@ class  TableUpdateView(UserAccessMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
         
 
 class TableDeleteAPIView(DestroyAPIView):
@@ -578,6 +599,11 @@ class FoodsItemCreateView(UserAccessMixin, CreateView):
         kwargs = super(FoodsItemCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 class FoodsItemUpdateView(UserAccessMixin, UpdateView):
@@ -591,6 +617,11 @@ class FoodsItemUpdateView(UserAccessMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
 
 
 
@@ -636,6 +667,11 @@ class FoodsCategoryCreateView(UserAccessMixin, CreateView):
     form_class = FoodsCategoryForm
     success_url	= '/dashboard/foods/categories/'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+
 
 
 class FoodsCategoryUpdateView(UserAccessMixin, UpdateView):
@@ -644,6 +680,11 @@ class FoodsCategoryUpdateView(UserAccessMixin, UpdateView):
     model = Category
     form_class = FoodsCategoryForm
     success_url	= '/dashboard/foods/categories/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 class FoodsCategoryDeleteView(UserAccessMixin, DeleteView):
@@ -674,6 +715,11 @@ class FoodsCategoriesViewPage(UserAccessMixin, ListView):
         else:
             object_list = self.model.objects.filter(user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 
@@ -710,6 +756,11 @@ class FoodsSubCategoriesViewPage(UserAccessMixin, ListView):
             object_list = self.model.objects.filter(category__user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+
 
 class FoodsSubCategoryCreateView(UserAccessMixin, CreateView):
     permission_required = 'stores.add_subcategory'
@@ -722,6 +773,11 @@ class FoodsSubCategoryCreateView(UserAccessMixin, CreateView):
         kwargs = super(FoodsSubCategoryCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 class FoodsSubCategoryUpdateView(UserAccessMixin, UpdateView):
@@ -735,7 +791,11 @@ class FoodsSubCategoryUpdateView(UserAccessMixin, UpdateView):
         kwargs = super(FoodsSubCategoryUpdateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
 
 class FoodsSubCategoryDeleteView(UserAccessMixin, DeleteView):
     permission_required = 'stores.delete_subcategory'
@@ -766,9 +826,19 @@ class FoodsOrdersViewPage(UserAccessMixin, ListView):
         else:
             get_rooms = Room.objects.filter(user=self.request.user)
             object_list = self.model.objects.filter(room__in=get_rooms)
+            print(object_list)
         
-        context_dict = {'request': self.request}
+        context_dict = {
+            'request': self.request,
+        }
         return self.serializer_class(object_list, context=context_dict, many=True).data
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+    
 
 
 class FoodsOutdoorOrdersViewPage(UserAccessMixin, ListView):
@@ -788,9 +858,16 @@ class FoodsOutdoorOrdersViewPage(UserAccessMixin, ListView):
             else:
                 # get_rooms = User.objects.filter(pk=self.request.user.pk)
                 object_list = self.model.objects.filter(user=self.request.user)
+            
             return self.serializer_class(object_list, context={'request': self.request}, many=True).data
         except:
             traceback.print_exc()
+
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
 
 
 class OrderExportPageView(UserAccessMixin, APIView):
@@ -852,6 +929,12 @@ class ServiceViewPage(UserAccessMixin, ListView):
         object_list = self.model.objects.filter(user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+
 
 class ServiceCreateView(UserAccessMixin, CreateView):
     permission_required = 'dashboard.add_service'
@@ -860,6 +943,11 @@ class ServiceCreateView(UserAccessMixin, CreateView):
     form_class = ServiceForm
     success_url	= '/dashboard/services/'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+
 
 class ServiceUpdateView(UserAccessMixin, UpdateView):
     permission_required = 'dashboard.change_service'
@@ -867,6 +955,11 @@ class ServiceUpdateView(UserAccessMixin, UpdateView):
     model = Service
     form_class = ServiceForm
     success_url	= '/dashboard/services/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 class ServiceDeleteAPIView(UserAccessMixin, DestroyAPIView):
@@ -887,6 +980,11 @@ class ServiceOrdersViewPage(UserAccessMixin, ListView):
         object_list = self.model.objects.filter(room__in=get_rooms)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+
 
 """
 Complaints View
@@ -901,6 +999,11 @@ class ComplaintsViewPage(UserAccessMixin, ListView):
     def get_queryset(self):
         object_list = self.model.objects.filter(room__user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 class ComplaintsUpdateAPIView(UserAccessMixin, UpdateAPIView):
@@ -929,6 +1032,12 @@ class ComplainTypesViewPage(UserAccessMixin, ListView):
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+
+
 
 class ComplainTypeCreateView(UserAccessMixin, CreateView):
     permission_required = 'dashboard.add_complaintype'
@@ -936,6 +1045,11 @@ class ComplainTypeCreateView(UserAccessMixin, CreateView):
     model = ComplainType
     form_class = ComplainTypeForm
     success_url	= '/dashboard/complaints/types/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 class ComplainTypeUpdateView(UserAccessMixin, UpdateView):
@@ -944,6 +1058,11 @@ class ComplainTypeUpdateView(UserAccessMixin, UpdateView):
     model = ComplainType
     form_class = ComplainTypeForm
     success_url	= '/dashboard/complaints/types/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 class ComplainTypeDeleteAPIView(UserAccessMixin, DestroyAPIView):
@@ -966,6 +1085,11 @@ class DialerCreateView(UserAccessMixin, CreateView):
         kwargs = super(DialerCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
     
 class DialerViewPage(UserAccessMixin, ListView):
@@ -1001,6 +1125,11 @@ class DialerUpdateView(UserAccessMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
     
 
@@ -1026,6 +1155,11 @@ class ExtensionCreateView(UserAccessMixin, CreateView):
         kwargs = super(ExtensionCreateView, self).get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
 
 
 # registering a new client
@@ -1134,6 +1268,11 @@ class ExtensionUpdateView(UserAccessMixin, UpdateView):
         kwargs['user'] = self.request.user
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+
 
 
 class ExtensionDeleteAPIView(UserAccessMixin, DestroyAPIView):
@@ -1153,6 +1292,11 @@ class PbxCreateView(UserAccessMixin, CreateView):
     model = Pbx
     form_class = PbxForm
     success_url	= '/dashboard/configuration/pbx/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
     
     
@@ -1174,6 +1318,12 @@ class PbxViewPage(UserAccessMixin, ListView):
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
 
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
+
+
 
 class PbxUpdateView(UserAccessMixin, UpdateView):
     permission_required = 'dashboard.change_pbx'
@@ -1181,6 +1331,11 @@ class PbxUpdateView(UserAccessMixin, UpdateView):
     model = Pbx
     form_class = PbxForm
     success_url	= '/dashboard/configuration/pbx/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
 
 class PbxDeleteView(UserAccessMixin, DeleteView):
@@ -1203,6 +1358,11 @@ class JanusCreateView(UserAccessMixin, CreateView):
     model = Janus
     form_class = JanusForm
     success_url	= '/dashboard/configuration/janus/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
         
 
 
@@ -1222,6 +1382,12 @@ class JanusViewPage(UserAccessMixin, ListView):
         else:
             object_list = self.model.objects.filter(user=self.request.user)
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
     
 class JanusUpdateView(UserAccessMixin, UpdateView):
@@ -1230,7 +1396,11 @@ class JanusUpdateView(UserAccessMixin, UpdateView):
     model = Janus
     form_class = JanusForm
     success_url	= '/dashboard/configuration/janus/'
-    
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
 
 class JanusDeleteView(UserAccessMixin, DeleteView):
     permission_required = 'dashboard.delete_janus'
@@ -1287,6 +1457,11 @@ class GlobalViewPage(UserAccessMixin, ListView):
             object_list = self.model.objects.filter(user=self.request.user)
             
         return self.serializer_class(object_list, context={'request': self.request}, many=True).data
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['outdoor_token'] = self.request.user.outdoor_token
+        return context
     
     
 
