@@ -550,7 +550,10 @@ def CreatePaymentOrder(request):
                 'Content-Type': 'application/json',
                 'X-VERIFY': verify_header
             }
+            # test creds
             # url = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay"
+            
+            # prod creds
             url = "https://api.phonepe.com/apis/hermes/pg/v1/pay"
 
             # if os.environ.get('ENV') == 'dev':
@@ -1169,7 +1172,6 @@ class OutdoorOrderModelView(APIView):
                 temp_user.custom_order_id = order_id
                 temp_user.order_total = total_amount
                 temp_user.customer_name = data['name']
-                temp_user.customer_email = data['email']
                 temp_user.customer_phone = data['phone']
                 temp_user.customer_address = data['address']
                 temp_user.save()
@@ -1331,6 +1333,8 @@ class OutdoorOrderStatusViewPage(TemplateView):
         context['room_token'] = room_token
         context['room_number'] = room_token
         context['room_id'] = room_token
+        context['business_type'] = user.business_type
+        
         return context
 
 

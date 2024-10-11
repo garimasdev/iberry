@@ -89,7 +89,6 @@ class Temporary_Users(models.Model):
     receipt = models.CharField(max_length=16, null=True, blank=True)
     order_total = models.CharField(max_length=60, null=True, blank=True)
     customer_name = models.CharField(max_length=60, null=True, blank=True)
-    customer_email = models.CharField(max_length=60, null=True, blank=True)
     customer_phone = models.CharField(max_length=60, null=True, blank=True)
     customer_address = models.TextField(null=True, blank=True)
     class Meta:

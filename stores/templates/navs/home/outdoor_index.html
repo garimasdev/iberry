@@ -81,24 +81,45 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="mb-3">
-                            <label for="username" class="form-label">Name</label>
+                            <label for="username" class="form-label">Receiver's Name</label>
                             <input type="text" class="form-control" id="username" required>
+                            <div class="invalid-feedback" id="usernameFeedback" style="display:none;">Please enter your name.</div>
                         </div>
                         <div class="mb-3">
-                            <label for="phone" class="form-label">Phone</label>
+                            <label for="phone" class="form-label">Receiver's Phone Number</label>
                             <input type="tel" class="form-control" id="phone" required>
+                            <div class="invalid-feedback" id="phoneFeedback">Please enter your phone number.</div>
+                        </div>
+                        <!-- <div class="mb-3">
+                            <label for="house_no" class="form-label">Flat, Building, Apartment, House No. & Floor</label>
+                            <input type="text" class="form-control" id="house_no" required>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" required>
+                            <label for="building" class="form-label">Street, Sector, Village, & Block No.</label>
+                            <input type="text" class="form-control" id="building" required>
+                        </div> -->
+                          <div class="mb-3">
+                            <label for="house_no" class="form-label">Address Line 1</label>
+                            <input type="text" class="form-control" id="house_no" required>
+                            <div class="invalid-feedback" id="addressLine1Feedback" style="display:none;">Please enter Address Line 1.</div>
                         </div>
                         <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" required></textarea>
+                            <label for="building" class="form-label">Address Line 2</label>
+                            <input type="text" class="form-control" id="building" required>
+                            <div class="invalid-feedback" id="addressLine2Feedback" style="display:none;">Please enter Address Line 2.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="landmark" class="form-label">Landmark & Area Name (optional)</label>
+                            <input type="text" class="form-control" id="landmark" >
+                        </div>
+                        <div class="mb-3">
+                            <label for="pincode" class="form-label">Pincode</label>
+                            <input type="text" class="form-control" id="pincode" required>
+                            <div class="invalid-feedback" id="pincodeFeedback" style="display:none;">Please enter your pincode.</div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>            
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" onclick="createPayment()">Proceed</button>
@@ -150,7 +171,7 @@
             <button class="cart-view" data-bs-toggle="modal" data-bs-target="#add-to-cart-{{item.id}}"><i class="bi bi-plus-circle"></i></button>
             
             
-            <!-- Modal -->
+            <!-- Modal before adding item to cart -->
             <div class="modal fade" id="add-to-cart-{{item.id}}" tabindex="-1" aria-labelledby="add-to-cart" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -215,6 +236,7 @@
     {%endfor%}
     <!-- {{perms}}-->
 
+    <!-- cart sidebar -->
     <aside id="cart-bar" class="cart-bar">
         <ul class="cart-nav cart-list" id="cart-nav">
             <h5>Cart</h5>
@@ -241,7 +263,7 @@
         </ul>
          <!-- Instruction Box -->
         <div class="instruction-box" style="padding: 10px; margin-top: 15px; border-top: 1px solid #ddd;">
-            <textarea id="instructions" cols="35" rows="2" placeholder="Add any special instructions here..."></textarea>
+            <textarea id="instructions" cols="35" rows="2" placeholder=" Add any special instructions here..."></textarea>
         </div>
         <!-- Add sections for tax and delivery charges -->
         <div class="cart-summary" data-bs-toggle="modal" data-bs-target="#asktheuser" style="margin-top: auto; padding: 10px; border-top: 1px solid #ddd;">
@@ -272,7 +294,7 @@
 <script src="/static/js/foods/outdoor_foods.js"></script>
 
 
-
+<!-- cart for user id -->
 <script>
     window.onload = function() {
         fetch('/outdoor_cart/user_id', {
@@ -340,13 +362,14 @@
         if (phone) {
             document.getElementById('phone').value = phone;
         }
-        const email = localStorage.getItem("email");
-        if (email) {
-            document.getElementById('email').value = email;
-        }
         const address = localStorage.getItem("address");
         if (address) {
-            document.getElementById('address').value = address;
+            const addressParts = address.split(',').map(part => part.trim());
+            
+            document.getElementById('house_no').value = addressParts[0] || '';  // Address Line 1
+            document.getElementById('building').value = addressParts[1] || '';  // Address Line 2
+            document.getElementById('landmark').value = addressParts[2] || '';  // Landmark
+            document.getElementById('pincode').value = addressParts[3] || '';  // Pincode
         }        
     }
 
@@ -376,6 +399,56 @@
     function codOrderPayment() {
         // Handle Cash On Delivery logic
         const roomId = '{{room_id}}';
+
+        // Get address fields
+        const addressLine1 = document.getElementById('house_no').value.trim();
+        const addressLine2 = document.getElementById('building').value.trim();
+        const landmark = document.getElementById('landmark').value.trim();
+        const pincode = document.getElementById('pincode').value.trim();
+        const username = document.getElementById('username').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+
+        // Clear previous feedback messages
+        document.getElementById('usernameFeedback').style.display = 'none';
+        document.getElementById('phoneFeedback').style.display = 'none';
+        document.getElementById('addressLine1Feedback').style.display = 'none';
+        document.getElementById('addressLine2Feedback').style.display = 'none';
+        document.getElementById('pincodeFeedback').style.display = 'none';
+
+        // Validate mandatory fields
+        let isValid = true;
+
+        if (!username) {
+            document.getElementById('usernameFeedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!phone) {
+            document.getElementById('phoneFeedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!addressLine1) {
+            document.getElementById('addressLine1Feedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!addressLine2) {
+            document.getElementById('addressLine2Feedback').style.display = 'block';
+            isValid = false;
+        }
+        if (!pincode) {
+            document.getElementById('pincodeFeedback').style.display = 'block';
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return;  // Prevent further execution if invalid
+        }
+
+        
+        // Concatenate the address
+        let address = addressLine1;
+        if (addressLine2) address += ' ' + addressLine2;
+        if (landmark) address += ', ' + landmark;
+        address += ', ' + pincode;
         // const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
         $.ajax({
             headers: {
@@ -388,9 +461,8 @@
                 user: roomId,
                 anonymous_user_id: "{{anonymous_user_id}}",
                 name: document.getElementById('username').value,
-                email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value
+                address: address
             }),
             success: function (response) {
                 $('.response')
@@ -424,10 +496,20 @@
         localStorage.setItem("username", username);
         var phone = document.getElementById('phone').value;
         localStorage.setItem("phone", phone);
-        var address = document.getElementById('address').value;
+
+        // address of users
+        var addressLine1 = document.getElementById('house_no').value;
+        var addressLine2 = document.getElementById('building').value;
+        var landmark = document.getElementById('landmark').value;
+        var pincode = document.getElementById('pincode').value;
+
+        // Concatenate the address fields
+        var address = addressLine1;
+        if (addressLine2) address += ' ' + addressLine2;
+        if (landmark) address += ', ' + landmark;
+        if (pincode) address += ', ' + pincode;
+
         localStorage.setItem("address", address);
-        var email = document.getElementById('email').value;
-        localStorage.setItem("email", email);
 
         if (selectedPaymentMode === 'cod') {
             return codOrderPayment();
@@ -437,7 +519,6 @@
             username: username,
             phone: phone,
             address: address,
-            email: email,
             anonymous_user_id: "{{anonymous_user_id}}",
             user: "{{room_id}}"
         };
