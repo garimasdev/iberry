@@ -143,12 +143,23 @@
                                                                 </div>
                                                             </li>
                                                             {%endfor%}
-
+                                                        </ol>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <ol>
+                                                            <li class="item-box item-{{item.id}}">
+                                                                <!-- Instruction Box -->
+                                                                <div class="instruction-box">
+                                                                    <!-- <input type="text" id="instructions-{{ item.id }}" placeholder="Add instructions here" class="form-control"> -->
+                                                                    <label style="font-size: x-large;">Instructions</label>
+                                                                    <textarea name="instruction" class="form-select" id="{{order.id}}-note"></textarea>
+                                                                </div>
+                                                            </li>
                                                         </ol>
                                                     </div>
                                                     <div class="col-md-12">
                                                         <div class="form-floating mb-3">
-                                                            <textarea name="note" class="form-select" id="{{order.id}}-note" style="height: 120px;">{{order.note}}</textarea>
+                                                            <textarea name="note" class="form-select" id="{{order.id}}-note" style="height: 80px;">{{order.note}}</textarea>
                                                             <label for="floatingPbx">Note</label>
                                                         </div>
                                                     </div>

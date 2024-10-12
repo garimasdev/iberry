@@ -1,4 +1,3 @@
-import numbers
 import re
 from accounts.models import User
 from dashboard.models import Room
@@ -55,7 +54,7 @@ def notification_count(request):
         try:
             notification = Notification.objects.filter(
                 room__user=request.user, is_readed=False
-            )[:5]
+            )
             notification_count = notification.count()
             notification_data = NotificationSerializer(notification, many=True).data
         except Notification.DoesNotExist:

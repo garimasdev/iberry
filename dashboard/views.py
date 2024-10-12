@@ -1,5 +1,4 @@
 from datetime import datetime
-from operator import concat
 import random
 import string
 import traceback
@@ -17,7 +16,6 @@ from dashboard.models import *
 from rest_framework.views import APIView
 from rest_framework.generics import UpdateAPIView, DestroyAPIView, CreateAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
-from django.db.models.functions import TruncDay
 from core import settings
 from dashboard.forms import ComplainTypeForm, DialerForm, ExtensionForm, FoodsCategoryForm, FoodsItemForm, JanusForm, PbxForm, RoomForm, RoomUpdateForm, ServiceForm, SubCategoryForm, TableForm, TableUpdateForm
 from dashboard.models import Complain, ComplainType, Dialer, Extension, Global, Janus, Pbx, Room, Service
@@ -26,18 +24,21 @@ from urllib.request import urlopen
 import json
 import urllib
 from django.http import HttpResponse
-from openpyxl.styles import Alignment
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from stores.models import Category, Item, OutdoorOrder, Order, Price, ServiceOrder, SubCategory, Temporary_Users
 from django_filters.views import FilterView
 from .filters import OrderFilter
-import openpyxl
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.views.decorators.csrf import csrf_exempt
+from notification.models import Notification
+from notification.serializers import NotificationSerializer
 
-# Create your views here.
+
+
+
+
 class UserAccessMixin(PermissionRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if (not self.request.user.is_authenticated):
@@ -1570,3 +1571,51 @@ class OrderReportView(UserAccessMixin, FilterView):
             
             
         return JsonResponse(data={"data": data, "header": header, "filename": file_name})
+
+
+
+# clicking notification and redirecting to order page
+@csrf_exempt
+def mark_notification_as_read(request, notification_id):
+    if request.method == 'POST' and request.user.is_authenticated:
+        try:
+            notification = Notification.objects.get(id=notification_id, room__user=request.user)
+            notification.is_readed = True
+            notification.save()
+            return JsonResponse({"status": "success"})
+        except Notification.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Notification not found"})
+    return JsonResponse({"status": "error", "message": "Invalid request"})
+
+
+@csrf_exempt
+# clearing all the notification when click on cross
+def clear_all_notifications(request):
+    print("clear")
+    if request.method == "POST":
+        print("not clear")
+        try:
+            Notification.objects.filter(room__user=request.user).delete()
+            return JsonResponse({"status": "success"})
+        except:
+            traceback.print_exc()
+    return JsonResponse({"status": "error"})
+
+
+# getting real time updates for orders in notification bell
+def get_notifications(request):
+    if request.user.is_authenticated:
+        notifications = Notification.objects.filter(
+            room__user=request.user, is_readed=False
+        )
+        notification_count = notifications.count()
+        notification_data = NotificationSerializer(notifications, many=True).data
+        return JsonResponse({
+            'notification_count': notification_count,
+            'notifications': notification_data,
+            'status': 'success',
+        })
+    return JsonResponse({
+        'notification_count': 0,
+        'notifications': []
+    })

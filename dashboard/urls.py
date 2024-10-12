@@ -133,4 +133,8 @@ urlpatterns = [
     # path('report/', OrderReport, name='report'),
 
     # re_path(r'^.*\.*', views.pages, name='pages'),
+    # bell notifications 
+    path('notifications/mark_as_read/<int:notification_id>/', views.mark_notification_as_read, name='mark-notification-as-read'),
+    path('notifications/clear_all/', views.clear_all_notifications, name='clear-all-notifications'),
+    path('notifications/get/', views.get_notifications, name='get-notifications'),  # Real time notifications
 ]+ router.urls

@@ -83,10 +83,11 @@
         </ul>
     </nav>
     <div class="notification-box card">
+        <button class="btn-close clear-notifications" aria-label="Close"></button>
         <ul>
             {%for notification in notifications%}
             <li>
-                <a href="#">
+                <a href="#" class="notification-item" data-id="{{ notification.id }}">
                     {{notification.title}}
                 </a>
             </li>
@@ -103,6 +104,100 @@
         });
     });
 
+    // Close the notification box when clicking outside of it
+    $(document).click(function(event) {
+        if (!$(event.target).closest('.notification-box').length && !$(event.target).closest('.notification-icon-btn').length) {
+            $(".notification-box").removeClass("active");
+        }
+    });
+
+    // Handle notification click
+    $(document).on("click", ".notification-item", function(e) {
+        e.preventDefault(); // Prevent the default link behavior
+        const notificationId = $(this).data("id");
+
+        // AJAX call to mark notification as read
+        $.ajax({
+            type: "POST",
+            url: `/dashboard/notifications/mark_as_read/${notificationId}/`,
+            headers: {
+                "X-CSRFToken": $("input[name='csrfmiddlewaretoken']").val()
+            },
+            success: function(response) {
+                // Redirect the user after successfully marking the notification
+                if (response.status === "success") {
+                    window.location.href = "/dashboard/foors/orders/";
+                }
+            },
+            error: function(error) {
+                console.error("Error marking notification as read:", error);
+            }
+        });
+    });
+
+
+    // clearing all the notifications
+    $(".clear-notifications").click(function() {
+        $.ajax({
+            type: "POST",
+            url: "/dashboard/notifications/clear_all/",
+            headers: {
+                "X-CSRFToken": $("input[name='csrfmiddlewaretoken']").val()
+            },
+            success: function(response) {
+                // remove notifications from the list
+                $(".notification-box").removeClass("active");
+                $(".notification-box ul").empty(); // Clear the list of notifications
+
+                // Update notification count to 0
+                $(".notification-icon-btn .badge").text("0");
+            },
+            error: function(error) {
+                console.error("Error clearing notifications:", error);
+            }
+        });
+    });
+
+    
+    // fetching real time notifications
+    function fetchNotifications() {
+        $.ajax({
+            type: "GET",
+            url: "/dashboard/notifications/get/",
+            success: function(response) {
+                // Update notification count
+                const newCount = response.notification_count;
+                $(".notification-icon-btn .badge").text(newCount > 0 ? newCount : '').toggle(newCount > 0);
+                
+                // Update notifications in the dropdown
+                const notificationList = $(".notification-box ul");
+                notificationList.empty(); // Clear current notifications
+                
+                response.notifications.forEach(notification => {
+                    notificationList.append(`
+                        <li>
+                            <a href="#" class="notification-item" data-id="${notification.id}">
+                                ${notification.title}
+                            </a>
+                        </li>
+                    `);
+                });
+            },
+            complete: function() {
+                // Schedule the next request
+                setTimeout(fetchNotifications, 5000); // Check every 5 seconds
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        fetchNotifications(); // Start fetching notifications on page load
+    });
+
+
+
+    
+    // change password button
     $(document).ready(function() {
         $("#change_password_submit").click(function() {
             // Get the values of new_password and confirm_password
@@ -143,6 +238,7 @@
         });
     });
 
+    // generate outdoor QR code
     const generate_outdoor_qr = (e) => {
         document.getElementById("outdoor_qrcode").innerHTML = "";
         const outdoorqrcode = new QRCode(document.getElementById("outdoor_qrcode"), {
