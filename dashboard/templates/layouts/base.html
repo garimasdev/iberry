@@ -58,9 +58,8 @@
     <style>
     .copy-text {
         position: relative;
-        /* padding: 10px; */
         background: #fff;
-        border: 1px solid #ddd;
+        border: 1px solid rgb(83, 83, 83);
         border-radius: 10px;
         display: flex;
         align-items: center;
@@ -68,7 +67,7 @@
     .copy-text input.text {
         padding: 10px;
         font-size: 18px;
-        background: #5784f5;
+        background: #000000;
         color: #555;
         border: none;
         outline: none;
@@ -76,7 +75,7 @@
     .copy-text button {
         padding: 6px;
         background: white;
-        color: #5784f5;
+        color: #3d4042;
         font-size: 16px;
         border: none;
         outline: none;
@@ -84,35 +83,7 @@
         cursor: pointer;
     }
 
-    .copy-text button:active {
-        background: #5784f5;
-    }
-    .copy-text button:before {
-        content: "Copied";
-        position: absolute;
-        top: -45px;
-        right: 0px;
-        background: #5784f5;
-        padding: 8px 10px;
-        border-radius: 20px;
-        font-size: 15px;
-        display: none;
-    }
-    .copy-text button:after {
-        content: "";
-        position: absolute;
-        top: -20px;
-        right: 25px;
-        width: 10px;
-        height: 10px;
-        background: #5784f5;
-        transform: rotate(45deg);
-        display: none;
-    }
-    .copy-text.active button:before,
-    .copy-text.active button:after {
-        display: block;
-    }
+    
 
     </style>
 
@@ -160,7 +131,7 @@
                 <!-- Copy Url tooltip -->
                 <div class="modal-footer">
                     <div class="copy-text">
-                        <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyToClipboard();">
+                        <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyToClipboard();" data-bs-toggle="tooltip" title="Copied" data-bs-trigger="manual">
                             Copy URL
                             <i class="fa fa-clone"></i>
                         </button>
@@ -168,7 +139,7 @@
 
                     <!-- print & download -->
                     <button type="button" class="btn btn-outline-success" onclick="javascript:window.print();"><i class="bi bi-printer-fill"></i> Print</button>
-                    <a class="btn btn-outline-primary" href="#" id="outdoorqrdl" style="color: black;"><i class="bi bi-download"></i> Download</a>
+                    <a class="btn btn-outline-primary" href="#" id="outdoorqrdl"><i class="bi bi-download"></i> Download</a>
                 </div>
             </div>
         </div>
@@ -344,19 +315,25 @@
     <script>
         function copyToClipboard() {
             let copyText = document.querySelector(".copy-text");
-            // fetching outdoor_token
-            const outdoorToken = "{{ outdoor_token|escapejs }}";
+            const outdoorToken = "{{ outdoor_token|escapejs }}"; // Update as necessary
             const url = `https://qr.nukadscan.com/store/${outdoorToken}/products/outdoor_items/`;
 
-            // Use the Clipboard API
             navigator.clipboard.writeText(url).then(() => {
-                copyText.classList.add("active");
-                window.getSelection().removeAllRanges();
-                setTimeout(function () {
-                    copyText.classList.remove("active");
-                }, 800);
+                // Show tooltip
+                const tooltipTriggerEl = document.getElementById('copyUrlBtn');
+                const tooltip = new bootstrap.Tooltip(tooltipTriggerEl);
+                tooltip.show();
+
+                // Hide the tooltip after 5 seconds
+                setTimeout(() => {
+                    tooltip.hide();
+                }, 1000); // 5000 milliseconds = 5 seconds
             });
         }
+        $(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+
     </script>
 
     <script>

@@ -1,7 +1,12 @@
 {% extends "layouts/base.html" %} {% block title %} Table List {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+{% block stylesheets %}
+
+
+
+
+{% endblock stylesheets %} {% block content %}
 
 <main id="main" class="main">
     <div class="pagetitle">
@@ -74,6 +79,12 @@
                 <div class="modal-body" id="qrcode">
                 </div>
                 <div class="modal-footer">
+                    <div class="copy-text">
+                        <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyToClipboard();"  data-bs-toggle="tooltip" title="Copied" data-bs-trigger="manual">
+                            Copy URL
+                            <i class="fa fa-clone"></i>
+                        </button>
+                    </div>
                     <button type="button" class="btn btn-outline-success" onclick="javascript:window.print();"><i class="bi bi-printer-fill"></i> Print</button>
                     <a class="btn btn-outline-primary" href="#" id="qrdl"><i class="bi bi-download"></i> Download</a>
                 </div>
@@ -141,7 +152,29 @@
         }, 500);
     }
 
-    
+    function copyToClipboard() {
+        let copyText = document.querySelector(".copy-text");
+        const outdoorToken = "{{ outdoor_token|escapejs }}"; // Update as necessary
+        const url = `https://qr.nukadscan.com/store/${outdoorToken}/products/outdoor_items/`;
+
+        navigator.clipboard.writeText(url).then(() => {
+            // Show tooltip
+            const tooltipTriggerEl = document.getElementById('copyUrlBtn');
+            const tooltip = new bootstrap.Tooltip(tooltipTriggerEl);
+            tooltip.show();
+
+            // Hide the tooltip after 5 seconds
+            setTimeout(() => {
+                tooltip.hide();
+            }, 5000); // 5000 milliseconds = 5 seconds
+        });
+    }
+    $(function () {
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    });
+
+
+
     // Send SMS for Table qr code
     const send_sms = (e) => {
         let sms_content = "Click #LINK# to access hotel Phone System and Food menu. #TOKEN#Welcome to ibudha.com";
