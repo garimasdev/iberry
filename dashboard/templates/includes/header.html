@@ -97,6 +97,10 @@
 </header>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
 <script src="/static/vendor/qrcodejs/qrcode.js"></script>
+
+<!-- audio file for notification-->
+<audio id="notification-sound" src="/static/loud-buzzer.mp3" preload="auto"></audio>
+
 <script>
     $(document).ready(function() {
         $(".notification-icon-btn").click(function() {
@@ -109,30 +113,6 @@
         if (!$(event.target).closest('.notification-box').length && !$(event.target).closest('.notification-icon-btn').length) {
             $(".notification-box").removeClass("active");
         }
-    });
-
-    // Handle notification click
-    $(document).on("click", ".notification-item", function(e) {
-        e.preventDefault(); // Prevent the default link behavior
-        const notificationId = $(this).data("id");
-
-        // AJAX call to mark notification as read
-        $.ajax({
-            type: "POST",
-            url: `/dashboard/notifications/mark_as_read/${notificationId}/`,
-            headers: {
-                "X-CSRFToken": $("input[name='csrfmiddlewaretoken']").val()
-            },
-            success: function(response) {
-                // Redirect the user after successfully marking the notification
-                if (response.status === "success") {
-                    window.location.href = "/dashboard/foors/orders/";
-                }
-            },
-            error: function(error) {
-                console.error("Error marking notification as read:", error);
-            }
-        });
     });
 
 
@@ -159,6 +139,8 @@
     });
 
     
+    let previousCount = 0;
+
     // fetching real time notifications
     function fetchNotifications() {
         $.ajax({
@@ -167,6 +149,11 @@
             success: function(response) {
                 // Update notification count
                 const newCount = response.notification_count;
+
+                if (newCount > previousCount) {
+                    document.getElementById("notification-sound").play();
+                }
+
                 $(".notification-icon-btn .badge").text(newCount > 0 ? newCount : '').toggle(newCount > 0);
                 
                 // Update notifications in the dropdown
@@ -182,6 +169,7 @@
                         </li>
                     `);
                 });
+                previousCount = newCount;
             },
             complete: function() {
                 // Schedule the next request
@@ -189,6 +177,33 @@
             }
         });
     }
+
+    // Handle notification click
+    $(document).on("click", ".notification-item", function(e) {
+        e.preventDefault(); // Prevent the default link behavior
+        const notificationId = $(this).data("id");
+
+        document.getElementById("notification-sound").pause();
+        document.getElementById("notification-sound").currentTime = 0;
+        
+        // AJAX call to mark notification as read
+        $.ajax({
+            type: "POST",
+            url: `/dashboard/notifications/mark_as_read/${notificationId}/`,
+            headers: {
+                "X-CSRFToken": $("input[name='csrfmiddlewaretoken']").val()
+            },
+            success: function(response) {
+                // Redirect the user after successfully marking the notification
+                if (response.status === "success") {
+                    window.location.href = "/dashboard/foors/orders/";
+                }
+            },
+            error: function(error) {
+                console.error("Error marking notification as read:", error);
+            }
+        });
+    });
 
     $(document).ready(function() {
         fetchNotifications(); // Start fetching notifications on page load
