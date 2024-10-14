@@ -138,7 +138,16 @@
         });
     });
 
-    
+
+    let audio_play_track = false
+
+    function playaudio() {
+        let sound = document.getElementById("notification-sound");
+        setInterval(() => {
+            sound.play()
+        }, 2500)
+    }
+
     let previousCount = 0;
 
     // fetching real time notifications
@@ -150,9 +159,9 @@
                 // Update notification count
                 const newCount = response.notification_count;
 
-                if (newCount > previousCount) {
-                    document.getElementById("notification-sound").play();
-                }
+                // if (newCount > previousCount) {
+                //     playaudio()
+                // }
 
                 $(".notification-icon-btn .badge").text(newCount > 0 ? newCount : '').toggle(newCount > 0);
                 
@@ -169,6 +178,10 @@
                         </li>
                     `);
                 });
+                if (newCount > previousCount) {
+                    playaudio()
+                }
+                
                 previousCount = newCount;
             },
             complete: function() {
@@ -253,6 +266,8 @@
         });
     });
 
+    
+    
     // generate outdoor QR code
     const generate_outdoor_qr = (e) => {
         document.getElementById("outdoor_qrcode").innerHTML = "";
