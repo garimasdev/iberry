@@ -1307,6 +1307,10 @@ class OrderStatusViewPage(TemplateView):
 
         context["order"] = FoodOrdersSerializer(order).data
         context['hotel_name'] = room.user.name
+        context['room_token'] = room_token
+        context['room_number'] = room_token
+        context['room_id'] = room_token
+        context['business_type'] = room.user.business_type
 
         return context
 
