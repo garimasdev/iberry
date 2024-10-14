@@ -120,8 +120,7 @@ def SaveGstDetailsConfig(request):
 def createTermsConfigurations(request):
     if request.method == 'GET':
         choices = TermHeading.STATUS
-        context = {'outdoor_token': request.user.outdoor_token}
-        return render(request, 'tabs/custom_terms/custom_terms.html', {'choices': choices}, context)
+        return render(request, 'tabs/custom_terms/custom_terms.html', {'choices': choices, 'outdoor_token':request.user.outdoor_token})
     
     if request.method == 'POST':
         try:
