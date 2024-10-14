@@ -179,8 +179,8 @@ PUSH_NOTIFICATIONS_SETTINGS = {
 }
 
 TELEGRAM = {
-    "bot_token": "6954115938:AAHSdZOJaCFz4qduUE3ppMBB7mHUVfYg8q8"
-    # "bot_token": "6071425680:AAGWmXo37l0FdD415w8zxXdghbm_E8IvN44"
+    "bot_token": "7686486264:AAHhl8tFUi9J2QWEvZz_7BSQDvbjK8ASCIM",
+    "channel_name": "@IberryBugs",
 }
 
 # Internationalization
@@ -261,7 +261,7 @@ ENV= Env.PROD
 # PWA_APP_SCOPE = '/'
 # PWA_APP_ORIENTATION = 'any'
 # # PWA_APP_START_URL = '/'
-# PWA_APP_START_URL = '/store/97599568/foods/outdoor_items/'
+# PWA_APP_START_URL = '/store/97599568/products/outdoor_items/'
 # PWA_APP_STATUS_BAR_COLOR = 'default'
 # PWA_APP_ICONS = [
 # 	{
