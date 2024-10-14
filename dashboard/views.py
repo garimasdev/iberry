@@ -908,7 +908,6 @@ class OutdoorOrderExportPageView(UserAccessMixin, APIView):
                 'outdoor_orders': data.data,
                 'total_amount': total_amount,
                 'name': user_detail.customer_name.capitalize(),
-                'email': user_detail.customer_email,
                 'phone': user_detail.customer_phone,
                 'address': user_detail.customer_address
             })
