@@ -1,64 +1,5 @@
 {% extends "layouts/base.html" %} {% block title %} Room List {% endblock %}
-<style>
-    .copy-text {
-        position: relative;
-        /* padding: 10px; */
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-    }
-    .copy-text input.text {
-        padding: 10px;
-        font-size: 18px;
-        background: #5784f5;
-        color: #555;
-        border: none;
-        outline: none;
-    }
-    .copy-text button {
-        padding: 6px;
-        background: white;
-        color: #5784f5;
-        font-size: 16px;
-        border: none;
-        outline: none;
-        border-radius: 8px;
-        cursor: pointer;
-    }
 
-    .copy-text button:active {
-        background: #5784f5;
-    }
-    .copy-text button:before {
-        content: "Copied";
-        position: absolute;
-        top: -45px;
-        right: 0px;
-        background: #5784f5;
-        padding: 8px 10px;
-        border-radius: 20px;
-        font-size: 15px;
-        display: none;
-    }
-    .copy-text button:after {
-        content: "";
-        position: absolute;
-        top: -20px;
-        right: 25px;
-        width: 10px;
-        height: 10px;
-        background: #5784f5;
-        transform: rotate(45deg);
-        display: none;
-    }
-    .copy-text.active button:before,
-    .copy-text.active button:after {
-        display: block;
-    }
-
-    </style>
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %} {% endblock stylesheets %}
 
@@ -76,7 +17,7 @@
                 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Room List</h5>
+                        <h5 class="card-title">Room List </h5>
                         <!-- Table with stripped rows -->
                         <table class="table datatable">
                             <thead>
@@ -143,7 +84,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="copy-text">
-                        <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyToClipboard();"  data-bs-toggle="tooltip" title="Copied" data-bs-trigger="manual">
+                        <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyClipboard(this);" data-url="{{ request.scheme }}://{{ request.get_host }}/check/store/{{room.room_token}}/config" data-bs-toggle="tooltip" title="Copied" data-bs-trigger="manual">
                             Copy URL
                             <i class="fa fa-clone"></i>
                         </button>
@@ -215,10 +156,9 @@
     }
 
 
-    function copyToClipboard() {
+    function copyClipboard(e) {
         let copyText = document.querySelector(".copy-text");
-        const outdoorToken = "{{ outdoor_token|escapejs }}"; // Update as necessary
-        const url = `https://qr.nukadscan.com/store/${outdoorToken}/products/outdoor_items/`;
+        const url = e.dataset.url
 
         navigator.clipboard.writeText(url).then(() => {
             // Show tooltip
@@ -229,7 +169,7 @@
             // Hide the tooltip after 5 seconds
             setTimeout(() => {
                 tooltip.hide();
-            }, 5000); // 5000 milliseconds = 5 seconds
+            }, 5000);
         });
     }
     $(function () {

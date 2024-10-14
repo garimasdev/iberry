@@ -131,7 +131,7 @@
                 <!-- Copy Url tooltip -->
                 <div class="modal-footer">
                     <div class="copy-text">
-                        <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyToClipboard();" data-bs-toggle="tooltip" title="Copied" data-bs-trigger="manual">
+                        <button type="button" class="btn btn-outline-secondary" id="copyUrlBtn" onclick="copyToClipboard(this);" data-url="{{ request.scheme }}://{{ request.get_host }}/store/{{outdoor_token}}/products/outdoor_items/" data-bs-toggle="tooltip" title="Copied" data-bs-trigger="manual">
                             Copy URL
                             <i class="fa fa-clone"></i>
                         </button>
@@ -313,10 +313,9 @@
     
     <!-- api for copy paste in clipboard -->
     <script>
-        function copyToClipboard() {
+        function copyToClipboard(e) {
             let copyText = document.querySelector(".copy-text");
-            const outdoorToken = "{{ outdoor_token|escapejs }}"; // Update as necessary
-            const url = `https://qr.nukadscan.com/store/${outdoorToken}/products/outdoor_items/`;
+            const url = e.dataset.url
 
             navigator.clipboard.writeText(url).then(() => {
                 // Show tooltip
