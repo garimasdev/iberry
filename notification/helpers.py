@@ -63,14 +63,24 @@ def push_notification(body, title, token):
 
 
 
-# telegram channel notification for all platforms
+# telegram channel for room orders notification 
 def telegram_notification(channel_name, bot_token, message):
     try:
-        # bot = telegram.Bot(token=settings.TELEGRAM['bot_token'])
+        # bot token and channel name from room model
         bot = telegram.Bot(token=bot_token)
         bot.send_message(chat_id=f'@{channel_name}', text=message,  parse_mode=ParseMode.HTML)
     except:
         traceback.print_exc()
+
+# exception telegram channel
+def telegram_exception(message):
+    try:
+        bot_token = telegram.Bot(token=settings.TELEGRAM['bot_token'])
+        channel_name = settings.TELEGRAM['channel_name']
+        bot_token.send_message(chat_id=channel_name, text=message, parse_mode=ParseMode.HTML)
+    except:
+        traceback.print_exc()
+        
 
 
 

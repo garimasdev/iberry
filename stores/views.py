@@ -89,7 +89,7 @@ from stores.serializers import (
 #     import telegram
 #     from telegram import ParseMode
 
-from notification.helpers import push_notification, telegram_notification
+from notification.helpers import push_notification, telegram_exception, telegram_notification
 
 
 
@@ -309,7 +309,7 @@ class HomeViewPage(TemplateView):
 
             return context
         except:
-            telegram_notification(room.channel_name, room.bot_token, traceback.format_exc())
+            telegram_exception(traceback.format_exc())
             traceback.print_exc()
 
 
@@ -427,8 +427,7 @@ class OutdoorHomeViewPage(TemplateView):
             return context
         except:
             import traceback
-            telegram_notification(room.channel_name, room.bot_token, traceback.format_exc())
-            # telegram_notification("iberry2023", traceback.format_exc())
+            telegram_exception(traceback.format_exc())
             traceback.print_exc()
 
 
@@ -655,6 +654,7 @@ def paymentCheckout(request):
                     'room_token': request.GET.get('token')
                 }))
     except:
+        telegram_exception(traceback.format_exc())
         traceback.print_exc()
 
 
@@ -1204,7 +1204,7 @@ class OutdoorOrderModelView(APIView):
                 )
         except:
             traceback.print_exc()
-            telegram_notification(get_room.channel_name, get_room.bot_token, traceback.format_exc())
+            telegram_exception(traceback.format_exc())
             return Response({
                 'success': "Order not being placed."
             })
@@ -1283,7 +1283,7 @@ def PlaceOrderAPIView(request):
                 )
         except:
             traceback.print_exc()
-            telegram_notification(get_room.user.channel_name, get_room.user.bot_token, traceback.format_exc())
+            telegram_exception(traceback.format_exc())
             return JsonResponse(
                 {"error": "Cart is empty"}, status=status.HTTP_401_UNAUTHORIZED
             )
@@ -1620,6 +1620,7 @@ class ServiceOrderPlaceAPIView(APIView):
 
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except:
+            telegram_exception(traceback.format_exc())
             traceback.print_exc()
 
 
