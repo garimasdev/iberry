@@ -145,7 +145,7 @@
         let sound = document.getElementById("notification-sound");
         setInterval(() => {
             sound.play()
-        }, 2500)
+        }, 1000)
     }
 
     let previousCount = 0;
@@ -159,9 +159,9 @@
                 // Update notification count
                 const newCount = response.notification_count;
 
-                // if (newCount > previousCount) {
-                //     playaudio()
-                // }
+                if (newCount > previousCount) {
+                    playaudio()
+                }
 
                 $(".notification-icon-btn .badge").text(newCount > 0 ? newCount : '').toggle(newCount > 0);
                 
@@ -178,9 +178,6 @@
                         </li>
                     `);
                 });
-                if (newCount > previousCount) {
-                    playaudio()
-                }
                 
                 previousCount = newCount;
             },
