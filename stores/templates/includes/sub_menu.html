@@ -28,7 +28,7 @@
     {%endif%}        
         
         {% if business_type == 0 %}
-        {% if '/foods/bar/' not in request.path %}
+        {% if '/foods/bar/' not in request.path  and '/order_status/'|add:room_number|add:'/'|add:order_id not in request.path %}
         
         <!-- veg category -->
         <li class="item-type veg {%if request.GET.item_type == 'Veg' %}active{%endif%}">
