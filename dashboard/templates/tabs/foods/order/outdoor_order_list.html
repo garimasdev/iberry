@@ -1,4 +1,4 @@
-{% extends "layouts/base.html" %} {% block title %} Order List {% endblock %}
+{% extends "layouts/base.html" %} {% block title %} Outdoor Order List {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
@@ -32,21 +32,6 @@
 {% endblock stylesheets %} {% block content %}
 <main id="main" class="main">
     <section class="section">
-        <div class="response"></div>
-        <!--Order Print View-->
-        <div class="modal fade print-modal" id="print-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-body">
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary print-btn">Print Order</button>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
@@ -62,7 +47,6 @@
                                     <th scope="col">Status</th>
                                     <th scope="col">Created_at</th>
                                     <th scope="col">Action</th>
-                                    <th scope="col"></th>
                                 </tr>
                             </thead>
                             <tbody>

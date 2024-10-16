@@ -5,14 +5,14 @@ $(document).ready(function() {
         // Perform AJAX request to fetch updated order data
         $.ajax({
             type: "GET",
-            url: "/dashboard/foors/orders//", // Endpoint to fetch orders
+            url: "/dashboard/foors/orders/", // Endpoint to fetch orders
             dataType: "json",
             success: function(response) {
                 // Update the order page with the fetched data
                 // You may need to implement this logic based on your page structure
                 console.log("Fetched updated order data:", response);
                 // Reload the page or update the UI as per your requirements
-                window.location.reload();
+                // window.location.reload();
             },
             error: function(error) {
                 console.error("Error fetching orders:", error);

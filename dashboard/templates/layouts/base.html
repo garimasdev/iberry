@@ -178,9 +178,7 @@
     <script src="/static/vendor/tinymce/tinymce.min.js"></script>
     <script src="/static/vendor/php-email-form/validate.js"></script>
 
-    {% if '/dashboard/foors/orders/' != request.path %}
     <script src="/static/js/main.js"></script>
-    {% endif %}
     <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-messaging.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-analytics.js"></script>
@@ -226,7 +224,6 @@
         return messaging.getToken()
         })
         .then((token) => {
-            console.log('final token', token);
             const fcm = {
                 'fcm_token': token
             }
@@ -261,8 +258,6 @@
     }
 
         messaging.onMessage(function(payload) {
-        console.log("notifi worked")
-        console.log("Foreground notification received:", payload);
         showLocalNotification(payload.notification.title);
         // Handle the notification payload and show it to the user
         if (Notification.permission === "granted") {
