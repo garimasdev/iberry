@@ -826,7 +826,6 @@ class FoodsOrdersViewPage(UserAccessMixin, ListView):
         else:
             get_rooms = Room.objects.filter(user=self.request.user)
             object_list = self.model.objects.filter(room__in=get_rooms)
-            print(object_list)
         
         context_dict = {
             'request': self.request,
@@ -1479,6 +1478,7 @@ class OrderReportView(UserAccessMixin, FilterView):
         # context['orders_placed'] = orders.count()
         # context['orders_delivered'] = orders.filter(status='delivered').count()
         # context['orders_canceled'] = orders.filter(status='canceled').count()
+        # outdoor token for copy url
         context['outdoor_token'] = self.request.user.outdoor_token
         return context
     
@@ -1491,16 +1491,15 @@ class OrderReportView(UserAccessMixin, FilterView):
         start_date = datetime.strptime(get_start_date, '%Y-%m-%dT%H:%M')
         end_date = datetime.strptime(get_end_date, '%Y-%m-%dT%H:%M')
         
-        
         # Generate the file name based on the date range
         file_name = f'order_report_{start_date.date()}_to_{end_date.date()}.xlsx'
-        if get_model == "food_orders":
+        data, header = [], []
+
+        if get_model == "room_food_orders":
            orders = self.get_queryset().filter(created_at__range=[start_date, end_date])
-           
-           
            # Create a dictionary to store order data grouped by date
            status = ["Ordered", "Processing", "Completed", "Canceled"]
-           data = []
+
            for order in orders:
                create_at = order.created_at.strftime('%Y-%m-%dT%H:%M')
                updated_at = order.updated_at.strftime('%Y-%m-%dT%H:%M')
@@ -1514,17 +1513,63 @@ class OrderReportView(UserAccessMixin, FilterView):
                    order_quantity_and_title.append(item_title)
                
                    
-               new_data = {'order_date_time': create_at, 'status': status[order.status], 'delivery_date_time': updated_at, 
-                           'from_room_number': order.room.room_number, "order_description": f"Room  {order.room.room_number} orders {','.join(order_quantity_and_title)}", 
-                           "comment_by_staff": order.note, "total_time_taken": f"{hours}:{minutes}"}
+               new_data = {
+                   'order_date_time': create_at, 
+                   'status': status[order.status], 
+                   'delivery_date_time': updated_at, 
+                   'from_room_number': order.room.room_number, 
+                   "order_description": f"Room  {order.room.room_number} orders {','.join(order_quantity_and_title)}", 
+                   "comment_by_staff": order.note, 
+                   "total_time_taken": f"{hours}:{minutes}"
+                }
+
                data.append(new_data)
                
            header = ['Order DateTime', 'Status', 'Delivery DateTime', 'From RoomNumber', 'Order Description', 'Comment ByStaff', 'Total TimeTaken']
+       
+        
+        # Outdoor Food Orders Report
+        elif get_model == "outdoor_food_orders":
+            try:
+                outdoor_orders = OutdoorOrder.objects.filter(created_at__range=[start_date, end_date])
+                status = ["Ordered", "Processing", "Completed", "Canceled"]
+                for order in outdoor_orders:
+                    create_at = order.created_at.strftime('%Y-%m-%dT%H:%M')
+                    updated_at = order.updated_at.strftime('%Y-%m-%dT%H:%M')
+                    order_quantity_and_title = []
+                    time_taken = order.updated_at - order.created_at
+                    hours = time_taken.days * 24 + time_taken.seconds // 3600
+                    minutes = (time_taken.seconds % 3600) // 60
+                    
+                    for item in order.items.all():
+                        item_title = f"{item.quantity} {item.item.title}"
+                        order_quantity_and_title.append(item_title)
+                    
+                    temp_user = order.temp_user
+                    print(temp_user)
+                    customer_name = order.temp_user.customer_name if temp_user else 'Unknown'
+
+                    new_data = {
+                        'order_date_time': create_at,
+                        'status': status[order.status],
+                        'delivery_date_time': updated_at,
+                        'from_room_number': customer_name,
+                        "order_description": f"Outdoor order items: {','.join(order_quantity_and_title)}",
+                        "comment_by_staff": order.note,
+                        "total_time_taken": f"{hours}:{minutes}"
+                    }
+
+                    data.append(new_data)
+                header = ['Outdoor Order DateTime', 'Status', 'Delivery DateTime', 'From Customer', 'Order Description', 'Comment ByStaff', 'Total TimeTaken']
+            except:
+                traceback.print_exc()
+
+        
+        # Service Orders Report
         elif get_model == "service_orders":
-            orders = ServiceOrder.objects.filter(created_at__range=[start_date, end_date])
-            
+            orders = ServiceOrder.objects.filter(created_at__range=[start_date, end_date])            
             status = ["Ordered", "Processing", "Completed", "Canceled"]
-            data = []
+
             for order in orders:
                 create_at = order.created_at.strftime('%Y-%m-%dT%H:%M')
                 updated_at = order.updated_at.strftime('%Y-%m-%dT%H:%M')
@@ -1538,18 +1583,26 @@ class OrderReportView(UserAccessMixin, FilterView):
                     order_quantity_and_title.append(service_title)
                 
                     
-                new_data = {'order_date_time': create_at, 'status': status[order.status], 'delivery_date_time': updated_at, 
-                            'from_room_number': order.room.room_number, "order_description": f"Room  {order.room.room_number} orders {','.join(order_quantity_and_title)}", 
-                            "comment_by_staff": order.note, "total_time_taken": f"{hours}:{minutes}"}
+                new_data = {
+                    'order_date_time': create_at, 
+                    'status': status[order.status], 
+                    'delivery_date_time': updated_at, 
+                    'from_room_number': order.room.room_number, 
+                    "order_description": f"Room  {order.room.room_number} orders {','.join(order_quantity_and_title)}", 
+                    "comment_by_staff": order.note, 
+                    "total_time_taken": f"{hours}:{minutes}"
+                }
+
                 data.append(new_data)
                 
             header = ['Service Request DateTime', 'Status', 'Delivery DateTime', 'From RoomNumber', 'Order Description', 'Comment ByStaff', 'Total TimeTaken']
         
+        
+        # Complaints Orders Report
         elif get_model == "complaints":
-            orders = Complain.objects.filter(created_at__range=[start_date, end_date])
-            
+            orders = Complain.objects.filter(created_at__range=[start_date, end_date])            
             status = ["Complained", "Processing", "Completed", "Canceled"]
-            data = []
+
             for order in orders:
                 create_at = order.created_at.strftime('%Y-%m-%dT%H:%M')
                 updated_at = order.updated_at.strftime('%Y-%m-%dT%H:%M')
@@ -1557,12 +1610,17 @@ class OrderReportView(UserAccessMixin, FilterView):
                 time_taken =  order.updated_at - order.created_at
                 hours = time_taken.days * 24 + time_taken.seconds // 3600
                 minutes = (time_taken.seconds % 3600) // 60
-                
-                
                     
-                new_data = {'order_date_time': create_at, 'status': status[order.status], 'delivery_date_time': updated_at, 
-                            'from_room_number': order.room.room_number, "order_description": f"Room  {order.room.room_number} complain {complain}", 
-                            "comment_by_staff": order.note, "total_time_taken": f"{hours}:{minutes}"}
+                new_data = {
+                    'order_date_time': create_at, 
+                    'status': status[order.status], 
+                    'delivery_date_time': updated_at, 
+                    'from_room_number': order.room.room_number, 
+                    "order_description": f"Room  {order.room.room_number} complain {complain}", 
+                    "comment_by_staff": order.note,
+                    "total_time_taken": f"{hours}:{minutes}"
+                }
+
                 data.append(new_data)
                 
             header = ['Complaint DateTime', 'Status', 'Complaint Resolves DateTime', 'From RoomNumber', 'Complaint Description', 'Comment ByStaff', 'Total TimeTaken']
@@ -1571,6 +1629,11 @@ class OrderReportView(UserAccessMixin, FilterView):
         return JsonResponse(data={"data": data, "header": header, "filename": file_name})
 
 
+
+
+"""
+Notification Bell 
+"""
 
 # clicking notification and redirecting to order page
 @csrf_exempt

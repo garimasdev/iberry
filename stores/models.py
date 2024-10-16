@@ -198,6 +198,7 @@ class OutdoorOrder(models.Model):
     )
     order_id = models.CharField(max_length=8, unique=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    temp_user = models.ForeignKey(Temporary_Users, null=True, blank=True, on_delete=models.SET_NULL)
     items = models.ManyToManyField(OutdoorOrderItem, related_name='stores_outdoor_order_items')
     overall_tax = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
