@@ -97,7 +97,6 @@ $(document).ready(function() {
                     '</div>');
             },
             success: function(response) {
-                console.log(response);
                 $("#print-modal .modal-body .spinner-border").hide();
                 // Construct the HTML for table rows using a loop
                 var tableRows = '';
@@ -136,7 +135,6 @@ $(document).ready(function() {
                     '<p class="text-right"><strong>Overall Tax:</strong> ₹ ' + response.outdoor_orders.overall_tax + '</p>' +
                     '<p class="text-right"><strong>Total Amount:</strong> ₹ ' + response.total_amount + '</p>' +
                     '<p class="text-right"><strong>Mobile:</strong> ' + response.phone + '</p>' +
-                    '<p class="text-right"><strong>Email:</strong> ' + response.email + '</p>' +
                     '<hr>' +
                     '<p class="text-right"><strong>Address:</strong> ' + response.address + '</p>' +
                     '<p class="text-right"><strong>Date:</strong> ' + response.outdoor_orders.created_at + '<strong></p>' +
