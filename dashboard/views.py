@@ -32,8 +32,8 @@ from .filters import OrderFilter
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from django.views.decorators.csrf import csrf_exempt
-from notification.models import Notification
-from notification.serializers import NotificationSerializer
+from notification.models import Notification, OutdoorNotification
+from notification.serializers import NotificationSerializer, OutdoorNotificationSerializer
 
 
 
@@ -1640,23 +1640,40 @@ Notification Bell
 def mark_notification_as_read(request, notification_id):
     if request.method == 'POST' and request.user.is_authenticated:
         try:
+            # Try to get the room notification first
             notification = Notification.objects.get(id=notification_id, room__user=request.user)
             notification.is_readed = True
             notification.save()
-            return JsonResponse({"status": "success"})
+            # setting notification type for room
+            notification_type = "room"
         except Notification.DoesNotExist:
-            return JsonResponse({"status": "error", "message": "Notification not found"})
+            try:
+                # If not found, try to get the outdoor notification
+                notification = OutdoorNotification.objects.get(id=notification_id, user=request.user)
+                notification.is_readed = True
+                notification.save()
+                # setting notification type for outdoor
+                notification_type = "outdoor"
+            except OutdoorNotification.DoesNotExist:
+                return JsonResponse({"status": "error", "message": "Notification not found"})
+
+        # Return success with updated notification count
+        updated_count = (Notification.objects.filter(room__user=request.user, is_readed=False).count() +
+                         OutdoorNotification.objects.filter(user=request.user, is_readed=False).count())
+        
+        return JsonResponse({"status": "success", "notification_count": updated_count, "notification_type": notification_type, "notification_id": notification.id})
+
     return JsonResponse({"status": "error", "message": "Invalid request"})
 
 
-@csrf_exempt
+
 # clearing all the notification when click on cross
+@csrf_exempt
 def clear_all_notifications(request):
-    print("clear")
     if request.method == "POST":
-        print("not clear")
         try:
             Notification.objects.filter(room__user=request.user).delete()
+            OutdoorNotification.objects.filter(user=request.user).delete()
             return JsonResponse({"status": "success"})
         except:
             traceback.print_exc()
@@ -1666,17 +1683,24 @@ def clear_all_notifications(request):
 # getting real time updates for orders in notification bell
 def get_notifications(request):
     if request.user.is_authenticated:
-        notifications = Notification.objects.filter(
-            room__user=request.user, is_readed=False
-        )
-        notification_count = notifications.count()
-        notification_data = NotificationSerializer(notifications, many=True).data
+        room_notifications = Notification.objects.filter(room__user=request.user, is_readed=False)
+        outdoor_notifications = OutdoorNotification.objects.filter(user=request.user, is_readed=False)
+
+        notification_count = room_notifications.count() + outdoor_notifications.count()
+        notification_data = NotificationSerializer(room_notifications, many=True).data
+        outdoor_notification_data = OutdoorNotificationSerializer(outdoor_notifications, many=True).data
+
+        # Combine both notification data
+        all_notifications = notification_data + outdoor_notification_data
+
         return JsonResponse({
             'notification_count': notification_count,
-            'notifications': notification_data,
+            'notifications': all_notifications,
             'status': 'success',
         })
+
     return JsonResponse({
         'notification_count': 0,
         'notifications': []
     })
+

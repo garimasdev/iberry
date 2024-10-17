@@ -1,8 +1,9 @@
 import re
+import traceback
 from accounts.models import User
 from dashboard.models import Room
-from notification.models import Notification
-from notification.serializers import NotificationSerializer
+from notification.models import Notification, OutdoorNotification
+from notification.serializers import NotificationSerializer, OutdoorNotificationSerializer
 from stores.models import Cart, OutdoorCart, ServiceCart
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -52,17 +53,35 @@ def cart_count(request):
 def notification_count(request):
     if request.user.is_authenticated:
         try:
-            notification = Notification.objects.filter(
+            # Fetch room notifications
+            room_notifications = Notification.objects.filter(
                 room__user=request.user, is_readed=False
             )
-            notification_count = notification.count()
-            notification_data = NotificationSerializer(notification, many=True).data
-        except Notification.DoesNotExist:
-            notification_count = 0
+            room_notification_count = room_notifications.count()
+            room_notifications_data = NotificationSerializer(room_notifications, many=True).data
+            
+            # Fetch outdoor notifications
+            outdoor_notifications = OutdoorNotification.objects.filter(
+                user=request.user
+            )
+            outdoor_notification_count = outdoor_notifications.count()
+            outdoor_notifications_data = OutdoorNotificationSerializer(outdoor_notifications, many=True).data
+            
+            # Combine counts and notifications
+            total_notification_count = room_notification_count + outdoor_notification_count
+            notifications = room_notifications_data + outdoor_notifications_data
 
-        return {
-            "notification_count": notification_count,
-            "notifications": notification_data,
-        }
+            return {
+                "notification_count": total_notification_count,
+                "notifications": notifications,
+            }
+        except:
+            traceback.print_exc()
     else:
         return {"notification_count": 0, "notifications": []}
+
+
+
+
+
+

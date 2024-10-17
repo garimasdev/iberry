@@ -3,7 +3,7 @@ from push_notifications.api.rest_framework import DeviceSerializerMixin, UniqueR
     HexIntegerField, ValidationError, UNSIGNED_64BIT_INT_MAX_VALUE, hex_re
 from push_notifications.models import GCMDevice
 from django.contrib.auth import get_user_model
-from notification.models import Notification
+from notification.models import Notification, OutdoorNotification
 
 class GCMDeviceSerializer(UniqueRegistrationSerializerMixin, serializers.ModelSerializer):
     device_id = HexIntegerField(
@@ -33,4 +33,10 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = Notification
         fields = '__all__'
         # exclude = ['content']
+
+
+class OutdoorNotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OutdoorNotification
+        fields = '__all__'
         

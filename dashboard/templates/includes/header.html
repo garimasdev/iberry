@@ -145,7 +145,7 @@
         let sound = document.getElementById("notification-sound");
         setInterval(() => {
             sound.play()
-        }, 2500)
+        }, 2000)
     }
 
     let previousCount = 0;
@@ -188,6 +188,10 @@
         });
     }
 
+    $(document).ready(function() {
+        fetchNotifications(); // Start fetching notifications on page load
+    });
+
     // Handle notification click
     $(document).on("click", ".notification-item", function(e) {
         e.preventDefault(); // Prevent the default link behavior
@@ -206,7 +210,15 @@
             success: function(response) {
                 // Redirect the user after successfully marking the notification
                 if (response.status === "success") {
-                    window.location.href = "/dashboard/foors/orders/";
+                    // Update the notification count
+                    $(".notification-icon-btn .badge").text(response.notification_count > 0 ? response.notification_count : '').toggle(response.notification_count > 0);
+                    
+                    // redirect based on notification type
+                    if (response.notification_type === 'room'){
+                        window.location.href = "/dashboard/foors/orders/";
+                    } else if(response.notification_type==='outdoor') {
+                        window.location.href = "/dashboard/foods/outdoor-orders/";
+                    }
                 }
             },
             error: function(error) {
