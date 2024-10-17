@@ -164,6 +164,7 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     status = models.SmallIntegerField(choices=STATUS, default=0)
     note = models.CharField(max_length=250, null=True, blank=True)
+    instruction = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -204,6 +205,7 @@ class OutdoorOrder(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     status = models.SmallIntegerField(choices=STATUS, default=0)
     note = models.CharField(max_length=250, null=True, blank=True)
+    instruction = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

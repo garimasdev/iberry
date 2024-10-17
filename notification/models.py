@@ -9,8 +9,8 @@ from accounts.models import User
 class Notification(models.Model):
     NOTIFICATION_TYPE = (
         (0, 'Order Placed'),
-        (2, 'Report'),
-        (3, 'Public'),
+        (1, 'Report'),
+        (2, 'Public'),
     )
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     notification_type = models.SmallIntegerField(choices=NOTIFICATION_TYPE, default=0)
