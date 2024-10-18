@@ -407,6 +407,7 @@
         const pincode = document.getElementById('pincode').value.trim();
         const username = document.getElementById('username').value.trim();
         const phone = document.getElementById('phone').value.trim();
+        const instructions = document.getElementById('instructions').value.trim();
 
         // Clear previous feedback messages
         document.getElementById('usernameFeedback').style.display = 'none';
@@ -463,7 +464,8 @@
                 anonymous_user_id: "{{anonymous_user_id}}",
                 name: document.getElementById('username').value,
                 phone: document.getElementById('phone').value,
-                address: address
+                address: address,
+                instructions: instructions,
             }),
             success: function (response) {
                 $('.response')

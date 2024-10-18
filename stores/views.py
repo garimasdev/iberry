@@ -1139,6 +1139,7 @@ class OutdoorOrderModelView(APIView):
     def post(self, request, *args, **kwargs):
         try:
             data = request.data
+            instructions = data['instructions'] if data['instructions'] is not None else None
             get_room = User.objects.get(outdoor_token=data['user'])
             cart_items = OutdoorCart.objects.filter(user=get_room, anonymous_user_id=data['anonymous_user_id'])
             
@@ -1161,6 +1162,8 @@ class OutdoorOrderModelView(APIView):
                     )
                     order.items.add(order_item)
 
+                
+                order.instruction = instructions
                 order.total_price = total_amount
                 order.overall_tax = round(overall_tax, 2)
                 order.save()
