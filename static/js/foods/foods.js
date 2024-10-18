@@ -232,6 +232,7 @@ $(document).ready(function () {
       e.preventDefault();
       const roomId = $(this).attr('room_id');
       const token = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+      const instructions = document.getElementById('instructions').value.trim();
   
       $.ajax({
         headers: {
@@ -242,6 +243,7 @@ $(document).ready(function () {
         contentType: 'application/json',
         data: JSON.stringify({
           room: roomId,
+          instructions: instructions,
         }),
         success: function (response) {
           $('.response').empty().show().html('<div class="alert alert-success" role="alert">Your order has been placed.</div>').delay(2000).fadeOut(500);

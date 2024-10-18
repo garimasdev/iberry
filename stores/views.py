@@ -1218,8 +1218,10 @@ def PlaceOrderAPIView(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            print(data)
+            instructions = data.get('instructions') if data.get('instructions') is not None else None
+            print(instructions)
             serializer = CustomOrderSerializer(data=data)
+            
             if serializer.is_valid():
                 get_room = Room.objects.get(id=serializer.data["room"])
                 cart_items = Cart.objects.filter(room=get_room)
@@ -1242,6 +1244,8 @@ def PlaceOrderAPIView(request):
                         )
                         order.items.add(order_item)
 
+                    
+                    order.instruction = instructions
                     order.total_price = total_amount
                     order.overall_tax = round(overall_tax, 2)
                     order.save()
