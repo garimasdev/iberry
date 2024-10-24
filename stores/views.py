@@ -347,11 +347,15 @@ class OutdoorHomeViewPage(TemplateView):
             # Filter Item by Sub Category
             if sub_category_filter:
                 try:
-                    get_sub_category = SubCategory.objects.filter(category__user__pk=room.pk, name=sub_category_filter)
+                    category = Category.objects.filter(user=room, name=category_filter).exclude(Q(name__icontains='bar'))
+                    get_sub_category = SubCategory.objects.filter(category=category[0])
+                    # get_sub_category = SubCategory.objects.filter(category__user__pk=room.pk, name=sub_category_filter)
+                    get_sub_category_one = SubCategory.objects.filter(category__user__pk=room.pk, name=sub_category_filter)
                     if item_type:
-                        items = filterItemByCategories(room, sub_category=get_sub_category[0], item_type=item_type)
+                        items = filterItemByCategories(room, sub_category=get_sub_category_one[0], item_type=item_type)
                     else:
-                        items = filterItemByCategories(room, sub_category=get_sub_category[0])
+                        items = filterItemByCategories(room, sub_category=get_sub_category_one[0])
+                    
 
                 except IndexError:
                     traceback.print_exc()

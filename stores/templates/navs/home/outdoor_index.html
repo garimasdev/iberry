@@ -139,7 +139,7 @@
                 {% for category in categories %}
                     <li>
                         <a class="dropdown-item {% if request.GET.category == category.name %}active{% endif %}" 
-                        href="?category={{ category.name|urlencode }}{% if request.GET.sub_category %}&sub_category={{ request.GET.sub_category|urlencode }}{% endif %}">
+                        href="?category={{ category.name|urlencode }}">
                             {{ category.name }}
                         </a>
                     </li>
