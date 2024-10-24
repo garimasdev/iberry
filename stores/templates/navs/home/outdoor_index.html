@@ -130,25 +130,47 @@
 
     
     
-    <ul class="categories">
+    <div class="d-flex gap-2">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Menu
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="categoryDropdown">
+                {% for category in categories %}
+                    <li>
+                        <a class="dropdown-item {% if request.GET.category == category.name %}active{% endif %}" 
+                        href="?category={{ category.name|urlencode }}{% if request.GET.sub_category %}&sub_category={{ request.GET.sub_category|urlencode }}{% endif %}">
+                            {{ category.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
 
-        {%if sub_categories|length > 0 %}
-        <!--Main Category-->
-        {%for sub_category in sub_categories%}
-        <li class="{%if request.GET.sub_category == sub_category.name %}active{%endif%}">
-            <a href="?category={{sub_category.category.name|urlencode}}&sub_category={{sub_category.name|urlencode}}">{{sub_category.name}}</a>
-        </li>
-        {%endfor%}
-        <!--Sub Category-->
-        {%else%} {%for category in categories%}
-        <li class="{%if request.GET.category == category.name %}active{%endif%}">
-            <a href="?category={{category.name|urlencode}}">{{category.name}}</a>
-        </li>
-        {%endfor%} {%endif%}
-    </ul>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="subCategoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                SubMenu
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="subCategoryDropdown">
+                {% if sub_categories|length > 0 %}
+                    {% for sub_category in sub_categories %}
+                        <li>
+                            <a class="dropdown-item {% if request.GET.sub_category == sub_category.name %}active{% endif %}" 
+                            href="?category={{ sub_category.category.name|urlencode }}&sub_category={{ sub_category.name|urlencode }}">
+                                {{ sub_category.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li>No subcategories available</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+
     {%for categoriesItems in items%}
     <h4 class="category">{{categoriesItems.category}}</h4>
-    
     <!-- products display required -->
     <div class="products">
         {%for item in categoriesItems.items%}
